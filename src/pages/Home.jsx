@@ -8,31 +8,15 @@ import SketchSettings from '@/components/settings/SketchSettings';
 import ResultView from '@/components/result/ResultView';
 import GeneratingOverlay from '@/components/result/GeneratingOverlay';
 
-const PANTONE_HEX_MAP = {
-  'Cool Gray 11C': '#53565A',
-  'Black C': '#2D2926',
-  'Warm Gray 1C': '#D6D2C4',
-  '185 C': '#E4002B',
-  '021 C': '#FE5000',
-  '116 C': '#FFCD00',
-  '3005 C': '#0077C8',
-  '348 C': '#00843D',
-  '2685 C': '#56368A',
-  '7527 C': '#D5C6B1',
-  '7543 C': '#98A4AE',
-  '427 C': '#D0D3D4',
-  '1505 C': '#FF8200',
-  '2925 C': '#009CDE',
-  '375 C': '#97D700',
-  '225 C': '#E0457B',
-};
-
 const DEFAULT_SETTINGS = {
   style: 'marker_render',
   detail: 75,
   perspective: 'keep_original',
   surface: 'matte',
   pantoneColors: ['Cool Gray 11C', 'Black C'],
+  outputMode: 'single',
+  studySheet: 'four_views_eu',
+  cleanDesign: false,
 };
 
 const STYLE_LABELS = {
@@ -44,31 +28,65 @@ const STYLE_LABELS = {
 };
 
 const PERSPECTIVE_LABELS = {
-  three_quarter: 'in a dynamic three-quarter perspective view',
-  front: 'in a clean front elevation view',
-  side: 'in a side profile view',
-  isometric: 'in an isometric projection',
   keep_original: 'maintaining the original perspective and angle',
+  three_quarter: 'in a dynamic three-quarter perspective view',
+  perspective: 'in a natural perspective view with vanishing points',
+  isometric: 'in an isometric axonometric projection',
+  front_eu: 'as a clean front elevation (European first-angle projection)',
+  back_eu: 'as a clean back elevation',
+  left_eu: 'as a left-side elevation',
+  right_eu: 'as a right-side elevation',
+  top_eu: 'as a top plan view',
+  bottom_eu: 'as a bottom plan view',
+};
+
+const STUDY_SHEET_LABELS = {
+  four_views_eu: 'a professional 4-view orthographic study sheet in European first-angle projection (Front elevation top-left, Side elevation top-right, Top plan bottom-left, Back elevation bottom-right) arranged on a single white sheet with thin border lines separating the views and projection labels in small caps',
+  four_views_us: 'a professional 4-view orthographic study sheet in US third-angle projection (Front view top-left, Right side view top-right, Top view bottom-left, Perspective/isometric view bottom-right) arranged on a single white sheet',
+  six_views: 'a complete 6-view orthographic study sheet showing Front, Back, Left, Right, Top, and Bottom elevations arranged in a cross layout on a single white sheet',
+  multi_angle: 'a multi-angle study sheet showing the object from 6 different viewpoints: three-quarter front-left, three-quarter front-right, front, back, three-quarter back, and top — arranged in a 2x3 grid on a single white sheet',
+  cross_section: 'a technical cross-section study sheet showing 2–3 key sectional cuts through the object, with hatching on cut surfaces, internal components visible, and section markers on a plan view — all on a single white sheet',
+  exploded: 'a professional exploded-view illustration showing all components separated along their assembly axes with thin leader lines indicating assembly order, on a white sheet',
+  detail_focus: 'a detail-focus study sheet with one main three-quarter view large in the center and 3–4 zoomed detail callouts around it showing joints, textures, and key features — no text labels, only visual detail circles',
+  ideation_sheet: 'an ideation study sheet with 6–8 quick concept sketches of the same product at different stages of refinement, arranged loosely on a white sheet like a real designer\'s sketchbook page',
 };
 
 const SURFACE_LABELS = {
-  matte: 'with matte surface finishes showing subtle light diffusion',
-  glossy: 'with high-gloss reflective surfaces and sharp highlights',
-  metallic: 'with brushed metallic surfaces and metallic reflections',
-  transparent: 'with transparent/translucent material rendering',
-  mixed: 'with mixed materials showing contrasting surface treatments',
+  matte: 'matte surface finishes with subtle light diffusion',
+  glossy: 'high-gloss reflective surfaces with sharp specular highlights',
+  metallic: 'brushed metallic surfaces with anisotropic reflections',
+  transparent: 'transparent/translucent material with refraction hints',
+  mixed: 'mixed materials with contrasting surface treatments',
 };
 
 function buildPrompt(settings) {
-  const colorNames = settings.pantoneColors.map(c => `PANTONE ${c}`).join(', ');
-  const detailLabel = settings.detail >= 80 ? 'highly detailed' : settings.detail >= 50 ? 'moderately detailed' : 'loose and gestural';
+  const colorPart = settings.pantoneColors.length > 0
+    ? `The color palette must use strictly these Pantone colors: ${settings.pantoneColors.map(c => `PANTONE ${c}`).join(', ')}.`
+    : 'Render in monochromatic black, white, and cool grays only.';
 
-  return `Transform this image into a professional industrial design sketch in the style of a ${STYLE_LABELS[settings.style]}. 
-Render it ${PERSPECTIVE_LABELS[settings.perspective]}, ${SURFACE_LABELS[settings.surface]}.
-Use a ${detailLabel} approach. The color palette must use only these Pantone colors: ${colorNames}. 
-Include subtle construction lines, material callouts, and dimensional hints typical of professional ID sketches. 
-The sketch should look like it was drawn by a senior industrial designer on high-quality marker paper. 
-White background, professional presentation quality.`;
+  const detailLabel = settings.detail >= 80 ? 'highly detailed and refined' : settings.detail >= 50 ? 'moderately detailed' : 'loose, gestural, and quick';
+
+  const cleanPart = settings.cleanDesign
+    ? 'IMPORTANT: No text, no annotations, no dimension lines, no material callouts, no labels, no quotes, no numbers — pure visual sketch only.'
+    : 'Include subtle construction lines and light shadow cues typical of professional ID sketches.';
+
+  const surfaceLabel = SURFACE_LABELS[settings.surface];
+  const styleLabel = STYLE_LABELS[settings.style];
+
+  if (settings.outputMode === 'study_sheet') {
+    const sheetLabel = STUDY_SHEET_LABELS[settings.studySheet];
+    return `Transform this product into ${sheetLabel}.
+Rendering style: professional ${styleLabel}. Surface material: ${surfaceLabel}.
+${detailLabel} line quality. ${colorPart}
+${cleanPart}
+White background, professional industrial design presentation quality, no watermarks.`;
+  }
+
+  const perspLabel = PERSPECTIVE_LABELS[settings.perspective];
+  return `Transform this image into a professional industrial design sketch as a ${styleLabel}, rendered ${perspLabel}, with ${surfaceLabel}.
+${detailLabel} line quality. ${colorPart}
+${cleanPart}
+White background, professional presentation quality, no watermarks.`;
 }
 
 export default function Home() {
