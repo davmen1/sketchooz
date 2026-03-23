@@ -3,11 +3,12 @@ import { motion } from 'framer-motion';
 import { Pen } from 'lucide-react';
 
 const steps = [
-  'Analisi dell\'immagine...',
-  'Definizione delle linee...',
-  'Applicazione stile...',
-  'Rendering colori Pantone...',
-  'Rifinitura dettagli...'
+  'Analisi del prodotto...',
+  'Riconoscimento forme e dettagli...',
+  'Costruzione del prompt fedele...',
+  'Rendering sketch...',
+  'Applicazione colori Pantone...',
+  'Rifinitura finale...',
 ];
 
 export default function GeneratingOverlay() {
