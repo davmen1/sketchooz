@@ -59,7 +59,7 @@ const SURFACE_LABELS = {
   mixed: 'mixed materials with contrasting surface treatments',
 };
 
-function buildPrompt(settings) {
+function buildPrompt(settings, productDescription) {
   const colorPart = settings.pantoneColors.length > 0
     ? `The color palette must use strictly these Pantone colors: ${settings.pantoneColors.map(c => `PANTONE ${c}`).join(', ')}.`
     : 'Render in monochromatic black, white, and cool grays only.';
@@ -73,19 +73,29 @@ function buildPrompt(settings) {
   const surfaceLabel = SURFACE_LABELS[settings.surface];
   const styleLabel = STYLE_LABELS[settings.style];
 
+  const subjectAnchor = productDescription
+    ? `SUBJECT (reproduce faithfully — do not invent or substitute): ${productDescription}`
+    : '';
+
   if (settings.outputMode === 'study_sheet') {
     const sheetLabel = STUDY_SHEET_LABELS[settings.studySheet];
-    return `Transform this product into ${sheetLabel}.
-Rendering style: professional ${styleLabel}. Surface material: ${surfaceLabel}.
+    return `Create a professional industrial design study sheet. ${subjectAnchor}
+
+Layout: ${sheetLabel}.
+Rendering style: ${styleLabel}. Surface material: ${surfaceLabel}.
 ${detailLabel} line quality. ${colorPart}
 ${cleanPart}
+CRITICAL: Every view must depict EXACTLY the same product described above — same shape, same details, same proportions. Do not hallucinate different objects.
 White background, professional industrial design presentation quality, no watermarks.`;
   }
 
   const perspLabel = PERSPECTIVE_LABELS[settings.perspective];
-  return `Transform this image into a professional industrial design sketch as a ${styleLabel}, rendered ${perspLabel}, with ${surfaceLabel}.
+  return `Create a professional industrial design sketch. ${subjectAnchor}
+
+Render it as a ${styleLabel}, ${perspLabel}, with ${surfaceLabel}.
 ${detailLabel} line quality. ${colorPart}
 ${cleanPart}
+CRITICAL: The sketch must depict EXACTLY the product described above — same silhouette, same proportions, same distinctive features. Do not invent or substitute with a different object.
 White background, professional presentation quality, no watermarks.`;
 }
 
@@ -100,7 +110,24 @@ export default function Home() {
     setIsGenerating(true);
     setResultUrl(null);
 
-    const prompt = buildPrompt(settings);
+    // Step 1: Analyze the image to get a precise product description
+    let productDescription = '';
+    const analysis = await base44.integrations.Core.InvokeLLM({
+      prompt: `You are an industrial designer. Look at this product image and write a concise but precise visual description for use as a sketch reference. Describe:
+1. What type of product it is
+2. Overall shape and silhouette (geometric primitives, proportions)
+3. Key structural features, components, and their positions
+4. Visible hardware, fastenings, straps, zippers, buckles, seams
+5. Surface texture and material character
+6. Any distinctive design details
+
+Be specific and factual. Do NOT use adjectives like "beautiful" or "elegant". Max 120 words.`,
+      file_urls: [imageUrl],
+    });
+    productDescription = analysis;
+
+    // Step 2: Generate sketch grounded in the description
+    const prompt = buildPrompt(settings, productDescription);
     const { url } = await base44.integrations.Core.GenerateImage({
       prompt,
       existing_image_urls: [imageUrl],
