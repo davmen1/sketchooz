@@ -4,62 +4,19 @@ import { Check, Sparkles, Zap, Crown, Gift } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 import MobileHeader from '@/components/MobileHeader';
+import { useLang } from '@/lib/LangContext';
 
-const PLANS = [
-  {
-    id: 'monthly',
-    name: 'Monthly',
-    price: '€14,99',
-    period: '/ mese',
-    icon: Zap,
-    color: 'border-border',
-    features: [
-      'Render illimitati',
-      'Tutti gli stili sketch',
-      'Export HD',
-      'Colori Pantone',
-    ],
-  },
-  {
-    id: 'semestral',
-    name: 'Semestral',
-    price: '€75',
-    period: '/ 6 mesi',
-    savings: 'Risparmia €14,94',
-    icon: Sparkles,
-    color: 'border-accent',
-    highlight: true,
-    features: [
-      'Render illimitati',
-      'Tutti gli stili sketch',
-      'Export HD',
-      'Colori Pantone',
-      'Priorità di elaborazione',
-    ],
-  },
-  {
-    id: 'yearly',
-    name: 'Yearly',
-    price: '€100',
-    period: '/ anno',
-    savings: 'Risparmia €79,88',
-    icon: Crown,
-    color: 'border-border',
-    features: [
-      'Render illimitati',
-      'Tutti gli stili sketch',
-      'Export HD',
-      'Colori Pantone',
-      'Priorità di elaborazione',
-      'Accesso anticipato alle novità',
-    ],
-  },
+const PLAN_CONFIGS = [
+  { id: 'monthly', price: '€14,99', icon: Zap, color: 'border-border', translationKey: 'planMonthly' },
+  { id: 'semestral', price: '€75', icon: Sparkles, color: 'border-accent', highlight: true, translationKey: 'planSemestral' },
+  { id: 'yearly', price: '€100', icon: Crown, color: 'border-border', translationKey: 'planYearly' },
 ];
 
 export default function Pricing() {
   const [loading, setLoading] = useState(null);
   const [subscription, setSubscription] = useState(null);
   const [hasPack, setHasPack] = useState(false);
+  const { t } = useLang();
 
   useEffect(() => {
     base44.functions.invoke('getSubscription', {}).then(r => {
@@ -73,7 +30,7 @@ export default function Pricing() {
   const handlePackCheckout = async () => {
     const isInIframe = window.self !== window.top;
     if (isInIframe) {
-      alert('Il checkout funziona solo dall\'app pubblicata. Apri l\'app in una nuova scheda.');
+      alert(t('iframeAlert'));
       return;
     }
     setLoading('starter_pack');
@@ -83,7 +40,7 @@ export default function Pricing() {
       cancelUrl: currentUrl,
     });
     if (res.data?.error === 'already_purchased') {
-      alert('Hai già acquistato il Starter Pack!');
+      alert(t('alreadyPurchasedAlert'));
       setLoading(null);
       return;
     }
@@ -95,7 +52,7 @@ export default function Pricing() {
   const handleCheckout = async (planId) => {
     const isInIframe = window.self !== window.top;
     if (isInIframe) {
-      alert('Il checkout funziona solo dall\'app pubblicata. Apri l\'app in una nuova scheda.');
+      alert(t('iframeAlert'));
       return;
     }
     setLoading(planId);
@@ -112,20 +69,20 @@ export default function Pricing() {
 
   return (
     <div className="flex flex-col flex-1">
-      <MobileHeader title="Abbonamenti" subtitle="Scegli il tuo piano" />
+      <MobileHeader title={t('pricingTitle')} subtitle={t('pricingSubtitle')} />
 
       <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8 w-full">
         {/* Free tier notice */}
         <div className="mb-8 p-4 bg-muted rounded-xl text-sm text-muted-foreground text-center">
-          🎨 <strong>Piano Gratuito</strong> — 2 render al mese con filigrana SketchForge
+          {t('freeTierDesc')}
         </div>
 
         {subscription && (
           <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-sm text-green-800 text-center">
-            ✅ Abbonamento attivo: <strong className="capitalize">{subscription.plan}</strong>
+            ✅ {t('subscriptionActive')}: <strong className="capitalize">{subscription.plan}</strong>
             {subscription.current_period_end && (
               <span className="ml-2 text-green-600">
-                · scade il {new Date(subscription.current_period_end).toLocaleDateString('it-IT')}
+                · {t('expiresOn')} {new Date(subscription.current_period_end).toLocaleDateString()}
               </span>
             )}
           </div>
@@ -137,15 +94,15 @@ export default function Pricing() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8 relative bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-300 rounded-2xl p-6 flex flex-col sm:flex-row items-center gap-5"
         >
-          <div className="absolute -top-3 left-6 bg-amber-400 text-white text-xs font-bold px-3 py-1 rounded-full tracking-wide">🎁 OFFERTA UNA TANTUM</div>
+          <div className="absolute -top-3 left-6 bg-amber-400 text-white text-xs font-bold px-3 py-1 rounded-full tracking-wide">{t('oneTimeOfferBadge')}</div>
           <div className="p-3 rounded-xl bg-amber-100 shrink-0">
             <Gift className="w-7 h-7 text-amber-600" />
           </div>
           <div className="flex-1 text-center sm:text-left">
-            <h3 className="font-bold text-lg text-amber-900">Starter Pack — 3 Render</h3>
-            <p className="text-sm text-amber-700 mt-0.5">3 render senza watermark, acquistabili una sola volta. Perfetto per provare SketchForge.</p>
+            <h3 className="font-bold text-lg text-amber-900">{t('starterPackTitle')}</h3>
+            <p className="text-sm text-amber-700 mt-0.5">{t('starterPackDesc')}</p>
             <ul className="flex flex-wrap gap-x-4 gap-y-1 mt-2">
-              {['3 render HD', 'Nessuna filigrana', 'Tutti gli stili', 'Acquisto unico'].map(f => (
+              {t('starterPackFeatures').map(f => (
                 <li key={f} className="flex items-center gap-1 text-xs text-amber-800">
                   <Check className="w-3.5 h-3.5 text-green-600" />{f}
                 </li>
@@ -161,14 +118,15 @@ export default function Pricing() {
             >
               {loading === 'starter_pack' ? (
                 <div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-              ) : hasPack ? 'Già acquistato ✓' : 'Acquista ora'}
+              ) : hasPack ? t('alreadyPurchased') : t('buyNow')}
             </Button>
           </div>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {PLANS.map((plan, i) => {
+          {PLAN_CONFIGS.map((plan, i) => {
             const Icon = plan.icon;
+            const planT = t(plan.translationKey);
             return (
               <motion.div
                 key={plan.id}
@@ -178,9 +136,9 @@ export default function Pricing() {
                 className={`relative bg-card rounded-2xl border-2 ${plan.color} p-6 flex flex-col ${plan.highlight ? 'shadow-lg' : ''}`}
               >
                 {plan.highlight && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-accent text-accent-foreground text-xs font-semibold px-3 py-1 rounded-full">
-                    Più popolare
-                  </div>
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-accent text-accent-foreground text-xs font-semibold px-3 py-1 rounded-full">
+                  {t('mostPopular')}
+                </div>
                 )}
 
                 <div className="flex items-center gap-3 mb-4">
@@ -188,20 +146,20 @@ export default function Pricing() {
                     <Icon className={`w-5 h-5 ${plan.highlight ? 'text-accent' : 'text-muted-foreground'}`} />
                   </div>
                   <div>
-                    <h3 className="font-semibold">{plan.name}</h3>
-                    {plan.savings && (
-                      <span className="text-[11px] text-green-600 font-medium">{plan.savings}</span>
+                    <h3 className="font-semibold">{planT.name}</h3>
+                    {planT.savings && (
+                      <span className="text-[11px] text-green-600 font-medium">{planT.savings}</span>
                     )}
                   </div>
                 </div>
 
                 <div className="mb-6">
                   <span className="text-3xl font-bold">{plan.price}</span>
-                  <span className="text-muted-foreground text-sm ml-1">{plan.period}</span>
+                  <span className="text-muted-foreground text-sm ml-1">{planT.period}</span>
                 </div>
 
                 <ul className="space-y-2.5 flex-1 mb-6">
-                  {plan.features.map(f => (
+                  {planT.features.map(f => (
                     <li key={f} className="flex items-start gap-2 text-sm">
                       <Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
                       {f}
@@ -217,7 +175,7 @@ export default function Pricing() {
                 >
                   {loading === plan.id ? (
                     <div className="w-4 h-4 border-2 border-current/30 border-t-current rounded-full animate-spin" />
-                  ) : subscription?.status === 'active' ? 'Abbonato ✓' : 'Abbonati ora'}
+                  ) : subscription?.status === 'active' ? t('subscribed') : t('subscribeNow')}
                 </Button>
               </motion.div>
             );
