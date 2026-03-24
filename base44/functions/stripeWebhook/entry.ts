@@ -22,6 +22,22 @@ Deno.serve(async (req) => {
     const { user_email, plan } = session.metadata || {};
     if (!user_email || !plan) return new Response('OK');
 
+    // One-time starter pack
+    if (plan === 'starter_pack') {
+      const stripeSessionId = session.id;
+      // Idempotency: skip if already created
+      const existing = await base44.asServiceRole.entities.RenderPack.filter({ stripe_session_id: stripeSessionId });
+      if (existing.length === 0) {
+        await base44.asServiceRole.entities.RenderPack.create({
+          user_email,
+          renders_remaining: 3,
+          stripe_session_id: stripeSessionId,
+        });
+        console.log(`Starter pack created for ${user_email}`);
+      }
+      return new Response('OK');
+    }
+
     const subscriptionId = session.subscription;
     const customerId = session.customer;
 
@@ -32,8 +48,8 @@ Deno.serve(async (req) => {
     }
 
     // Upsert: delete existing then create fresh
-    const existing = await base44.asServiceRole.entities.Subscription.filter({ user_email });
-    for (const s of existing) {
+    const existingSubs = await base44.asServiceRole.entities.Subscription.filter({ user_email });
+    for (const s of existingSubs) {
       await base44.asServiceRole.entities.Subscription.delete(s.id);
     }
 

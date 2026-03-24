@@ -171,7 +171,14 @@ export default function Home() {
     // Check active subscription
     const subs = await base44.entities.Subscription.filter({ user_email: user.email, status: 'active' });
     if (subs.length > 0) return { allowed: true, watermark: false };
-    // Check daily usage
+    // Check render pack credits
+    const packs = await base44.entities.RenderPack.filter({ user_email: user.email });
+    const pack = packs.find(p => p.renders_remaining > 0);
+    if (pack) {
+      await base44.entities.RenderPack.update(pack.id, { renders_remaining: pack.renders_remaining - 1 });
+      return { allowed: true, watermark: false };
+    }
+    // Check daily free usage
     const today = getTodayKey();
     const usages = await base44.entities.RenderUsage.filter({ user_email: user.email, date: today });
     const usage = usages[0];

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Check, Sparkles, Zap, Crown } from 'lucide-react';
+import { Check, Sparkles, Zap, Crown, Gift } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 import MobileHeader from '@/components/MobileHeader';
@@ -59,12 +59,38 @@ const PLANS = [
 export default function Pricing() {
   const [loading, setLoading] = useState(null);
   const [subscription, setSubscription] = useState(null);
+  const [hasPack, setHasPack] = useState(false);
 
   useEffect(() => {
     base44.functions.invoke('getSubscription', {}).then(r => {
       setSubscription(r.data?.subscription || null);
     }).catch(() => {});
+    base44.entities.RenderPack.filter({}).then(packs => {
+      setHasPack(packs.length > 0);
+    }).catch(() => {});
   }, []);
+
+  const handlePackCheckout = async () => {
+    const isInIframe = window.self !== window.top;
+    if (isInIframe) {
+      alert('Il checkout funziona solo dall\'app pubblicata. Apri l\'app in una nuova scheda.');
+      return;
+    }
+    setLoading('starter_pack');
+    const currentUrl = window.location.href;
+    const res = await base44.functions.invoke('createPackCheckout', {
+      successUrl: currentUrl + '?success=1',
+      cancelUrl: currentUrl,
+    });
+    if (res.data?.error === 'already_purchased') {
+      alert('Hai già acquistato il Starter Pack!');
+      setLoading(null);
+      return;
+    }
+    const { url } = res.data;
+    if (url) window.location.href = url;
+    setLoading(null);
+  };
 
   const handleCheckout = async (planId) => {
     const isInIframe = window.self !== window.top;
@@ -72,7 +98,6 @@ export default function Pricing() {
       alert('Il checkout funziona solo dall\'app pubblicata. Apri l\'app in una nuova scheda.');
       return;
     }
-
     setLoading(planId);
     const currentUrl = window.location.href;
     const res = await base44.functions.invoke('createCheckout', {
@@ -105,6 +130,41 @@ export default function Pricing() {
             )}
           </div>
         )}
+
+        {/* Starter Pack promo */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8 relative bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-300 rounded-2xl p-6 flex flex-col sm:flex-row items-center gap-5"
+        >
+          <div className="absolute -top-3 left-6 bg-amber-400 text-white text-xs font-bold px-3 py-1 rounded-full tracking-wide">🎁 OFFERTA UNA TANTUM</div>
+          <div className="p-3 rounded-xl bg-amber-100 shrink-0">
+            <Gift className="w-7 h-7 text-amber-600" />
+          </div>
+          <div className="flex-1 text-center sm:text-left">
+            <h3 className="font-bold text-lg text-amber-900">Starter Pack — 3 Render</h3>
+            <p className="text-sm text-amber-700 mt-0.5">3 render senza watermark, acquistabili una sola volta. Perfetto per provare SketchForge.</p>
+            <ul className="flex flex-wrap gap-x-4 gap-y-1 mt-2">
+              {['3 render HD', 'Nessuna filigrana', 'Tutti gli stili', 'Acquisto unico'].map(f => (
+                <li key={f} className="flex items-center gap-1 text-xs text-amber-800">
+                  <Check className="w-3.5 h-3.5 text-green-600" />{f}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="flex flex-col items-center gap-2 shrink-0">
+            <span className="text-3xl font-bold text-amber-900">€2,99</span>
+            <Button
+              onClick={handlePackCheckout}
+              disabled={!!loading || hasPack}
+              className="bg-amber-500 hover:bg-amber-600 text-white font-semibold px-6"
+            >
+              {loading === 'starter_pack' ? (
+                <div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+              ) : hasPack ? 'Già acquistato ✓' : 'Acquista ora'}
+            </Button>
+          </div>
+        </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {PLANS.map((plan, i) => {
