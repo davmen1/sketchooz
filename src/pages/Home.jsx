@@ -80,7 +80,7 @@ function buildPrompt(settings, productDescription) {
   const styleLabel = STYLE_LABELS[settings.style];
 
   const subjectAnchor = productDescription
-    ? `SUBJECT (reproduce faithfully — do not invent or substitute): ${productDescription}`
+    ? `CRITICAL SUBJECT — reproduce with absolute fidelity, do NOT alter shape or proportions:\n${productDescription}\nThe sketch must show the EXACT SAME product: same silhouette, same proportions, same components. Do not invent, add, remove or reshape any part.`
     : '';
 
   // Resolve background label from structured bgColor object
@@ -120,6 +120,11 @@ function buildPrompt(settings, productDescription) {
     const sheetLabel = STUDY_SHEET_LABELS[settings.studySheet];
     return `Create a professional industrial design study sheet. ${subjectAnchor}
 
+STRICT RENDERING RULES:
+- Preserve the EXACT silhouette, shape and proportions described above
+- Do NOT simplify, stylize or redesign the product — only apply the rendering style on the faithful form
+- The output must be recognizable as the same product as the input image
+
 Layout: ${sheetLabel}.
 Rendering style: ${styleLabel}. Surface material: ${surfaceLabel}.
 ${detailLabel} line quality. ${colorPart}
@@ -131,6 +136,11 @@ BACKGROUND: Use a ${bgColorLabel}. No watermarks, professional industrial design
 
   const perspLabel = PERSPECTIVE_LABELS[settings.perspective];
   return `Create a professional industrial design sketch. ${subjectAnchor}
+
+STRICT RENDERING RULES:
+- Preserve the EXACT silhouette, shape and proportions described above
+- Do NOT simplify, stylize or redesign the product — only apply the rendering style on the faithful form
+- The output must be recognizable as the same product as the input image
 
 Render it as a ${styleLabel}, ${perspLabel}, with ${surfaceLabel}.
 ${detailLabel} line quality. ${colorPart}
@@ -156,15 +166,19 @@ export default function Home() {
     // Step 1: Analyze the image to get a precise product description
     let productDescription = '';
     const analysis = await base44.integrations.Core.InvokeLLM({
-      prompt: `You are an industrial designer. Look at this product image and write a concise but precise visual description for use as a sketch reference. Describe:
-1. What type of product it is
-2. Overall shape and silhouette (geometric primitives, proportions)
-3. Key structural features, components, and their positions
-4. Visible hardware, fastenings, straps, zippers, buckles, seams
-5. Surface texture and material character
-6. Any distinctive design details
+      prompt: `You are an industrial designer doing a precise visual analysis for sketch reproduction. Study this product image and describe it with maximum fidelity for a sketch artist who must reproduce it WITHOUT any creative interpretation.
 
-Be specific and factual. Do NOT use adjectives like "beautiful" or "elegant". Max 120 words.`,
+Describe in this exact order:
+1. PRODUCT TYPE: What it is
+2. SILHOUETTE: Exact outer contour shape (use geometric terms: rectangular, trapezoidal, rounded corners tight/wide, etc.)
+3. PROPORTIONS: Width-to-height-to-depth ratios as precisely as possible
+4. MAJOR COMPONENTS: Each part, its position, size relative to whole
+5. EDGES & TRANSITIONS: Sharp corners, chamfers, fillets, where they occur
+6. SURFACE TOPOLOGY: Flat faces, curved surfaces, indentations, protrusions
+7. HARDWARE & DETAILS: Buttons, zippers, straps, buckles, stitching, logos — exact positions
+8. MATERIAL & TEXTURE: Visible surface character
+
+Be purely descriptive and factual. NO creative additions. Max 150 words.`,
       file_urls: [imageUrl],
     });
     productDescription = analysis;
