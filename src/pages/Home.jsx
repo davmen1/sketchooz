@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, RotateCcw, Settings } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Sparkles, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 import ImageUploader from '@/components/upload/ImageUploader';
@@ -185,24 +184,17 @@ Be specific and factual. Do NOT use adjectives like "beautiful" or "elegant". Ma
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+    <div className="flex flex-col flex-1">
       <MobileHeader
         title="SketchForge"
         subtitle="Industrial Design AI"
         right={
-          <div className="flex items-center gap-2">
-            {(imageUrl || resultUrl) && (
-              <Button variant="ghost" size="sm" onClick={handleReset} className="min-h-[44px]">
-                <RotateCcw className="w-3.5 h-3.5 mr-1.5" />
-                <span className="hidden sm:inline">Ricomincia</span>
-              </Button>
-            )}
-            <Link to="/settings">
-              <Button variant="ghost" size="icon" className="w-11 h-11">
-                <Settings className="w-4 h-4" />
-              </Button>
-            </Link>
-          </div>
+          (imageUrl || resultUrl) ? (
+            <Button variant="ghost" size="sm" onClick={handleReset} className="min-h-[44px]">
+              <RotateCcw className="w-3.5 h-3.5 mr-1.5" />
+              <span className="hidden sm:inline">Ricomincia</span>
+            </Button>
+          ) : null
         }
       />
 

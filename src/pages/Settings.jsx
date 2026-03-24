@@ -46,7 +46,7 @@ export default function Settings() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+    <div className="flex flex-col flex-1">
       <MobileHeader title="Settings" subtitle="Account & preferences" />
 
       <main className="flex-1 max-w-2xl mx-auto w-full px-4 sm:px-6 py-6 space-y-6">
