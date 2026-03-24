@@ -76,9 +76,8 @@ Deno.serve(async (req) => {
       throw new Error('SVG generation failed — empty output');
     }
 
-    // Remove the white background path so SVG is transparent + black lines only
-    // White fill paths have fill close to rgb(254,254,254) or rgb(255,255,255)
-    const svgClean = svgRaw.replace(/<path fill="rgb\(25[0-9],25[0-9],25[0-9]\)"[^/]*/g, '');
+    // Remove white background paths so SVG has transparent bg + black lines only
+    const svgClean = svgRaw.replace(/<path fill="rgb\(25[0-9],25[0-9],25[0-9]\)"[^>]*\/>/gs, '');
 
     console.log('Line art SVG generated, length:', svgClean.length);
 
