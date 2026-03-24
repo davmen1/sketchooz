@@ -168,6 +168,8 @@ export default function Home() {
 
   const checkAndIncrementUsage = async () => {
     const user = await base44.auth.me();
+    // Admins always get free unlimited rendering
+    if (user.role === 'admin') return { allowed: true, watermark: false };
     // Check active subscription
     const subs = await base44.entities.Subscription.filter({ user_email: user.email, status: 'active' });
     if (subs.length > 0) return { allowed: true, watermark: false };
