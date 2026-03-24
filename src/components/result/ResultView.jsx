@@ -7,7 +7,7 @@ import { useLang } from '@/lib/LangContext';
 import { Slider } from '@/components/ui/slider';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 
-export default function ResultView({ originalUrl, resultUrl, hasWatermark }) {
+export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeVector }) {
   const [comparePosition, setComparePosition] = useState(50);
   const [viewMode, setViewMode] = useState('result'); // 'result' | 'compare'
 
@@ -23,6 +23,15 @@ export default function ResultView({ originalUrl, resultUrl, hasWatermark }) {
   };
 
   const handleVectorDownload = async () => {
+    if (freeVector) {
+      // Promo users: direct download of the raster as a free "vector" perk
+      const link = document.createElement('a');
+      link.href = resultUrl;
+      link.download = 'industrial-design-sketch.png';
+      link.target = '_blank';
+      link.click();
+      return;
+    }
     const isInIframe = window.self !== window.top;
     if (isInIframe) {
       alert('Il checkout funziona solo dall\'app pubblicata. Apri l\'app in una nuova scheda.');

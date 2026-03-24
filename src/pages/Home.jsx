@@ -166,15 +166,31 @@ export default function Home() {
 
   const getTodayKey = () => new Date().toISOString().slice(0, 10);
 
-  const PROMO_CODES = ['WANNATRY1'];
-  const hasPromo = () => PROMO_CODES.includes(localStorage.getItem('promo_code'));
+  const PROMO_EXPIRY = new Date('2026-04-23T23:59:59Z');
+  const hasPromo = () => {
+    const code = localStorage.getItem('promo_code');
+    return ['WANNATRY1'].includes(code) && new Date() < PROMO_EXPIRY;
+  };
 
   const checkAndIncrementUsage = async () => {
     const user = await base44.auth.me();
     // Admins always get free unlimited rendering
     if (user.role === 'admin') return { allowed: true, watermark: false };
-    // Promo code holders get free unlimited rendering
-    if (hasPromo()) return { allowed: true, watermark: false };
+    // Promo code: 2 renders/day, no watermark
+    if (hasPromo()) {
+      const today = getTodayKey();
+      const usages = await base44.entities.RenderUsage.filter({ user_email: user.email, date: today });
+      const usage = usages[0];
+      if (!usage) {
+        await base44.entities.RenderUsage.create({ user_email: user.email, date: today, count: 1 });
+        return { allowed: true, watermark: false };
+      }
+      if (usage.count < FREE_RENDERS_PER_DAY) {
+        await base44.entities.RenderUsage.update(usage.id, { count: usage.count + 1 });
+        return { allowed: true, watermark: false };
+      }
+      return { allowed: false, watermark: false };
+    }
     // Check active subscription
     const subs = await base44.entities.Subscription.filter({ user_email: user.email, status: 'active' });
     if (subs.length > 0) return { allowed: true, watermark: false };
@@ -372,6 +388,7 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
                       originalUrl={imageUrl}
                       resultUrl={needsWatermark ? (watermarkedUrl || resultUrl) : resultUrl}
                       hasWatermark={needsWatermark}
+                      freeVector={hasPromo()}
                     />
                   </>
                 )}
