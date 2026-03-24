@@ -2,7 +2,7 @@ import React from 'react';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Pen, Palette, Eye, Layout, FileText } from 'lucide-react';
+import { Pen, Palette, Eye, Layout, FileText, Sparkles } from 'lucide-react';
 import PantoneSelector from './PantoneSelector';
 
 const SKETCH_STYLES = [
@@ -45,6 +45,11 @@ const SURFACES = [
   { value: 'metallic', label: 'Metallic' },
   { value: 'transparent', label: 'Transparent' },
   { value: 'mixed', label: 'Mixed' },
+];
+
+const FINISHING_OPTIONS = [
+  { value: 'none', label: 'None' },
+  { value: 'marker_background', label: 'Marker BG' },
 ];
 
 function OptionButton({ label, selected, onClick }) {
@@ -178,17 +183,30 @@ export default function SketchSettings({ settings, onChange }) {
         />
       </div>
 
-      {/* Clean Design toggle */}
-      <div className="flex items-center justify-between py-2 border-t border-border">
-        <div>
-          <p className="text-xs font-semibold">Clean Design</p>
-          <p className="text-[10px] text-muted-foreground mt-0.5">No annotations, callouts or text</p>
+      {/* Finishing */}
+      <div className="space-y-2">
+        <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <Sparkles className="w-3.5 h-3.5" />
+          Finishing
+        </Label>
+        <div className="flex flex-wrap gap-1.5">
+          {FINISHING_OPTIONS.map((f) => (
+            <OptionButton
+              key={f.value}
+              label={f.label}
+              selected={settings.finishing === f.value}
+              onClick={() => update('finishing', f.value)}
+            />
+          ))}
         </div>
-        <Switch
-          checked={settings.cleanDesign}
-          onCheckedChange={(v) => update('cleanDesign', v)}
-        />
+        {settings.finishing === 'marker_background' && (
+          <p className="text-[10px] text-muted-foreground mt-1">
+            Raw marker color splash behind the object · bold black + white boundary lines
+          </p>
+        )}
       </div>
+
+      {/* Clean Design toggle */}
 
       {/* Pantone Colors */}
       <PantoneSelector
