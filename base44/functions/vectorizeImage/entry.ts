@@ -23,14 +23,13 @@ Deno.serve(async (req) => {
     const arrayBuffer = await imageRes.arrayBuffer();
     const nodeBuffer = Buffer.from(arrayBuffer);
 
-    // Resize large images to keep processing fast (max 1200px wide)
+    // Resize large images — keep full resolution for max quality (max 2400px wide)
     console.log('Pre-processing image with Jimp, bytes:', nodeBuffer.length);
     const image = await Jimp.read(nodeBuffer);
-    if (image.getWidth() > 1200) {
-      image.resize(1200, Jimp.AUTO);
+    if (image.getWidth() > 2400) {
+      image.resize(2400, Jimp.AUTO);
     }
-    // Slight contrast boost for cleaner edges
-    image.contrast(0.15);
+    // No contrast boost — preserve original shading
     const pngBuffer = await image.getBufferAsync(Jimp.MIME_PNG);
 
     // Build an ImageData-like object for imagetracerjs
@@ -44,23 +43,23 @@ Deno.serve(async (req) => {
 
     console.log(`Vectorizing ${width}x${height} image with imagetracerjs (full color)…`);
 
-    // Options: high color fidelity, moderate path simplification
+    // Options: MAXIMUM quality — minimal simplification, full color range
     const options = {
-      // Color quantization: 16 colors per palette, 2 cycles
-      numberofcolors: 16,
-      colorquantcycles: 2,
-      // Tracing
-      ltres: 1,          // line threshold (lower = more detail)
-      qtres: 1,          // quadratic spline threshold
-      pathomit: 8,       // omit paths smaller than 8px²
-      // Blur & noise reduction before tracing
+      // Color quantization: 64 colors, 6 cycles for best color fidelity
+      numberofcolors: 64,
+      colorquantcycles: 6,
+      // Tracing: extremely precise
+      ltres: 0.1,        // line threshold (very low = maximum detail)
+      qtres: 0.1,        // quadratic spline threshold (very low = very smooth curves)
+      pathomit: 0,       // keep every path regardless of size
+      // No blur — preserve all shading details
       blurradius: 0,
-      blurdelta: 20,
+      blurdelta: 0,
       // SVG options
       strokewidth: 0,
       linefilter: false,
       scale: 1,
-      roundcoords: 1,
+      roundcoords: 2,
       viewbox: true,
       desc: false,
     };
