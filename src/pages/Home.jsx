@@ -219,7 +219,7 @@ export default function Home() {
     if (!imageUrl) return;
     const { allowed, watermark } = await checkAndIncrementUsage();
     if (!allowed) {
-      toast.error(hasPromo() ? 'Hai esaurito i render promo.' : t('freeLimit'));
+      toast.error(hasPromo() ? t('promoExhausted') : t('freeLimit'));
       return;
     }
     setNeedsWatermark(watermark);
@@ -311,17 +311,17 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
                 <button
                   className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
                   onClick={() => {
-                    const code = window.prompt('Enter promo code:');
+                    const code = window.prompt(t('promoPrompt'));
                     if (code && ['WANNATRY1'].includes(code.trim().toUpperCase())) {
                       localStorage.setItem('promo_code', code.trim().toUpperCase());
                       setPromoRendersUsed(parseInt(localStorage.getItem('promo_renders_used') || '0', 10));
-                      toast.success('✅ Promo code applied! You have 2 free watermark-free renders.');
+                      toast.success(t('promoApplied'));
                     } else if (code) {
-                      toast.error('❌ Invalid promo code.');
+                      toast.error(t('promoInvalid'));
                     }
                   }}
                 >
-                  Have a promo code?
+                  {t('promoLink')}
                 </button>
               </div>
             )}
@@ -364,8 +364,8 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
             {hasPromo() && (
               <div className="rounded-xl border border-border bg-muted/50 px-4 py-3 text-xs space-y-1">
                 <div className="flex items-center justify-between">
-                  <span className="font-semibold text-foreground">🎟️ Promo attiva</span>
-                  <span className="text-muted-foreground">Scade 23 apr 2026</span>
+                  <span className="font-semibold text-foreground">🎟️ {t('promoActive')}</span>
+                  <span className="text-muted-foreground">{t('promoExpiry')}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   {[0, 1].map(i => (
@@ -374,7 +374,7 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
                     }`} />
                   ))}
                 </div>
-                <p className="text-muted-foreground">{Math.max(0, 2 - promoRendersUsed)} render rimasti</p>
+                <p className="text-muted-foreground">{Math.max(0, 2 - promoRendersUsed)} {t('promoRendersLeft')}</p>
               </div>
             )}
             </motion.aside>
