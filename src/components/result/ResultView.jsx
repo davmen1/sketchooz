@@ -23,8 +23,9 @@ export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeV
   };
 
   const handleVectorDownload = async () => {
-    if (freeVector) {
-      // Promo users: direct download of the raster as a free "vector" perk
+    // Free for promo users and admins
+    const user = await base44.auth.me();
+    if (freeVector || user?.role === 'admin') {
       const link = document.createElement('a');
       link.href = resultUrl;
       link.download = 'industrial-design-sketch.png';
