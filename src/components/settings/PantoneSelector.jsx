@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Label } from '@/components/ui/label';
 import { Check, ChevronDown } from 'lucide-react';
 
+export const PANTONE_PALETTES = [
+
 const PANTONE_PALETTES = [
   {
     name: 'Neutrals',
