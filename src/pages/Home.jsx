@@ -18,8 +18,8 @@ const DEFAULT_SETTINGS = {
   studySheet: 'four_views_eu',
   cleanDesign: false,
   finishing: 'none',
-  texture: 'none',
-  bgColor: 'white',
+  textures: [],
+  bgColor: { type: 'preset', value: 'white' },
 };
 
 const STYLE_LABELS = {
@@ -80,19 +80,34 @@ function buildPrompt(settings, productDescription) {
     ? `SUBJECT (reproduce faithfully — do not invent or substitute): ${productDescription}`
     : '';
 
-  const bgColorLabel = {
+  // Resolve background label from structured bgColor object
+  const BG_PRESET_LABELS = {
     white: 'pure white background',
-    light_gray: 'light cool gray (#E8E8E8) background',
-    cream: 'warm cream/ivory (#F5F0E8) background',
-    black: 'deep black background with the sketch rendered in light lines',
-    dark_navy: 'dark navy blue (#1A2332) background with the sketch rendered in light lines',
-    kraft: 'warm kraft paper tan (#C8A882) background like designer sketchbook paper',
-    dark_charcoal: 'dark charcoal (#2A2A2A) background with light sketch lines for dramatic contrast',
-  }[settings.bgColor] || 'pure white background';
+    off_white: 'off-white background (#F5F2EE)',
+    cream: 'warm cream/ivory (#F5F0E0) background',
+    kraft: 'warm kraft paper tan (#C8A882) background',
+    light_gray: 'light cool gray (#D8D8D8) background',
+    mid_gray: 'medium gray (#888888) background',
+    charcoal: 'dark charcoal (#2A2A2A) background, sketch rendered in light lines',
+    black: 'deep black (#111111) background, sketch rendered in light lines',
+    navy: 'dark navy (#0D1B2A) background, sketch rendered in light lines',
+    deep_blue: 'deep indigo blue (#1A237E) background, sketch rendered in light lines',
+    forest: 'deep forest green (#1B3A2A) background, sketch rendered in light lines',
+    deep_red: 'deep red (#4A0E0E) background, sketch rendered in light lines',
+  };
+  const bg = settings.bgColor || { type: 'preset', value: 'white' };
+  const bgColorLabel = bg.type === 'custom'
+    ? `solid custom color background with exact hex value ${bg.hex?.toUpperCase()}, rendered for maximum contrast`
+    : bg.type === 'pantone'
+      ? `solid ${bg.label} background (${bg.hex?.toUpperCase()}), rendered for maximum contrast with the sketch lines`
+      : BG_PRESET_LABELS[bg.value] || 'pure white background';
 
-  const texturePart = settings.texture && settings.texture !== 'none'
-    ? `MATERIAL TEXTURE: The product surfaces must clearly show a realistic ${settings.texture} texture — render the grain, weave, grain pattern, or surface character of ${settings.texture} material with faithful detail in the sketch style.`
-    : '';
+  const textures = settings.textures || [];
+  const texturePart = textures.length === 0
+    ? ''
+    : textures.length === 1
+      ? `MATERIAL TEXTURE: Product surfaces must clearly show a realistic ${textures[0]} texture — render the grain/weave/surface character with faithful detail in the sketch style.`
+      : `MATERIAL TEXTURE COMBO: The product uses two distinct materials — ${textures[0]} and ${textures[1]}. Intelligently assign each texture to different surfaces/components (e.g. primary body in ${textures[0]}, details or panels in ${textures[1]}). Both textures must be visibly distinct and rendered with faithful surface character in the sketch style.`;
 
   const finishingPart = settings.finishing === 'marker_background'
     ? `FINISHING — MANDATORY: Behind the product, paint a raw loose marker color splash/patch using a bold contrasting solid Pantone color, applied in rough irregular strokes like a real Copic marker on paper. The product silhouette must have a very bold black outline (3-4pt) on its outer boundary, plus crisp white highlight lines on key edges and curved surfaces, making the design pop dramatically against the marker backdrop. Aesthetic: professional ID marker sketch on white paper with a raw color backdrop, competition-style industrial design presentation.`

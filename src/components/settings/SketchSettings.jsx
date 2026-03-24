@@ -1,9 +1,9 @@
 import React from 'react';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
 import { Pen, Palette, Eye, Layout, FileText, Sparkles } from 'lucide-react';
 import PantoneSelector from './PantoneSelector';
+import BackgroundSelector from './BackgroundSelector';
 
 const SKETCH_STYLES = [
   { value: 'marker_render', label: 'Marker Render' },
@@ -47,28 +47,19 @@ const SURFACES = [
   { value: 'mixed', label: 'Mixed' },
 ];
 
-const BG_COLORS = [
-  { value: 'white', label: 'White', hex: '#FFFFFF' },
-  { value: 'light_gray', label: 'Lt. Gray', hex: '#E8E8E8' },
-  { value: 'cream', label: 'Cream', hex: '#F5F0E8' },
-  { value: 'kraft', label: 'Kraft', hex: '#C8A882' },
-  { value: 'dark_charcoal', label: 'Charcoal', hex: '#2A2A2A' },
-  { value: 'dark_navy', label: 'Navy', hex: '#1A2332' },
-  { value: 'black', label: 'Black', hex: '#111111' },
-];
-
 const FINISHING_OPTIONS = [
   { value: 'none', label: 'None' },
   { value: 'marker_background', label: 'Marker BG' },
 ];
 
 const TEXTURES = [
-  { value: 'none', label: 'None' },
   { value: 'wood', label: 'Wood' },
   { value: 'stone', label: 'Stone' },
   { value: 'leather', label: 'Leather' },
   { value: 'fabric', label: 'Fabric' },
   { value: 'metal', label: 'Metal' },
+  { value: 'carbon', label: 'Carbon' },
+  { value: 'ceramic', label: 'Ceramic' },
 ];
 
 function OptionButton({ label, selected, onClick }) {
@@ -86,8 +77,15 @@ function OptionButton({ label, selected, onClick }) {
   );
 }
 
+function toggleTexture(textures, value) {
+  if (textures.includes(value)) return textures.filter(t => t !== value);
+  if (textures.length >= 2) return [textures[1], value]; // slide window, max 2
+  return [...textures, value];
+}
+
 export default function SketchSettings({ settings, onChange }) {
   const update = (key, value) => onChange({ ...settings, [key]: value });
+  const textures = settings.textures || [];
 
   const isStudySheet = settings.outputMode === 'study_sheet';
 
@@ -226,47 +224,35 @@ export default function SketchSettings({ settings, onChange }) {
       </div>
 
       {/* Background Color */}
-      <div className="space-y-2">
-        <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Background
-        </Label>
-        <div className="flex flex-wrap gap-2">
-          {BG_COLORS.map((bg) => (
-            <button
-              key={bg.value}
-              onClick={() => update('bgColor', bg.value)}
-              title={bg.label}
-              className={`flex flex-col items-center gap-1 group`}
-            >
-              <div
-                className={`w-8 h-8 rounded-lg border-2 transition-all ${
-                  (settings.bgColor || 'white') === bg.value
-                    ? 'border-foreground scale-110 shadow-md'
-                    : 'border-border hover:border-muted-foreground/60'
-                }`}
-                style={{ backgroundColor: bg.hex }}
-              />
-              <span className="text-[8px] text-muted-foreground leading-none">{bg.label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
+      <BackgroundSelector
+        selected={settings.bgColor}
+        onChange={(val) => update('bgColor', val)}
+        pantoneColors={settings.pantoneColors}
+      />
 
-      {/* Texture */}
+      {/* Texture (max 2 combo) */}
       <div className="space-y-2">
-        <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Texture
-        </Label>
+        <div className="flex items-center justify-between">
+          <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Texture
+          </Label>
+          <span className="text-[10px] text-muted-foreground">{textures.length}/2 selected</span>
+        </div>
         <div className="flex flex-wrap gap-1.5">
           {TEXTURES.map((t) => (
             <OptionButton
               key={t.value}
               label={t.label}
-              selected={(settings.texture || 'none') === t.value}
-              onClick={() => update('texture', t.value)}
+              selected={textures.includes(t.value)}
+              onClick={() => update('textures', toggleTexture(textures, t.value))}
             />
           ))}
         </div>
+        {textures.length === 2 && (
+          <p className="text-[10px] text-muted-foreground">
+            Combo: <span className="font-medium text-foreground">{textures[0]} + {textures[1]}</span> — the AI will intelligently blend both textures on different surfaces
+          </p>
+        )}
       </div>
 
       {/* Clean Design toggle */}
