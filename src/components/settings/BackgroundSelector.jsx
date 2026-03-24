@@ -47,9 +47,22 @@ function rgbToCmyk(r, g, b) {
   return { c, m, y, k: Math.round(k * 100) };
 }
 
+const PALETTE_COLORS = [
+  '#FFFFFF','#F5F5F5','#E0E0E0','#BDBDBD','#9E9E9E','#757575','#616161','#424242','#212121','#000000',
+  '#FFEBEE','#FFCDD2','#EF9A9A','#E57373','#EF5350','#F44336','#E53935','#D32F2F','#C62828','#B71C1C',
+  '#FCE4EC','#F8BBD9','#F48FB1','#F06292','#EC407A','#E91E63','#D81B60','#C2185B','#AD1457','#880E4F',
+  '#F3E5F5','#E1BEE7','#CE93D8','#BA68C8','#AB47BC','#9C27B0','#8E24AA','#7B1FA2','#6A1B9A','#4A148C',
+  '#E8EAF6','#C5CAE9','#9FA8DA','#7986CB','#5C6BC0','#3F51B5','#3949AB','#303F9F','#283593','#1A237E',
+  '#E3F2FD','#BBDEFB','#90CAF9','#64B5F6','#42A5F5','#2196F3','#1E88E5','#1976D2','#1565C0','#0D47A1',
+  '#E0F7FA','#B2EBF2','#80DEEA','#4DD0E1','#26C6DA','#00BCD4','#00ACC1','#0097A7','#00838F','#006064',
+  '#E8F5E9','#C8E6C9','#A5D6A7','#81C784','#66BB6A','#4CAF50','#43A047','#388E3C','#2E7D32','#1B5E20',
+  '#FFFDE7','#FFF9C4','#FFF59D','#FFF176','#FFEE58','#FFEB3B','#FDD835','#F9A825','#F57F17','#FF6F00',
+  '#FFF3E0','#FFE0B2','#FFCC80','#FFB74D','#FFA726','#FF9800','#FB8C00','#F57C00','#E65100','#BF360C',
+];
+
 export default function BackgroundSelector({ selected, onChange, pantoneColors }) {
   const [showCustom, setShowCustom] = useState(false);
-  const [colorMode, setColorMode] = useState('rgb'); // 'rgb' | 'cmyk'
+  const [colorMode, setColorMode] = useState('palette'); // 'palette' | 'rgb' | 'cmyk' | 'hex'
   const [rgb, setRgb] = useState({ r: 255, g: 255, b: 255 });
   const [cmyk, setCmyk] = useState({ c: 0, m: 0, y: 0, k: 0 });
 
@@ -190,8 +203,8 @@ export default function BackgroundSelector({ selected, onChange, pantoneColors }
         {showCustom && (
           <div className="p-3 bg-card space-y-3">
             {/* Mode tabs */}
-            <div className="flex gap-1">
-              {['rgb', 'cmyk', 'hex'].map(mode => (
+            <div className="flex gap-1 flex-wrap">
+              {['palette', 'rgb', 'cmyk', 'hex'].map(mode => (
                 <button
                   key={mode}
                   onClick={() => setColorMode(mode)}
@@ -203,6 +216,50 @@ export default function BackgroundSelector({ selected, onChange, pantoneColors }
                 </button>
               ))}
             </div>
+
+            {colorMode === 'palette' && (
+              <div className="space-y-2">
+                <div className="grid gap-1" style={{ gridTemplateColumns: 'repeat(10, 1fr)' }}>
+                  {PALETTE_COLORS.map((hex) => (
+                    <button
+                      key={hex}
+                      title={hex}
+                      onClick={() => {
+                        const { r, g, b } = hexToRgb(hex);
+                        setRgb({ r, g, b });
+                        setCmyk(rgbToCmyk(r, g, b));
+                        selectCustom(hex);
+                      }}
+                      className={`aspect-square rounded transition-all border-2 ${
+                        selected?.type === 'custom' && selected.hex?.toLowerCase() === hex.toLowerCase()
+                          ? 'border-foreground scale-110 shadow-md'
+                          : 'border-transparent hover:border-muted-foreground/50'
+                      }`}
+                      style={{ backgroundColor: hex }}
+                    />
+                  ))}
+                </div>
+                {/* Native color picker for precision */}
+                <div className="flex items-center gap-2">
+                  <label className="text-[9px] uppercase font-semibold text-muted-foreground">Scegli</label>
+                  <input
+                    type="color"
+                    value={selected?.type === 'custom' ? selected.hex : '#FFFFFF'}
+                    onChange={e => {
+                      const hex = e.target.value;
+                      const { r, g, b } = hexToRgb(hex);
+                      setRgb({ r, g, b });
+                      setCmyk(rgbToCmyk(r, g, b));
+                      selectCustom(hex);
+                    }}
+                    className="w-8 h-8 rounded cursor-pointer border border-border bg-transparent p-0.5"
+                  />
+                  {selected?.type === 'custom' && (
+                    <span className="text-[10px] font-mono text-muted-foreground">{selected.hex?.toUpperCase()}</span>
+                  )}
+                </div>
+              </div>
+            )}
 
             {colorMode === 'rgb' && (
               <div className="grid grid-cols-3 gap-2">
