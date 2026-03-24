@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Download, ArrowLeftRight, ZoomIn, Maximize2 } from 'lucide-react';
+import { Download, ArrowLeftRight, Maximize2, Layers } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { base44 } from '@/api/base44Client';
 import { Slider } from '@/components/ui/slider';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 
@@ -9,12 +10,32 @@ export default function ResultView({ originalUrl, resultUrl }) {
   const [comparePosition, setComparePosition] = useState(50);
   const [viewMode, setViewMode] = useState('result'); // 'result' | 'compare'
 
+  const [vectorLoading, setVectorLoading] = useState(false);
+
   const handleDownload = async () => {
     const link = document.createElement('a');
     link.href = resultUrl;
     link.download = 'industrial-design-sketch.png';
     link.target = '_blank';
     link.click();
+  };
+
+  const handleVectorDownload = async () => {
+    const isInIframe = window.self !== window.top;
+    if (isInIframe) {
+      alert('Il checkout funziona solo dall\'app pubblicata. Apri l\'app in una nuova scheda.');
+      return;
+    }
+    setVectorLoading(true);
+    const currentUrl = window.location.href;
+    const res = await base44.functions.invoke('createVectorCheckout', {
+      imageUrl: resultUrl,
+      successUrl: currentUrl + '?vector_success=1',
+      cancelUrl: currentUrl,
+    });
+    const { url } = res.data;
+    if (url) window.location.href = url;
+    setVectorLoading(false);
   };
 
   return (
@@ -53,6 +74,14 @@ export default function ResultView({ originalUrl, resultUrl }) {
               <img src={resultUrl} alt="Full size result" className="w-full rounded-lg" />
             </DialogContent>
           </Dialog>
+          <Button size="sm" variant="outline" onClick={handleVectorDownload} disabled={vectorLoading}>
+            {vectorLoading ? (
+              <div className="w-3.5 h-3.5 border-2 border-current/30 border-t-current rounded-full animate-spin" />
+            ) : (
+              <Layers className="w-3.5 h-3.5 mr-1.5" />
+            )}
+            Vector €0,99
+          </Button>
           <Button size="sm" onClick={handleDownload} className="bg-accent hover:bg-accent/90 text-accent-foreground">
             <Download className="w-3.5 h-3.5 mr-1.5" />
             Download
