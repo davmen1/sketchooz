@@ -1,6 +1,7 @@
 import React from 'react';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import { Pen, Palette, Eye, Layout, FileText, Sparkles } from 'lucide-react';
 import PantoneSelector from './PantoneSelector';
 import BackgroundSelector from './BackgroundSelector';
@@ -256,6 +257,16 @@ export default function SketchSettings({ settings, onChange }) {
       </div>
 
       {/* Clean Design toggle */}
+      <div className="flex items-center justify-between">
+        <div>
+          <Label className="text-xs font-semibold">Clean Design</Label>
+          <p className="text-[10px] text-muted-foreground mt-0.5">No quotes, annotations, or dimension labels</p>
+        </div>
+        <Switch
+          checked={!!settings.cleanDesign}
+          onCheckedChange={(v) => update('cleanDesign', v)}
+        />
+      </div>
 
       {/* Pantone Colors */}
       <PantoneSelector
