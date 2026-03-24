@@ -9,6 +9,7 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import Home from './pages/Home';
 import Settings from './pages/Settings';
+import Pricing from './pages/Pricing';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -41,6 +42,7 @@ const AuthenticatedApp = () => {
       <Routes location={location}>
         <Route path="/" element={<Home />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/pricing" element={<Pricing />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </AppLayout>

@@ -1,0 +1,169 @@
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Check, Sparkles, Zap, Crown } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { base44 } from '@/api/base44Client';
+import MobileHeader from '@/components/MobileHeader';
+
+const PLANS = [
+  {
+    id: 'monthly',
+    name: 'Monthly',
+    price: '€14,99',
+    period: '/ mese',
+    icon: Zap,
+    color: 'border-border',
+    features: [
+      'Render illimitati',
+      'Tutti gli stili sketch',
+      'Export HD',
+      'Colori Pantone',
+    ],
+  },
+  {
+    id: 'semestral',
+    name: 'Semestral',
+    price: '€75',
+    period: '/ 6 mesi',
+    savings: 'Risparmia €14,94',
+    icon: Sparkles,
+    color: 'border-accent',
+    highlight: true,
+    features: [
+      'Render illimitati',
+      'Tutti gli stili sketch',
+      'Export HD',
+      'Colori Pantone',
+      'Priorità di elaborazione',
+    ],
+  },
+  {
+    id: 'yearly',
+    name: 'Yearly',
+    price: '€100',
+    period: '/ anno',
+    savings: 'Risparmia €79,88',
+    icon: Crown,
+    color: 'border-border',
+    features: [
+      'Render illimitati',
+      'Tutti gli stili sketch',
+      'Export HD',
+      'Colori Pantone',
+      'Priorità di elaborazione',
+      'Accesso anticipato alle novità',
+    ],
+  },
+];
+
+export default function Pricing() {
+  const [loading, setLoading] = useState(null);
+  const [subscription, setSubscription] = useState(null);
+
+  useEffect(() => {
+    base44.functions.invoke('getSubscription', {}).then(r => {
+      setSubscription(r.data?.subscription || null);
+    }).catch(() => {});
+  }, []);
+
+  const handleCheckout = async (planId) => {
+    const isInIframe = window.self !== window.top;
+    if (isInIframe) {
+      alert('Il checkout funziona solo dall\'app pubblicata. Apri l\'app in una nuova scheda.');
+      return;
+    }
+
+    setLoading(planId);
+    const currentUrl = window.location.href;
+    const res = await base44.functions.invoke('createCheckout', {
+      plan: planId,
+      successUrl: currentUrl + '?success=1',
+      cancelUrl: currentUrl,
+    });
+    const { url } = res.data;
+    if (url) window.location.href = url;
+    setLoading(null);
+  };
+
+  return (
+    <div className="flex flex-col flex-1">
+      <MobileHeader title="Abbonamenti" subtitle="Scegli il tuo piano" />
+
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8 w-full">
+        {/* Free tier notice */}
+        <div className="mb-8 p-4 bg-muted rounded-xl text-sm text-muted-foreground text-center">
+          🎨 <strong>Piano Gratuito</strong> — 2 render al mese con filigrana SketchForge
+        </div>
+
+        {subscription && (
+          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-sm text-green-800 text-center">
+            ✅ Abbonamento attivo: <strong className="capitalize">{subscription.plan}</strong>
+            {subscription.current_period_end && (
+              <span className="ml-2 text-green-600">
+                · scade il {new Date(subscription.current_period_end).toLocaleDateString('it-IT')}
+              </span>
+            )}
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {PLANS.map((plan, i) => {
+            const Icon = plan.icon;
+            return (
+              <motion.div
+                key={plan.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+                className={`relative bg-card rounded-2xl border-2 ${plan.color} p-6 flex flex-col ${plan.highlight ? 'shadow-lg' : ''}`}
+              >
+                {plan.highlight && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-accent text-accent-foreground text-xs font-semibold px-3 py-1 rounded-full">
+                    Più popolare
+                  </div>
+                )}
+
+                <div className="flex items-center gap-3 mb-4">
+                  <div className={`p-2 rounded-lg ${plan.highlight ? 'bg-accent/10' : 'bg-muted'}`}>
+                    <Icon className={`w-5 h-5 ${plan.highlight ? 'text-accent' : 'text-muted-foreground'}`} />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">{plan.name}</h3>
+                    {plan.savings && (
+                      <span className="text-[11px] text-green-600 font-medium">{plan.savings}</span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="mb-6">
+                  <span className="text-3xl font-bold">{plan.price}</span>
+                  <span className="text-muted-foreground text-sm ml-1">{plan.period}</span>
+                </div>
+
+                <ul className="space-y-2.5 flex-1 mb-6">
+                  {plan.features.map(f => (
+                    <li key={f} className="flex items-start gap-2 text-sm">
+                      <Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+
+                <Button
+                  onClick={() => handleCheckout(plan.id)}
+                  disabled={!!loading || subscription?.status === 'active'}
+                  className={`w-full ${plan.highlight ? 'bg-accent hover:bg-accent/90 text-accent-foreground' : ''}`}
+                  variant={plan.highlight ? 'default' : 'outline'}
+                >
+                  {loading === plan.id ? (
+                    <div className="w-4 h-4 border-2 border-current/30 border-t-current rounded-full animate-spin" />
+                  ) : subscription?.status === 'active' ? 'Abbonato ✓' : 'Abbonati ora'}
+                </Button>
+              </motion.div>
+            );
+          })}
+        </div>
+      </main>
+    </div>
+  );
+}

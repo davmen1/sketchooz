@@ -1,9 +1,10 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Settings } from 'lucide-react';
+import { Home, Settings, CreditCard } from 'lucide-react';
 
 const TABS = [
   { path: '/', label: 'Home', icon: Home },
+  { path: '/pricing', label: 'Piani', icon: CreditCard },
   { path: '/settings', label: 'Settings', icon: Settings },
 ];
 
