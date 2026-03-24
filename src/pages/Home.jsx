@@ -94,6 +94,7 @@ function buildPrompt(settings, productDescription) {
 Layout: ${sheetLabel}.
 Rendering style: ${styleLabel}. Surface material: ${surfaceLabel}.
 ${detailLabel} line quality. ${colorPart}
+${texturePart}
 ${cleanPart}
 ${finishingPart}
 CRITICAL: Every view must depict EXACTLY the same product described above — same shape, same details, same proportions. Do not hallucinate different objects.
@@ -105,6 +106,7 @@ White background, professional industrial design presentation quality, no waterm
 
 Render it as a ${styleLabel}, ${perspLabel}, with ${surfaceLabel}.
 ${detailLabel} line quality. ${colorPart}
+${texturePart}
 ${cleanPart}
 ${finishingPart}
 CRITICAL: The sketch must depict EXACTLY the product described above — same silhouette, same proportions, same distinctive features. Do not invent or substitute with a different object.
