@@ -19,6 +19,7 @@ const DEFAULT_SETTINGS = {
   cleanDesign: false,
   finishing: 'none',
   texture: 'none',
+  bgColor: 'white',
 };
 
 const STYLE_LABELS = {
@@ -79,6 +80,16 @@ function buildPrompt(settings, productDescription) {
     ? `SUBJECT (reproduce faithfully — do not invent or substitute): ${productDescription}`
     : '';
 
+  const bgColorLabel = {
+    white: 'pure white background',
+    light_gray: 'light cool gray (#E8E8E8) background',
+    cream: 'warm cream/ivory (#F5F0E8) background',
+    black: 'deep black background with the sketch rendered in light lines',
+    dark_navy: 'dark navy blue (#1A2332) background with the sketch rendered in light lines',
+    kraft: 'warm kraft paper tan (#C8A882) background like designer sketchbook paper',
+    dark_charcoal: 'dark charcoal (#2A2A2A) background with light sketch lines for dramatic contrast',
+  }[settings.bgColor] || 'pure white background';
+
   const texturePart = settings.texture && settings.texture !== 'none'
     ? `MATERIAL TEXTURE: The product surfaces must clearly show a realistic ${settings.texture} texture — render the grain, weave, grain pattern, or surface character of ${settings.texture} material with faithful detail in the sketch style.`
     : '';
@@ -97,8 +108,7 @@ ${detailLabel} line quality. ${colorPart}
 ${texturePart}
 ${cleanPart}
 ${finishingPart}
-CRITICAL: Every view must depict EXACTLY the same product described above — same shape, same details, same proportions. Do not hallucinate different objects.
-White background, professional industrial design presentation quality, no watermarks.`;
+BACKGROUND: Use a ${bgColorLabel}. No watermarks, professional industrial design presentation quality.`;
   }
 
   const perspLabel = PERSPECTIVE_LABELS[settings.perspective];
@@ -109,8 +119,7 @@ ${detailLabel} line quality. ${colorPart}
 ${texturePart}
 ${cleanPart}
 ${finishingPart}
-CRITICAL: The sketch must depict EXACTLY the product described above — same silhouette, same proportions, same distinctive features. Do not invent or substitute with a different object.
-White background, professional presentation quality, no watermarks.`;
+BACKGROUND: Use a ${bgColorLabel}. No watermarks, professional presentation quality.`;
 }
 
 export default function Home() {

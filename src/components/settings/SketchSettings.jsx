@@ -47,6 +47,16 @@ const SURFACES = [
   { value: 'mixed', label: 'Mixed' },
 ];
 
+const BG_COLORS = [
+  { value: 'white', label: 'White', hex: '#FFFFFF' },
+  { value: 'light_gray', label: 'Lt. Gray', hex: '#E8E8E8' },
+  { value: 'cream', label: 'Cream', hex: '#F5F0E8' },
+  { value: 'kraft', label: 'Kraft', hex: '#C8A882' },
+  { value: 'dark_charcoal', label: 'Charcoal', hex: '#2A2A2A' },
+  { value: 'dark_navy', label: 'Navy', hex: '#1A2332' },
+  { value: 'black', label: 'Black', hex: '#111111' },
+];
+
 const FINISHING_OPTIONS = [
   { value: 'none', label: 'None' },
   { value: 'marker_background', label: 'Marker BG' },
@@ -213,6 +223,33 @@ export default function SketchSettings({ settings, onChange }) {
             Raw marker color splash behind the object · bold black + white boundary lines
           </p>
         )}
+      </div>
+
+      {/* Background Color */}
+      <div className="space-y-2">
+        <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          Background
+        </Label>
+        <div className="flex flex-wrap gap-2">
+          {BG_COLORS.map((bg) => (
+            <button
+              key={bg.value}
+              onClick={() => update('bgColor', bg.value)}
+              title={bg.label}
+              className={`flex flex-col items-center gap-1 group`}
+            >
+              <div
+                className={`w-8 h-8 rounded-lg border-2 transition-all ${
+                  (settings.bgColor || 'white') === bg.value
+                    ? 'border-foreground scale-110 shadow-md'
+                    : 'border-border hover:border-muted-foreground/60'
+                }`}
+                style={{ backgroundColor: bg.hex }}
+              />
+              <span className="text-[8px] text-muted-foreground leading-none">{bg.label}</span>
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Texture */}
