@@ -3,8 +3,6 @@ import { Label } from '@/components/ui/label';
 import { Check, ChevronDown } from 'lucide-react';
 
 export const PANTONE_PALETTES = [
-
-const PANTONE_PALETTES = [
   {
     name: 'Neutrals',
     colors: [
@@ -144,7 +142,6 @@ export default function PantoneSelector({ selected, onChange }) {
         </div>
       </div>
 
-      {/* Selected swatches preview */}
       {selected.length > 0 && (
         <div className="flex gap-1.5 flex-wrap">
           {selected.map((name) => {
@@ -162,7 +159,6 @@ export default function PantoneSelector({ selected, onChange }) {
         </div>
       )}
 
-      {/* Palette accordion */}
       <div className="space-y-1.5">
         {PANTONE_PALETTES.map((palette) => {
           const isOpen = openPalette === palette.name;
