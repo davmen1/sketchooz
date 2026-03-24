@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import ErrorBoundary from '@/components/ErrorBoundary';
 import { Sparkles, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
@@ -144,10 +145,12 @@ export default function Home() {
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const [resultUrl, setResultUrl] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [genPhase, setGenPhase] = useState(null); // 'analyzing' | 'generating'
 
   const handleGenerate = async () => {
     if (!imageUrl) return;
     setIsGenerating(true);
+    setGenPhase('analyzing');
     setResultUrl(null);
 
     // Step 1: Analyze the image to get a precise product description
@@ -167,6 +170,7 @@ Be specific and factual. Do NOT use adjectives like "beautiful" or "elegant". Ma
     productDescription = analysis;
 
     // Step 2: Generate sketch grounded in the description
+    setGenPhase('generating');
     const prompt = buildPrompt(settings, productDescription);
     const { url } = await base44.integrations.Core.GenerateImage({
       prompt,
@@ -175,6 +179,7 @@ Be specific and factual. Do NOT use adjectives like "beautiful" or "elegant". Ma
 
     setResultUrl(url);
     setIsGenerating(false);
+    setGenPhase(null);
   };
 
   const handleReset = () => {
@@ -184,6 +189,7 @@ Be specific and factual. Do NOT use adjectives like "beautiful" or "elegant". Ma
   };
 
   return (
+    <ErrorBoundary>
     <div className="flex flex-col flex-1">
       <MobileHeader
         title="SketchForge"
@@ -270,7 +276,7 @@ Be specific and factual. Do NOT use adjectives like "beautiful" or "elegant". Ma
               )}
 
               <AnimatePresence mode="wait">
-                {isGenerating && <GeneratingOverlay key="gen" />}
+                {isGenerating && <GeneratingOverlay key="gen" phase={genPhase} />}
                 {resultUrl && !isGenerating && (
                   <ResultView
                     key="result"
@@ -284,5 +290,6 @@ Be specific and factual. Do NOT use adjectives like "beautiful" or "elegant". Ma
         )}
       </main>
     </div>
+    </ErrorBoundary>
   );
 }

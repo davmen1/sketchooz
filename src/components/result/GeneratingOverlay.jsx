@@ -2,6 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Pen } from 'lucide-react';
 
+// phase: 'analyzing' | 'generating' | null (null = auto-cycle)
+const PHASE_STEPS = {
+  analyzing: 0,   // Analisi prodotto
+  generating: 3,  // Rendering sketch
+};
+
 const steps = [
   'Analisi del prodotto...',
   'Riconoscimento forme e dettagli...',
@@ -11,8 +17,15 @@ const steps = [
   'Rifinitura finale...',
 ];
 
-export default function GeneratingOverlay() {
-  const [currentStep, setCurrentStep] = React.useState(0);
+export default function GeneratingOverlay({ phase }) {
+  const startStep = PHASE_STEPS[phase] ?? 0;
+  const [currentStep, setCurrentStep] = React.useState(startStep);
+
+  // When phase changes externally, jump to the matching step
+  React.useEffect(() => {
+    const step = PHASE_STEPS[phase];
+    if (step !== undefined) setCurrentStep(step);
+  }, [phase]);
 
   React.useEffect(() => {
     const interval = setInterval(() => {
