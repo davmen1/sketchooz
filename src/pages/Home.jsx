@@ -176,17 +176,11 @@ export default function Home() {
     const user = await base44.auth.me();
     // Admins always get free unlimited rendering
     if (user.role === 'admin') return { allowed: true, watermark: false };
-    // Promo code: 2 renders/day, no watermark
+    // Promo code: 2 renders total, no watermark
     if (hasPromo()) {
-      const today = getTodayKey();
-      const usages = await base44.entities.RenderUsage.filter({ user_email: user.email, date: today });
-      const usage = usages[0];
-      if (!usage) {
-        await base44.entities.RenderUsage.create({ user_email: user.email, date: today, count: 1 });
-        return { allowed: true, watermark: false };
-      }
-      if (usage.count < FREE_RENDERS_PER_DAY) {
-        await base44.entities.RenderUsage.update(usage.id, { count: usage.count + 1 });
+      const used = parseInt(localStorage.getItem('promo_renders_used') || '0', 10);
+      if (used < 2) {
+        localStorage.setItem('promo_renders_used', String(used + 1));
         return { allowed: true, watermark: false };
       }
       return { allowed: false, watermark: false };
