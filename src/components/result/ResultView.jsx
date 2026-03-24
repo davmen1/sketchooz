@@ -25,28 +25,51 @@ export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeV
   const handleVectorDownload = async () => {
     // Free for promo users and admins
     const user = await base44.auth.me();
-    if (freeVector || user?.role === 'admin') {
-      const link = document.createElement('a');
-      link.href = resultUrl;
-      link.download = 'industrial-design-sketch.png';
-      link.target = '_blank';
-      link.click();
-      return;
-    }
+    const isFree = freeVector || user?.role === 'admin';
+
     const isInIframe = window.self !== window.top;
     if (isInIframe) {
       alert('Il checkout funziona solo dall\'app pubblicata. Apri l\'app in una nuova scheda.');
       return;
     }
+
+    if (!isFree) {
+      setVectorLoading(true);
+      const currentUrl = window.location.href;
+      const res = await base44.functions.invoke('createVectorCheckout', {
+        imageUrl: resultUrl,
+        successUrl: currentUrl + '?vector_success=1',
+        cancelUrl: currentUrl,
+      });
+      const { url } = res.data;
+      if (url) window.location.href = url;
+      setVectorLoading(false);
+      return;
+    }
+
+    // Proceed with real SVG vectorization
+    const confirmed = window.confirm(
+      t('vectorWarning') ||
+      '⏳ Generating a real SVG vector file may take 30–90 seconds depending on image complexity. Proceed?'
+    );
+    if (!confirmed) return;
+
     setVectorLoading(true);
-    const currentUrl = window.location.href;
-    const res = await base44.functions.invoke('createVectorCheckout', {
-      imageUrl: resultUrl,
-      successUrl: currentUrl + '?vector_success=1',
-      cancelUrl: currentUrl,
-    });
-    const { url } = res.data;
-    if (url) window.location.href = url;
+    const response = await base44.functions.invoke('vectorizeImage', { imageUrl: resultUrl });
+    // The function returns SVG text — extract it
+    const svgContent = response.data;
+    if (!svgContent || typeof svgContent !== 'string' || !svgContent.includes('<svg')) {
+      alert(t('vectorError') || 'Vector generation failed. Please try again.');
+      setVectorLoading(false);
+      return;
+    }
+    const blob = new Blob([svgContent], { type: 'image/svg+xml' });
+    const blobUrl = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = blobUrl;
+    link.download = 'industrial-design-sketch.svg';
+    link.click();
+    URL.revokeObjectURL(blobUrl);
     setVectorLoading(false);
   };
 
@@ -95,11 +118,14 @@ export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeV
           </Dialog>
           <Button size="sm" variant="outline" onClick={handleVectorDownload} disabled={vectorLoading}>
             {vectorLoading ? (
-              <div className="w-3.5 h-3.5 border-2 border-current/30 border-t-current rounded-full animate-spin" />
+              <>
+                <div className="w-3.5 h-3.5 border-2 border-current/30 border-t-current rounded-full animate-spin" />
+                <span className="text-xs">{t('vectorGenerating') || 'Generating…'}</span>
+              </>
             ) : (
               <Layers className="w-3.5 h-3.5 mr-1.5" />
             )}
-            {t('vectorDownload')}
+            {!vectorLoading && t('vectorDownload')}
           </Button>
           <Button size="sm" onClick={handleDownload} className="bg-accent hover:bg-accent/90 text-accent-foreground">
             <Download className="w-3.5 h-3.5 mr-1.5" />
