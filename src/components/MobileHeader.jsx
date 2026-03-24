@@ -37,13 +37,21 @@ export default function MobileHeader({ title, subtitle, right }) {
 
         {/* Right slot */}
         <div className="flex items-center gap-2 shrink-0">
-          <button
-            onClick={toggle}
-            className="flex items-center justify-center h-8 px-2.5 rounded-lg border border-border bg-card text-xs font-semibold text-muted-foreground hover:text-foreground hover:border-muted-foreground/50 transition-colors select-none"
-            aria-label="Toggle language"
-          >
-            {lang === 'it' ? '🇮🇹 IT' : '🇬🇧 EN'}
-          </button>
+          <div className="flex items-center rounded-lg border border-border bg-muted p-0.5 gap-0.5">
+            {['it', 'en'].map((l) => (
+              <button
+                key={l}
+                onClick={() => l !== lang && toggle()}
+                className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all select-none ${
+                  lang === l
+                    ? 'bg-card text-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {l === 'it' ? '🇮🇹 IT' : '🇬🇧 EN'}
+              </button>
+            ))}
+          </div>
           {right}
         </div>
       </div>

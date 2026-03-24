@@ -254,7 +254,7 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
         </div>
         {textures.length === 2 && (
           <p className="text-[10px] text-muted-foreground">
-            Combo: <span className="font-medium text-foreground">{textures[0]} + {textures[1]}</span> — the AI will intelligently blend both textures on different surfaces
+            {t('textureComboNote').replace('{t1}', textures[0]).replace('{t2}', textures[1])}
           </p>
         )}
       </div>
