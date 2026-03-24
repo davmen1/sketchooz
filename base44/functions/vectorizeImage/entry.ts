@@ -23,60 +23,70 @@ Deno.serve(async (req) => {
     const arrayBuffer = await imageRes.arrayBuffer();
     const nodeBuffer = Buffer.from(arrayBuffer);
 
-    // Resize large images — keep full resolution for max quality (max 2400px wide)
-    console.log('Pre-processing image with Jimp, bytes:', nodeBuffer.length);
+    console.log('Processing image for line art extraction…');
     const image = await Jimp.read(nodeBuffer);
-    if (image.getWidth() > 2400) {
-      image.resize(2400, Jimp.AUTO);
+
+    // Resize to manageable size
+    if (image.getWidth() > 1600) {
+      image.resize(1600, Jimp.AUTO);
     }
-    // No contrast boost — preserve original shading
-    const pngBuffer = await image.getBufferAsync(Jimp.MIME_PNG);
 
-    // Build an ImageData-like object for imagetracerjs
-    const img = await Jimp.read(pngBuffer);
-    const width = img.getWidth();
-    const height = img.getHeight();
+    // 1. Convert to grayscale
+    image.grayscale();
 
-    // imagetracerjs expects { width, height, data: Uint8ClampedArray } (RGBA)
-    const rawData = new Uint8ClampedArray(img.bitmap.data);
+    // 2. Boost contrast strongly to separate lines from fills
+    image.contrast(0.6);
+
+    // 3. Threshold: only very dark pixels (edges/lines) stay black, rest white
+    // max: 80 means pixels with brightness < 80 → black, rest → white
+    image.threshold({ max: 80 });
+
+    // (lines = black, background/fills = white — coloring book style)
+
+    const width = image.getWidth();
+    const height = image.getHeight();
+
+    // Build RGBA image data for imagetracerjs
+    // Since grayscale+threshold: dark = line (black), light = background (white)
+    const rawData = new Uint8ClampedArray(image.bitmap.data);
     const imgData = { width, height, data: rawData };
 
-    console.log(`Vectorizing ${width}x${height} image with imagetracerjs (full color)…`);
+    console.log(`Tracing lines on ${width}x${height} image…`);
 
-    // Options: MAXIMUM quality — minimal simplification, full color range
+    // 2 colors only: black lines + white background
     const options = {
-      // Color quantization: 64 colors, 6 cycles for best color fidelity
-      numberofcolors: 64,
-      colorquantcycles: 6,
-      // Tracing: extremely precise
-      ltres: 0.1,        // line threshold (very low = maximum detail)
-      qtres: 0.1,        // quadratic spline threshold (very low = very smooth curves)
-      pathomit: 0,       // keep every path regardless of size
-      // No blur — preserve all shading details
+      numberofcolors: 2,
+      colorquantcycles: 1,
+      ltres: 0.5,
+      qtres: 0.5,
+      pathomit: 4,
       blurradius: 0,
       blurdelta: 0,
-      // SVG options
       strokewidth: 0,
-      linefilter: false,
+      linefilter: true,
       scale: 1,
-      roundcoords: 2,
+      roundcoords: 1,
       viewbox: true,
       desc: false,
     };
 
-    const svgString = ImageTracer.imagedataToSVG(imgData, options);
+    const svgRaw = ImageTracer.imagedataToSVG(imgData, options);
 
-    if (!svgString || !svgString.includes('<svg')) {
+    if (!svgRaw || !svgRaw.includes('<svg')) {
       throw new Error('SVG generation failed — empty output');
     }
 
-    console.log('SVG generated, length:', svgString.length);
+    // Remove the white background path so SVG is transparent + black lines only
+    // White fill paths have fill close to rgb(254,254,254) or rgb(255,255,255)
+    const svgClean = svgRaw.replace(/<path fill="rgb\(25[0-9],25[0-9],25[0-9]\)"[^/]*/g, '');
 
-    return new Response(svgString, {
+    console.log('Line art SVG generated, length:', svgClean.length);
+
+    return new Response(svgClean, {
       status: 200,
       headers: {
         'Content-Type': 'image/svg+xml',
-        'Content-Disposition': 'attachment; filename="sketch-vector.svg"',
+        'Content-Disposition': 'attachment; filename="sketch-lineart.svg"',
       },
     });
   } catch (error) {
