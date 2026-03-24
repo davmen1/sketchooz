@@ -166,10 +166,15 @@ export default function Home() {
 
   const getTodayKey = () => new Date().toISOString().slice(0, 10);
 
+  const PROMO_CODES = ['WANNATRY1'];
+  const hasPromo = () => PROMO_CODES.includes(localStorage.getItem('promo_code'));
+
   const checkAndIncrementUsage = async () => {
     const user = await base44.auth.me();
     // Admins always get free unlimited rendering
     if (user.role === 'admin') return { allowed: true, watermark: false };
+    // Promo code holders get free unlimited rendering
+    if (hasPromo()) return { allowed: true, watermark: false };
     // Check active subscription
     const subs = await base44.entities.Subscription.filter({ user_email: user.email, status: 'active' });
     if (subs.length > 0) return { allowed: true, watermark: false };
@@ -286,6 +291,24 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
               uploadedUrl={imageUrl}
               onClear={() => setImageUrl(null)}
             />
+            {!hasPromo() && (
+              <div className="text-center">
+                <button
+                  className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
+                  onClick={() => {
+                    const code = window.prompt('Enter promo code:');
+                    if (code && ['WANNATRY1'].includes(code.trim().toUpperCase())) {
+                      localStorage.setItem('promo_code', code.trim().toUpperCase());
+                      alert('✅ Promo code applied! Enjoy unlimited free renders.');
+                    } else if (code) {
+                      alert('❌ Invalid promo code.');
+                    }
+                  }}
+                >
+                  Have a promo code?
+                </button>
+              </div>
+            )}
           </motion.div>
         ) : (
           /* Editor Layout */
