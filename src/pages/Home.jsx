@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { Sparkles, RotateCcw } from 'lucide-react';
@@ -163,6 +164,9 @@ export default function Home() {
   const [genPhase, setGenPhase] = useState(null); // 'analyzing' | 'generating'
   const [needsWatermark, setNeedsWatermark] = useState(false);
   const [watermarkedUrl, setWatermarkedUrl] = useState(null);
+  const [promoRendersUsed, setPromoRendersUsed] = useState(() =>
+    parseInt(localStorage.getItem('promo_renders_used') || '0', 10)
+  );
 
   const getTodayKey = () => new Date().toISOString().slice(0, 10);
 
@@ -181,6 +185,7 @@ export default function Home() {
       const used = parseInt(localStorage.getItem('promo_renders_used') || '0', 10);
       if (used < 2) {
         localStorage.setItem('promo_renders_used', String(used + 1));
+        setPromoRendersUsed(used + 1);
         return { allowed: true, watermark: false };
       }
       return { allowed: false, watermark: false };
@@ -214,7 +219,7 @@ export default function Home() {
     if (!imageUrl) return;
     const { allowed, watermark } = await checkAndIncrementUsage();
     if (!allowed) {
-      alert(t('freeLimit'));
+      toast.error(hasPromo() ? 'Hai esaurito i render promo.' : t('freeLimit'));
       return;
     }
     setNeedsWatermark(watermark);
@@ -309,9 +314,10 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
                     const code = window.prompt('Enter promo code:');
                     if (code && ['WANNATRY1'].includes(code.trim().toUpperCase())) {
                       localStorage.setItem('promo_code', code.trim().toUpperCase());
-                      alert('✅ Promo code applied! Enjoy unlimited free renders.');
+                      setPromoRendersUsed(parseInt(localStorage.getItem('promo_renders_used') || '0', 10));
+                      toast.success('✅ Promo code applied! You have 2 free watermark-free renders.');
                     } else if (code) {
-                      alert('❌ Invalid promo code.');
+                      toast.error('❌ Invalid promo code.');
                     }
                   }}
                 >
@@ -341,19 +347,36 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
                 onClick={handleGenerate}
                 disabled={isGenerating || !imageUrl}
                 className="w-full h-12 bg-accent hover:bg-accent/90 text-accent-foreground font-semibold rounded-xl"
-              >
-                {isGenerating ? (
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    {t('generating')}
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4" />
-                    {t('generate')}
-                  </div>
-                )}
-              </Button>
+            >
+              {isGenerating ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  {t('generating')}
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4" />
+                  {t('generate')}
+                </div>
+              )}
+            </Button>
+
+            {hasPromo() && (
+              <div className="rounded-xl border border-border bg-muted/50 px-4 py-3 text-xs space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold text-foreground">🎟️ Promo attiva</span>
+                  <span className="text-muted-foreground">Scade 23 apr 2026</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  {[0, 1].map(i => (
+                    <div key={i} className={`h-2 flex-1 rounded-full ${
+                      i < promoRendersUsed ? 'bg-muted-foreground/40' : 'bg-accent'
+                    }`} />
+                  ))}
+                </div>
+                <p className="text-muted-foreground">{Math.max(0, 2 - promoRendersUsed)} render rimasti</p>
+              </div>
+            )}
             </motion.aside>
 
             {/* Result Area */}
