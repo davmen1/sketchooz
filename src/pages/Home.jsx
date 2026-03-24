@@ -5,6 +5,7 @@ import { Sparkles, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 import ImageUploader from '@/components/upload/ImageUploader';
+import { useLang } from '@/lib/LangContext';
 import SketchSettings from '@/components/settings/SketchSettings';
 import MobileHeader from '@/components/MobileHeader';
 import PullToRefresh from '@/components/PullToRefresh';
@@ -151,6 +152,7 @@ BACKGROUND: Use a ${bgColorLabel}. No watermarks, professional presentation qual
 }
 
 export default function Home() {
+  const { t } = useLang();
   const [imageUrl, setImageUrl] = useState(null);
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const [resultUrl, setResultUrl] = useState(null);
@@ -207,7 +209,7 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
     <div className="flex flex-col flex-1">
       <MobileHeader
         title="SketchForge"
-        subtitle="Industrial Design AI"
+        subtitle={t('appSubtitle')}
         right={
           (imageUrl || resultUrl) ? (
             <Button variant="ghost" size="sm" onClick={handleReset} className="min-h-[44px]">
@@ -229,11 +231,11 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
           >
             <div className="text-center space-y-3">
               <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
-                Da idea a sketch <br />
-                <span className="text-accent">professionale</span>
+                {t('heroTitle')} <br />
+                <span className="text-accent">{t('heroTitleAccent')}</span>
               </h2>
               <p className="text-muted-foreground text-sm sm:text-base max-w-md mx-auto">
-                Carica una foto, un disegno o una bozza e trasformalo in uno sketch di industrial design con colori Pantone.
+                {t('heroDesc')}
               </p>
             </div>
             <ImageUploader
@@ -253,10 +255,10 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
             >
               <div className="bg-card rounded-2xl border border-border p-5 space-y-6">
                 <div>
-                  <h3 className="text-sm font-semibold">Impostazioni</h3>
-                  <p className="text-xs text-muted-foreground mt-0.5">Personalizza il risultato</p>
+                  <h3 className="text-sm font-semibold">{t('settings')}</h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">{t('settingsDesc')}</p>
                 </div>
-                <SketchSettings settings={settings} onChange={setSettings} />
+                <SketchSettings settings={settings} onChange={setSettings} imageUrl={imageUrl} />
               </div>
 
               <Button
@@ -267,12 +269,12 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
                 {isGenerating ? (
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Generazione...
+                    {t('generating')}
                   </div>
                 ) : (
                   <div className="flex items-center gap-2">
                     <Sparkles className="w-4 h-4" />
-                    Genera Sketch
+                    {t('generate')}
                   </div>
                 )}
               </Button>

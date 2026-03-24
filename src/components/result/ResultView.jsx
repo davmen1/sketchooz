@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Download, ArrowLeftRight, Maximize2, Layers } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
+import { useLang } from '@/lib/LangContext';
 import { Slider } from '@/components/ui/slider';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 
@@ -11,6 +12,7 @@ export default function ResultView({ originalUrl, resultUrl }) {
   const [viewMode, setViewMode] = useState('result'); // 'result' | 'compare'
 
   const [vectorLoading, setVectorLoading] = useState(false);
+  const { t } = useLang();
 
   const handleDownload = async () => {
     const link = document.createElement('a');
@@ -52,7 +54,7 @@ export default function ResultView({ originalUrl, resultUrl }) {
             size="sm"
             onClick={() => setViewMode('result')}
           >
-            Risultato
+            {t('result')}
           </Button>
           <Button
             variant={viewMode === 'compare' ? 'default' : 'outline'}
@@ -60,7 +62,7 @@ export default function ResultView({ originalUrl, resultUrl }) {
             onClick={() => setViewMode('compare')}
           >
             <ArrowLeftRight className="w-3.5 h-3.5 mr-1.5" />
-            Confronta
+            {t('compare')}
           </Button>
         </div>
         <div className="flex items-center gap-2">
@@ -80,11 +82,11 @@ export default function ResultView({ originalUrl, resultUrl }) {
             ) : (
               <Layers className="w-3.5 h-3.5 mr-1.5" />
             )}
-            Vector €0,99
+            {t('vectorDownload')}
           </Button>
           <Button size="sm" onClick={handleDownload} className="bg-accent hover:bg-accent/90 text-accent-foreground">
             <Download className="w-3.5 h-3.5 mr-1.5" />
-            Download
+            {t('download')}
           </Button>
         </div>
       </div>
@@ -145,8 +147,8 @@ export default function ResultView({ originalUrl, resultUrl }) {
             step={1}
           />
           <div className="flex justify-between mt-1">
-            <span className="text-xs text-muted-foreground">Originale</span>
-            <span className="text-xs text-muted-foreground">Sketch</span>
+            <span className="text-xs text-muted-foreground">{t('original')}</span>
+            <span className="text-xs text-muted-foreground">{t('sketch')}</span>
           </div>
         </div>
       )}

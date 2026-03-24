@@ -5,6 +5,8 @@ import { Switch } from '@/components/ui/switch';
 import { Pen, Palette, Eye, Layout, FileText, Sparkles } from 'lucide-react';
 import PantoneSelector from './PantoneSelector';
 import BackgroundSelector from './BackgroundSelector';
+import SuggestPalette from './SuggestPalette';
+import { useLang } from '@/lib/LangContext';
 
 const SKETCH_STYLES = [
   { value: 'marker_render', label: 'Marker Render' },
@@ -84,9 +86,10 @@ function toggleTexture(textures, value) {
   return [...textures, value];
 }
 
-export default function SketchSettings({ settings, onChange }) {
+export default function SketchSettings({ settings, onChange, imageUrl }) {
   const update = (key, value) => onChange({ ...settings, [key]: value });
   const textures = settings.textures || [];
+  const { t } = useLang();
 
   const isStudySheet = settings.outputMode === 'study_sheet';
 
@@ -96,17 +99,17 @@ export default function SketchSettings({ settings, onChange }) {
       {/* Output Mode */}
       <div className="space-y-2">
         <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          <Layout className="w-3.5 h-3.5" />
-          Output
+        <Layout className="w-3.5 h-3.5" />
+        {t('output')}
         </Label>
         <div className="flex gap-2">
           <OptionButton
-            label="Single View"
+            label={t('singleView')}
             selected={settings.outputMode === 'single'}
             onClick={() => update('outputMode', 'single')}
           />
           <OptionButton
-            label="Study Sheet"
+            label={t('studySheet')}
             selected={settings.outputMode === 'study_sheet'}
             onClick={() => update('outputMode', 'study_sheet')}
           />
@@ -116,7 +119,7 @@ export default function SketchSettings({ settings, onChange }) {
       {/* View / Layout selector */}
       {!isStudySheet ? (
         <div className="space-y-2">
-          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Vista</Label>
+          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t('view')}</Label>
           <div className="flex flex-wrap gap-1.5">
             {SINGLE_VIEWS.map((v) => (
               <OptionButton
@@ -132,7 +135,7 @@ export default function SketchSettings({ settings, onChange }) {
         <div className="space-y-2">
           <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             <FileText className="w-3.5 h-3.5" />
-            Tavola
+            {t('board')}
           </Label>
           <div className="flex flex-wrap gap-1.5">
             {STUDY_SHEETS.map((s) => (
@@ -151,7 +154,7 @@ export default function SketchSettings({ settings, onChange }) {
       <div className="space-y-2">
         <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           <Pen className="w-3.5 h-3.5" />
-          Stile
+          {t('style')}
         </Label>
         <div className="flex flex-wrap gap-1.5">
           {SKETCH_STYLES.map((s) => (
@@ -169,7 +172,7 @@ export default function SketchSettings({ settings, onChange }) {
       <div className="space-y-2">
         <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           <Palette className="w-3.5 h-3.5" />
-          Superficie
+          {t('surface')}
         </Label>
         <div className="flex flex-wrap gap-1.5">
           {SURFACES.map((s) => (
@@ -188,8 +191,8 @@ export default function SketchSettings({ settings, onChange }) {
         <div className="flex items-center justify-between">
           <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             <Eye className="w-3.5 h-3.5" />
-            Dettaglio
-          </Label>
+            {t('detail')}
+            </Label>
           <span className="text-xs font-mono text-muted-foreground">{settings.detail}%</span>
         </div>
         <Slider
@@ -205,7 +208,7 @@ export default function SketchSettings({ settings, onChange }) {
       <div className="space-y-2">
         <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           <Sparkles className="w-3.5 h-3.5" />
-          Finishing
+          {t('finishing')}
         </Label>
         <div className="flex flex-wrap gap-1.5">
           {FINISHING_OPTIONS.map((f) => (
@@ -219,7 +222,7 @@ export default function SketchSettings({ settings, onChange }) {
         </div>
         {settings.finishing === 'marker_background' && (
           <p className="text-[10px] text-muted-foreground mt-1">
-            Raw marker color splash behind the object · bold black + white boundary lines
+            {t('markerBgNote')}
           </p>
         )}
       </div>
@@ -235,9 +238,9 @@ export default function SketchSettings({ settings, onChange }) {
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Texture
+            {t('texture')}
           </Label>
-          <span className="text-[10px] text-muted-foreground">{textures.length}/2 selected</span>
+          <span className="text-[10px] text-muted-foreground">{textures.length}/2 {t('selected')}</span>
         </div>
         <div className="flex flex-wrap gap-1.5">
           {TEXTURES.map((t) => (
@@ -259,14 +262,20 @@ export default function SketchSettings({ settings, onChange }) {
       {/* Clean Design toggle */}
       <div className="flex items-center justify-between">
         <div>
-          <Label className="text-xs font-semibold">Clean Design</Label>
-          <p className="text-[10px] text-muted-foreground mt-0.5">No quotes, annotations, or dimension labels</p>
+          <Label className="text-xs font-semibold">{t('cleanDesign')}</Label>
+          <p className="text-[10px] text-muted-foreground mt-0.5">{t('cleanDesignDesc')}</p>
         </div>
         <Switch
           checked={!!settings.cleanDesign}
           onCheckedChange={(v) => update('cleanDesign', v)}
         />
       </div>
+
+      {/* Suggest Palette */}
+      <SuggestPalette
+        imageUrl={imageUrl}
+        onSuggest={(colors) => update('pantoneColors', colors)}
+      />
 
       {/* Pantone Colors */}
       <PantoneSelector
