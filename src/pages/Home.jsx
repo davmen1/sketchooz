@@ -17,6 +17,7 @@ const DEFAULT_SETTINGS = {
   outputMode: 'single',
   studySheet: 'four_views_eu',
   cleanDesign: false,
+  finishing: 'none',
 };
 
 const STYLE_LABELS = {
@@ -77,6 +78,10 @@ function buildPrompt(settings, productDescription) {
     ? `SUBJECT (reproduce faithfully — do not invent or substitute): ${productDescription}`
     : '';
 
+  const finishingPart = settings.finishing === 'marker_background'
+    ? `FINISHING — MANDATORY: Behind the product, paint a raw loose marker color splash/patch using a bold contrasting solid Pantone color, applied in rough irregular strokes like a real Copic marker on paper. The product silhouette must have a very bold black outline (3-4pt) on its outer boundary, plus crisp white highlight lines on key edges and curved surfaces, making the design pop dramatically against the marker backdrop. Aesthetic: professional ID marker sketch on white paper with a raw color backdrop, competition-style industrial design presentation.`
+    : '';
+
   if (settings.outputMode === 'study_sheet') {
     const sheetLabel = STUDY_SHEET_LABELS[settings.studySheet];
     return `Create a professional industrial design study sheet. ${subjectAnchor}
@@ -85,6 +90,7 @@ Layout: ${sheetLabel}.
 Rendering style: ${styleLabel}. Surface material: ${surfaceLabel}.
 ${detailLabel} line quality. ${colorPart}
 ${cleanPart}
+${finishingPart}
 CRITICAL: Every view must depict EXACTLY the same product described above — same shape, same details, same proportions. Do not hallucinate different objects.
 White background, professional industrial design presentation quality, no watermarks.`;
   }
@@ -95,6 +101,7 @@ White background, professional industrial design presentation quality, no waterm
 Render it as a ${styleLabel}, ${perspLabel}, with ${surfaceLabel}.
 ${detailLabel} line quality. ${colorPart}
 ${cleanPart}
+${finishingPart}
 CRITICAL: The sketch must depict EXACTLY the product described above — same silhouette, same proportions, same distinctive features. Do not invent or substitute with a different object.
 White background, professional presentation quality, no watermarks.`;
 }
