@@ -37,6 +37,9 @@ export const translations = {
     markerBgNote: 'Splash di marker grezzo dietro il prodotto · bordi bold nero + bianco',
     textureComboNote: 'Combo: {t1} + {t2} — l\'AI distribuirà le texture intelligentemente',
     selected: 'selezionati',
+    freeLimit: 'Hai usato i 2 render gratuiti di oggi. Abbonati per render illimitati senza watermark.',
+    watermarkBanner: 'Render gratuito — con watermark. Abbonati per esportare senza.',
+    upgrade: 'Abbonati',
   },
   en: {
     appSubtitle: 'Industrial Design AI',
@@ -72,6 +75,9 @@ export const translations = {
     markerBgNote: 'Raw marker color splash behind the object · bold black + white boundary lines',
     textureComboNote: 'Combo: {t1} + {t2} — AI will intelligently blend both textures',
     selected: 'selected',
+    freeLimit: 'You have used your 2 free renders for today. Upgrade to a plan for unlimited renders without watermark.',
+    watermarkBanner: 'Free render — watermarked. Upgrade for clean exports.',
+    upgrade: 'Upgrade',
   },
 };
 

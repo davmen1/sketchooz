@@ -7,7 +7,7 @@ import { useLang } from '@/lib/LangContext';
 import { Slider } from '@/components/ui/slider';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 
-export default function ResultView({ originalUrl, resultUrl }) {
+export default function ResultView({ originalUrl, resultUrl, hasWatermark }) {
   const [comparePosition, setComparePosition] = useState(50);
   const [viewMode, setViewMode] = useState('result'); // 'result' | 'compare'
 
@@ -46,6 +46,13 @@ export default function ResultView({ originalUrl, resultUrl }) {
       animate={{ opacity: 1, y: 0 }}
       className="space-y-4"
     >
+      {hasWatermark && (
+        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-xs">
+          <span>⚠️</span>
+          <span>{t('watermarkBanner')}</span>
+          <a href="/pricing" className="ml-auto font-semibold underline whitespace-nowrap">{t('upgrade') || 'Upgrade'}</a>
+        </div>
+      )}
       {/* Toolbar */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">

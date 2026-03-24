@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 import ImageUploader from '@/components/upload/ImageUploader';
 import { useLang } from '@/lib/LangContext';
+import WatermarkCanvas from '@/components/result/WatermarkCanvas';
 import SketchSettings from '@/components/settings/SketchSettings';
 import MobileHeader from '@/components/MobileHeader';
 import PullToRefresh from '@/components/PullToRefresh';
@@ -151,6 +152,8 @@ ${finishingPart}
 BACKGROUND: Use a ${bgColorLabel}. No watermarks, professional presentation quality.`;
 }
 
+const FREE_RENDERS_PER_DAY = 2;
+
 export default function Home() {
   const { t } = useLang();
   const [imageUrl, setImageUrl] = useState(null);
@@ -158,9 +161,40 @@ export default function Home() {
   const [resultUrl, setResultUrl] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [genPhase, setGenPhase] = useState(null); // 'analyzing' | 'generating'
+  const [needsWatermark, setNeedsWatermark] = useState(false);
+  const [watermarkedUrl, setWatermarkedUrl] = useState(null);
+
+  const getTodayKey = () => new Date().toISOString().slice(0, 10);
+
+  const checkAndIncrementUsage = async () => {
+    const user = await base44.auth.me();
+    // Check active subscription
+    const subs = await base44.entities.Subscription.filter({ user_email: user.email, status: 'active' });
+    if (subs.length > 0) return { allowed: true, watermark: false };
+    // Check daily usage
+    const today = getTodayKey();
+    const usages = await base44.entities.RenderUsage.filter({ user_email: user.email, date: today });
+    const usage = usages[0];
+    if (!usage) {
+      await base44.entities.RenderUsage.create({ user_email: user.email, date: today, count: 1 });
+      return { allowed: true, watermark: true };
+    }
+    if (usage.count < FREE_RENDERS_PER_DAY) {
+      await base44.entities.RenderUsage.update(usage.id, { count: usage.count + 1 });
+      return { allowed: true, watermark: true };
+    }
+    return { allowed: false, watermark: true };
+  };
 
   const handleGenerate = async () => {
     if (!imageUrl) return;
+    const { allowed, watermark } = await checkAndIncrementUsage();
+    if (!allowed) {
+      alert(t('freeLimit'));
+      return;
+    }
+    setNeedsWatermark(watermark);
+    setWatermarkedUrl(null);
     setIsGenerating(true);
     setGenPhase('analyzing');
     setResultUrl(null);
@@ -294,11 +328,20 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
               <AnimatePresence mode="wait">
                 {isGenerating && <GeneratingOverlay key="gen" phase={genPhase} />}
                 {resultUrl && !isGenerating && (
-                  <ResultView
-                    key="result"
-                    originalUrl={imageUrl}
-                    resultUrl={resultUrl}
-                  />
+                  <>
+                    {needsWatermark && resultUrl && !watermarkedUrl && (
+                      <WatermarkCanvas
+                        imageUrl={resultUrl}
+                        onReady={(url) => setWatermarkedUrl(url)}
+                      />
+                    )}
+                    <ResultView
+                      key="result"
+                      originalUrl={imageUrl}
+                      resultUrl={needsWatermark ? (watermarkedUrl || resultUrl) : resultUrl}
+                      hasWatermark={needsWatermark}
+                    />
+                  </>
                 )}
               </AnimatePresence>
             </div>
