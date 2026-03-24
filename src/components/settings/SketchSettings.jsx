@@ -52,6 +52,15 @@ const FINISHING_OPTIONS = [
   { value: 'marker_background', label: 'Marker BG' },
 ];
 
+const TEXTURES = [
+  { value: 'none', label: 'None' },
+  { value: 'wood', label: 'Wood' },
+  { value: 'stone', label: 'Stone' },
+  { value: 'leather', label: 'Leather' },
+  { value: 'fabric', label: 'Fabric' },
+  { value: 'metal', label: 'Metal' },
+];
+
 function OptionButton({ label, selected, onClick }) {
   return (
     <button
@@ -204,6 +213,23 @@ export default function SketchSettings({ settings, onChange }) {
             Raw marker color splash behind the object · bold black + white boundary lines
           </p>
         )}
+      </div>
+
+      {/* Texture */}
+      <div className="space-y-2">
+        <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          Texture
+        </Label>
+        <div className="flex flex-wrap gap-1.5">
+          {TEXTURES.map((t) => (
+            <OptionButton
+              key={t.value}
+              label={t.label}
+              selected={(settings.texture || 'none') === t.value}
+              onClick={() => update('texture', t.value)}
+            />
+          ))}
+        </div>
       </div>
 
       {/* Clean Design toggle */}

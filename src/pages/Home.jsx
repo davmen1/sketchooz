@@ -18,6 +18,7 @@ const DEFAULT_SETTINGS = {
   studySheet: 'four_views_eu',
   cleanDesign: false,
   finishing: 'none',
+  texture: 'none',
 };
 
 const STYLE_LABELS = {
@@ -76,6 +77,10 @@ function buildPrompt(settings, productDescription) {
 
   const subjectAnchor = productDescription
     ? `SUBJECT (reproduce faithfully — do not invent or substitute): ${productDescription}`
+    : '';
+
+  const texturePart = settings.texture && settings.texture !== 'none'
+    ? `MATERIAL TEXTURE: The product surfaces must clearly show a realistic ${settings.texture} texture — render the grain, weave, grain pattern, or surface character of ${settings.texture} material with faithful detail in the sketch style.`
     : '';
 
   const finishingPart = settings.finishing === 'marker_background'

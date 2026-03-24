@@ -84,6 +84,21 @@ const PANTONE_PALETTES = [
     ],
   },
   {
+    name: 'Browns & Earths',
+    colors: [
+      { name: '4625 C', hex: '#3D1A00' },
+      { name: '4695 C', hex: '#6B2D0F' },
+      { name: '7526 C', hex: '#9E4A1E' },
+      { name: '7522 C', hex: '#B5651D' },
+      { name: '729 C', hex: '#C68642' },
+      { name: '7510 C', hex: '#D4A05A' },
+      { name: '7508 C', hex: '#E0C080' },
+      { name: '9180 C', hex: '#F2E6C8' },
+      { name: '4515 C', hex: '#B8A99A' },
+      { name: '4665 C', hex: '#C9B99A' },
+    ],
+  },
+  {
     name: 'Industrial',
     colors: [
       { name: '7527 C', hex: '#D5C6B1' },
