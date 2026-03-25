@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import BottomTabBar from './BottomTabBar';
 import SupportAgent from './SupportAgent';
@@ -41,9 +41,14 @@ export default function AppLayout() {
     if (Math.abs(dx) < 60 || Math.abs(dy) > Math.abs(dx) * 0.7) return;
     const nextIndex = dx < 0 ? currentIndex + 1 : currentIndex - 1;
     if (nextIndex >= 0 && nextIndex < TAB_PATHS.length) {
-      navigate(TAB_PATHS[nextIndex]);
+      navigate(TAB_PATHS[nextIndex], { replace: true });
     }
   }, [currentIndex, navigate]);
+
+  // Normalize pathname for nested routes (e.g. /pricing matches /pricing)
+  const normalizedPath = '/' + (pathname.replace(/^\//, '').split('/')[0] || '');
+  const resolvedIndex = TAB_PATHS.indexOf(normalizedPath);
+  const activeIndex = resolvedIndex >= 0 ? resolvedIndex : 0;
 
   return (
     <div
@@ -52,13 +57,13 @@ export default function AppLayout() {
       onTouchEnd={handleTouchEnd}
     >
       {TAB_PATHS.map((tabPath, idx) => {
-        const isActive = pathname === tabPath;
+        const isActive = activeIndex === idx;
         const TabComponent = TAB_COMPONENTS[tabPath];
         return (
           <motion.div
             key={tabPath}
             animate={{
-              x: isActive ? 0 : idx < currentIndex ? '-100%' : '100%',
+              x: isActive ? 0 : idx < activeIndex ? '-100%' : '100%',
               visibility: isActive ? 'visible' : 'hidden',
             }}
             transition={{ type: 'spring', stiffness: 380, damping: 38, mass: 0.8 }}
@@ -78,6 +83,8 @@ export default function AppLayout() {
           </motion.div>
         );
       })}
+      {/* Outlet renders matched nested route (null elements — tabs are self-managed) */}
+      <Outlet />
       <BottomTabBar />
       <SupportAgent />
     </div>

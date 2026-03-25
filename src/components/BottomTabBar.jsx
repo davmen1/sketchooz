@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Home, Settings, CreditCard } from 'lucide-react';
 import { useLang } from '@/lib/LangContext';
 
@@ -14,6 +14,8 @@ export default function BottomTabBar() {
     { path: '/settings', labelKey: 'tabSettings', icon: Settings },
   ];
 
+  const navigate = useNavigate();
+
   return (
     <nav
       className="fixed bottom-0 left-0 right-0 z-40 bg-card/95 backdrop-blur-md border-t border-border flex"
@@ -21,11 +23,12 @@ export default function BottomTabBar() {
     >
       {TABS.map(({ path, labelKey, icon: Icon }) => {
         const label = t(labelKey);
-        const active = location.pathname === path;
+        const active = location.pathname === path ||
+          (path !== '/' && location.pathname.startsWith(path));
         return (
-          <Link
+          <button
             key={path}
-            to={path}
+            onClick={() => navigate(path, { replace: true })}
             className="flex-1 flex flex-col items-center justify-center gap-0.5 py-2.5 select-none transition-colors"
           >
             <Icon
@@ -36,7 +39,7 @@ export default function BottomTabBar() {
             >
               {label}
             </span>
-          </Link>
+          </button>
         );
       })}
     </nav>
