@@ -157,7 +157,8 @@ ${finishingPart}
 BACKGROUND: Use a ${bgColorLabel}. No watermarks, professional presentation quality.`;
 }
 
-const FREE_RENDERS_PER_DAY = 2;
+const FREE_RENDERS_PER_DAY = 1;
+const FREE_RENDERS_PER_MONTH = 10;
 
 export default function Home() {
   const { t } = useLang();
@@ -187,7 +188,7 @@ export default function Home() {
     const user = await base44.auth.me();
     // Admins always get free unlimited rendering
     if (user.role === 'admin') return { allowed: true, watermark: false };
-    // Promo code: 2 renders total, no watermark
+    // Promo code: 6 credits = 2 renders total, no watermark
     if (hasPromo()) {
       const used = parseInt(localStorage.getItem('promo_renders_used') || '0', 10);
       if (used < 2) {
@@ -204,10 +205,17 @@ export default function Home() {
       await base44.entities.RenderPack.update(pack.id, { credits_remaining: pack.credits_remaining - 3 });
       return { allowed: true, watermark: false };
     }
+    // Check monthly free cap
+    const thisMonth = getTodayKey().slice(0, 7); // 'YYYY-MM'
+    const allUsages = await base44.entities.RenderUsage.filter({ user_email: user.email });
+    const monthlyTotal = allUsages
+      .filter(u => u.date && u.date.startsWith(thisMonth))
+      .reduce((sum, u) => sum + (u.count || 0), 0);
+    if (monthlyTotal >= FREE_RENDERS_PER_MONTH) return { allowed: false, watermark: true };
+
     // Check daily free usage
     const today = getTodayKey();
-    const usages = await base44.entities.RenderUsage.filter({ user_email: user.email, date: today });
-    const usage = usages[0];
+    const usage = allUsages.find(u => u.date === today);
     if (!usage) {
       await base44.entities.RenderUsage.create({ user_email: user.email, date: today, count: 1 });
       return { allowed: true, watermark: true };
