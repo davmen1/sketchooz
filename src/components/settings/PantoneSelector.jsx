@@ -111,6 +111,19 @@ export const PANTONE_PALETTES = [
       { name: '8201 C', hex: '#7ABFBF' },
     ],
   },
+  {
+    name: 'Metals',
+    colors: [
+      { name: 'Silver 877 C', hex: '#8A8D8F' },
+      { name: 'Gold 871 C', hex: '#85754E' },
+      { name: 'Bronze 876 C', hex: '#A05C34' },
+      { name: 'Copper 7526 C', hex: '#9E4A1E' },
+      { name: 'Titanium 429 C', hex: '#97A0A8' },
+      { name: 'Chrome 427 C', hex: '#D0D3D4' },
+      { name: 'Gunmetal 432 C', hex: '#3D4F58' },
+      { name: 'Platinum 9161 C', hex: '#C8C9C7' },
+    ],
+  },
 ];
 
 export default function PantoneSelector({ selected, onChange }) {
