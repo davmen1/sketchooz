@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import ErrorBoundary from '@/components/ErrorBoundary';
@@ -163,7 +164,6 @@ export default function Home() {
   const [imageUrl, setImageUrl] = useState(null);
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const [resultUrl, setResultUrl] = useState(null);
-  const [isGenerating, setIsGenerating] = useState(false);
   const [genPhase, setGenPhase] = useState(null); // 'analyzing' | 'generating'
   const [needsWatermark, setNeedsWatermark] = useState(false);
   const [watermarkedUrl, setWatermarkedUrl] = useState(null);
@@ -219,22 +219,11 @@ export default function Home() {
     return { allowed: false, watermark: true };
   };
 
-  const handleGenerate = async () => {
-    if (!imageUrl) return;
-    const { allowed, watermark } = await checkAndIncrementUsage();
-    if (!allowed) {
-      toast.error(hasPromo() ? t('promoExhausted') : t('freeLimit'));
-      return;
-    }
-    setNeedsWatermark(watermark);
-    setWatermarkedUrl(null);
-    setResultIsBW(settings.bwForRaster);
-    setIsGenerating(true);
-
-    // Step 1: Analyze the image to get a precise product description
-    let productDescription = '';
-    const analysis = await base44.integrations.Core.InvokeLLM({
-      prompt: `You are an industrial designer doing a precise visual analysis for sketch reproduction. Study this product image and describe it with maximum fidelity for a sketch artist who must reproduce it WITHOUT any creative interpretation.
+  const generateMutation = useMutation({
+    mutationFn: async () => {
+      setGenPhase('analyzing');
+      const analysis = await base44.integrations.Core.InvokeLLM({
+        prompt: `You are an industrial designer doing a precise visual analysis for sketch reproduction. Study this product image and describe it with maximum fidelity for a sketch artist who must reproduce it WITHOUT any creative interpretation.
 
 Describe in this exact order:
 1. PRODUCT TYPE: What it is
@@ -247,21 +236,41 @@ Describe in this exact order:
 8. MATERIAL & TEXTURE: Visible surface character
 
 Be purely descriptive and factual. NO creative additions. Max 150 words.`,
-      file_urls: [imageUrl],
-    });
-    productDescription = analysis;
+        file_urls: [imageUrl],
+      });
+      setGenPhase('generating');
+      const prompt = buildPrompt(settings, analysis);
+      const { url } = await base44.integrations.Core.GenerateImage({
+        prompt,
+        existing_image_urls: [imageUrl],
+      });
+      return url;
+    },
+    onMutate: async () => {
+      const { allowed, watermark } = await checkAndIncrementUsage();
+      if (!allowed) {
+        toast.error(hasPromo() ? t('promoExhausted') : t('freeLimit'));
+        throw new Error('limit_reached');
+      }
+      setNeedsWatermark(watermark);
+      setWatermarkedUrl(null);
+      setResultIsBW(settings.bwForRaster);
+    },
+    onSuccess: (url) => {
+      setResultUrl(url);
+      setGenPhase(null);
+    },
+    onError: (err) => {
+      setGenPhase(null);
+      if (err.message !== 'limit_reached') toast.error(err.message);
+    },
+  });
 
-    // Step 2: Generate sketch grounded in the description
-    setGenPhase('generating');
-    const prompt = buildPrompt(settings, productDescription);
-    const { url } = await base44.integrations.Core.GenerateImage({
-      prompt,
-      existing_image_urls: [imageUrl],
-    });
+  const isGenerating = generateMutation.isPending;
 
-    setResultUrl(url);
-    setIsGenerating(false);
-    setGenPhase(null);
+  const handleGenerate = () => {
+    if (!imageUrl) return;
+    generateMutation.mutate();
   };
 
   const handleReset = () => {
