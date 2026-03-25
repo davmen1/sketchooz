@@ -10,10 +10,10 @@ import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeVector, showRasterDownload, onRegenerate }) {
   const [comparePosition, setComparePosition] = useState(50);
   const [viewMode, setViewMode] = useState('result'); // 'result' | 'compare'
+  const [correction, setCorrection] = useState('');
+  const [checkingOut, setCheckingOut] = useState(false);
 
   const { t } = useLang();
-
-  const [correction, setCorrection] = useState('');
 
   const handleDownload = async () => {
     const res = await fetch(resultUrl);
