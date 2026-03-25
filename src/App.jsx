@@ -8,9 +8,6 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { LangProvider } from '@/lib/LangContext';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
-import Home from './pages/Home';
-import Settings from './pages/Settings';
-import Pricing from './pages/Pricing';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -39,14 +36,12 @@ const AuthenticatedApp = () => {
 
   // Render the main app
   return (
-    <AppLayout>
-      <Routes location={location}>
-        <Route path="/" element={<Home />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/pricing" element={<Pricing />} />
-        <Route path="*" element={<PageNotFound />} />
-      </Routes>
-    </AppLayout>
+    <Routes location={location}>
+      <Route path="/" element={<AppLayout />} />
+      <Route path="/pricing" element={<AppLayout />} />
+      <Route path="/settings" element={<AppLayout />} />
+      <Route path="*" element={<PageNotFound />} />
+    </Routes>
   );
 };
 

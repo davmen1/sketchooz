@@ -1,36 +1,46 @@
 import React from 'react';
-import { useLocation, Outlet } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
+import { useLocation } from 'react-router-dom';
 import BottomTabBar from './BottomTabBar';
+import Home from '../pages/Home';
+import Pricing from '../pages/Pricing';
+import Settings from '../pages/Settings';
 
-const slideVariants = {
-  initial: { x: '100%', opacity: 0 },
-  animate: { x: 0, opacity: 1 },
-  exit: { x: '-30%', opacity: 0 },
+const TAB_PATHS = ['/', '/pricing', '/settings'];
+const TAB_COMPONENTS = { '/': Home, '/pricing': Pricing, '/settings': Settings };
+
+const activeStyle = {
+  flex: 1,
+  display: 'flex',
+  flexDirection: 'column',
+  minHeight: '100%',
+  paddingBottom: 'calc(60px + env(safe-area-inset-bottom))',
 };
 
-const transition = { type: 'tween', ease: [0.32, 0.72, 0, 1], duration: 0.3 };
+const hiddenStyle = {
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  right: 0,
+  height: '100dvh',
+  overflow: 'hidden',
+  visibility: 'hidden',
+  pointerEvents: 'none',
+};
 
-export default function AppLayout({ children }) {
-  const location = useLocation();
+export default function AppLayout() {
+  const { pathname } = useLocation();
 
   return (
-    <div className="relative flex flex-col min-h-screen bg-background overflow-hidden">
-      <AnimatePresence mode="wait" initial={false}>
-        <motion.div
-          key={location.pathname}
-          variants={slideVariants}
-          initial="initial"
-          animate="animate"
-          exit="exit"
-          transition={transition}
-          className="flex-1 flex flex-col min-h-screen"
-          // Extra bottom padding so content clears the tab bar (~60px) + safe area
-          style={{ paddingBottom: 'calc(60px + env(safe-area-inset-bottom))' }}
-        >
-          {children}
-        </motion.div>
-      </AnimatePresence>
+    <div className="relative flex flex-col min-h-screen bg-background">
+      {TAB_PATHS.map((tabPath) => {
+        const isActive = pathname === tabPath;
+        const TabComponent = TAB_COMPONENTS[tabPath];
+        return (
+          <div key={tabPath} style={isActive ? activeStyle : hiddenStyle}>
+            <TabComponent />
+          </div>
+        );
+      })}
       <BottomTabBar />
     </div>
   );
