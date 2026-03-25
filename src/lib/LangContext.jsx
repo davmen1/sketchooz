@@ -117,7 +117,7 @@ export const translations = {
     correctionsLabel: 'Correct the Design',
     correctionsPlaceholder: 'E.g. make the product rounder, add a handle on the side...',
     correctionsApply: 'Apply correction',
-    correctionsNote: '3 credits will be deducted. The render will be regenerated with your instructions.'
+    correctionsNote: '3 credits will be deducted. The render will be regenerated with your instructions.',
     correctionsLabel: 'Corrections',
     correctionsPlaceholder: 'E.g. sharper edges, warmer tones, more detail on handles...',
     // Tabs
