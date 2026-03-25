@@ -112,9 +112,65 @@ export default function Pricing() {
           🎨 {lang === 'it' ? 'Ogni render consuma 3 crediti. I crediti non scadono mai.' : 'Each render costs 3 credits. Credits never expire.'}
         </div>
 
-        {/* Pack grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {PACK_CONFIGS.map((pack, i) => {
+        {/* Starter pack — featured hero */}
+        {(() => {
+          const pack = PACK_CONFIGS[0];
+          const labels = packLabels[pack.id];
+          const Icon = pack.icon;
+          return (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="relative bg-amber-50 border-2 border-amber-300 rounded-2xl p-6 sm:p-8"
+            >
+              <div className="absolute -top-3.5 left-6 bg-amber-500 text-white text-xs font-bold px-4 py-1 rounded-full">
+                🎁 {lang === 'it' ? 'INIZIA QUI — ACQUISTO UNICO' : 'START HERE — ONE-TIME PURCHASE'}
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-6">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="p-2.5 rounded-xl bg-amber-100">
+                      <Icon className="w-5 h-5 text-amber-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-lg">{labels.name}</h3>
+                      <p className="text-xs text-muted-foreground">{getPricePerRender(pack.price, pack.credits)}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-baseline gap-2 mb-1">
+                    <span className="text-4xl font-bold">{pack.price}</span>
+                    <span className="text-sm text-muted-foreground font-medium">{lang === 'it' ? 'pagamento unico' : 'one-time'}</span>
+                  </div>
+                  <div className="text-sm text-accent font-semibold mb-4">{pack.credits} crediti · {getCostPerRender(pack.credits)}</div>
+                  <ul className="flex flex-wrap gap-x-4 gap-y-1">
+                    {labels.features.map(f => (
+                      <li key={f} className="flex items-center gap-1.5 text-xs">
+                        <Check className="w-3.5 h-3.5 text-green-500 shrink-0" />
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="flex flex-col items-stretch sm:items-end gap-2 sm:min-w-[160px]">
+                  <Button
+                    onClick={() => handleCheckout(pack.id)}
+                    disabled={!!loading}
+                    className="bg-amber-500 hover:bg-amber-600 text-white font-semibold px-8 py-3 h-auto text-base rounded-xl"
+                  >
+                    {loading === pack.id ? (
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    ) : (lang === 'it' ? 'Acquista ora' : 'Buy now')}
+                  </Button>
+                  <p className="text-[10px] text-center text-muted-foreground">{lang === 'it' ? 'Nessun abbonamento' : 'No subscription'}</p>
+                </div>
+              </div>
+            </motion.div>
+          );
+        })()}
+
+        {/* Other packs */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {PACK_CONFIGS.slice(1).map((pack, i) => {
             const Icon = pack.icon;
             const labels = packLabels[pack.id];
             return (
@@ -144,6 +200,7 @@ export default function Pricing() {
                 <div className="mb-1">
                   <span className="text-2xl font-bold">{pack.price}</span>
                 </div>
+                <div className="text-[10px] text-muted-foreground mb-0.5">{lang === 'it' ? 'acquisto unico' : 'one-time purchase'}</div>
                 <div className="text-xs text-accent font-semibold mb-4">{pack.credits} crediti · {getCostPerRender(pack.credits)}</div>
 
                 <ul className="space-y-1.5 flex-1 mb-4">
