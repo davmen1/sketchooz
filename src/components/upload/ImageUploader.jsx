@@ -15,8 +15,12 @@ export default function ImageUploader({ onImageUploaded, uploadedUrl, onClear })
       alert('Formato non supportato. Usa PNG, JPG o WEBP.');
       return;
     }
+    // Optimistic: show local preview immediately
+    const localUrl = URL.createObjectURL(file);
+    onImageUploaded(localUrl);
     setIsUploading(true);
     const { file_url } = await base44.integrations.Core.UploadFile({ file });
+    URL.revokeObjectURL(localUrl);
     onImageUploaded(file_url);
     setIsUploading(false);
   }, [onImageUploaded]);

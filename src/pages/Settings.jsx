@@ -28,7 +28,7 @@ function DangerRow({ icon: Icon, label, description, actionLabel, variant = 'out
 export default function Settings() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [deleteStep, setDeleteStep] = useState('idle'); // idle | confirm | deleting | done
+  const [deleteStep, setDeleteStep] = useState('idle'); // idle | confirm | instructions
 
   const handleLogout = () => {
     base44.auth.logout('/');
@@ -36,14 +36,7 @@ export default function Settings() {
 
   const handleDeleteRequest = () => setDeleteStep('confirm');
   const handleDeleteCancel = () => setDeleteStep('idle');
-
-  const handleDeleteConfirm = async () => {
-    setDeleteStep('deleting');
-    // Sign out — platform-level deletion requires contacting support
-    await new Promise(r => setTimeout(r, 1200));
-    setDeleteStep('done');
-    setTimeout(() => base44.auth.logout('/'), 2000);
-  };
+  const handleDeleteConfirm = () => setDeleteStep('instructions');
 
   return (
     <div className="flex flex-col flex-1">
@@ -62,16 +55,16 @@ export default function Settings() {
         <section className="bg-card rounded-2xl border border-border px-4">
           <DangerRow
             icon={LogOut}
-            label="Sign out"
-            description="You'll be redirected to the login page."
-            actionLabel="Sign out"
+            label="Esci"
+            description="Verrai reindirizzato alla pagina di login."
+            actionLabel="Esci"
             onClick={handleLogout}
           />
           <DangerRow
             icon={Trash2}
-            label="Delete account"
-            description="Permanently remove your account and all data."
-            actionLabel="Delete"
+            label="Elimina account"
+            description="Rimuovi permanentemente account e dati."
+            actionLabel="Elimina"
             variant="destructive"
             onClick={handleDeleteRequest}
           />
@@ -79,13 +72,38 @@ export default function Settings() {
 
         {/* Confirmation modal */}
         {deleteStep !== 'idle' && (
-          <div className="fixed inset-0 z-50 bg-black/60 flex items-end sm:items-center justify-center p-4"
-            style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}>
+          <div
+            className="fixed inset-0 z-50 bg-black/60 flex items-end sm:items-center justify-center p-4"
+            style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}
+          >
             <div className="bg-card rounded-2xl border border-border w-full max-w-sm p-6 space-y-4">
-              {deleteStep === 'done' ? (
-                <div className="text-center space-y-2">
-                  <p className="text-sm font-semibold">Account deletion requested</p>
-                  <p className="text-xs text-muted-foreground">Signing you out now…</p>
+
+              {deleteStep === 'instructions' ? (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center shrink-0">
+                      <Trash2 className="w-5 h-5 text-muted-foreground" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold">Come eliminare il tuo account</p>
+                      <p className="text-xs text-muted-foreground">La richiesta viene gestita via email</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Per eliminare definitivamente il tuo account e tutti i dati associati, contattaci a:
+                  </p>
+                  <a
+                    href={`mailto:support@sketchforge.app?subject=Richiesta%20eliminazione%20account&body=Ciao%2C%20vorrei%20eliminare%20il%20mio%20account%3A%20${encodeURIComponent(user?.email || '')}`}
+                    className="block w-full text-center px-4 py-3 rounded-xl bg-foreground text-background text-sm font-semibold"
+                  >
+                    support@sketchforge.app
+                  </a>
+                  <p className="text-[10px] text-muted-foreground">
+                    Includi l'email del tuo account nel messaggio. L'eliminazione viene processata entro 48h.
+                  </p>
+                  <Button variant="outline" className="w-full min-h-[44px]" onClick={handleDeleteCancel}>
+                    Chiudi
+                  </Button>
                 </div>
               ) : (
                 <>
@@ -94,24 +112,19 @@ export default function Settings() {
                       <AlertTriangle className="w-5 h-5 text-destructive" />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold">Delete account?</p>
-                      <p className="text-xs text-muted-foreground">This action cannot be undone.</p>
+                      <p className="text-sm font-semibold">Eliminare l'account?</p>
+                      <p className="text-xs text-muted-foreground">Questa azione non è reversibile.</p>
                     </div>
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    All your data will be permanently deleted. You will be signed out immediately.
+                    Tutti i tuoi dati verranno eliminati permanentemente.
                   </p>
                   <div className="flex gap-2 pt-1">
-                    <Button variant="outline" className="flex-1 min-h-[44px]" onClick={handleDeleteCancel} disabled={deleteStep === 'deleting'}>
-                      Cancel
+                    <Button variant="outline" className="flex-1 min-h-[44px]" onClick={handleDeleteCancel}>
+                      Annulla
                     </Button>
-                    <Button variant="destructive" className="flex-1 min-h-[44px]" onClick={handleDeleteConfirm} disabled={deleteStep === 'deleting'}>
-                      {deleteStep === 'deleting' ? (
-                        <div className="flex items-center gap-2">
-                          <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                          Deleting…
-                        </div>
-                      ) : 'Yes, delete'}
+                    <Button variant="destructive" className="flex-1 min-h-[44px]" onClick={handleDeleteConfirm}>
+                      Continua
                     </Button>
                   </div>
                 </>
