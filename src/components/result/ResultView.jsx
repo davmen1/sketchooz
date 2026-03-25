@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Download, ArrowLeftRight, Maximize2, Layers } from 'lucide-react';
+import { ArrowLeftRight, Maximize2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 import { useLang } from '@/lib/LangContext';
@@ -11,7 +11,6 @@ export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeV
   const [comparePosition, setComparePosition] = useState(50);
   const [viewMode, setViewMode] = useState('result'); // 'result' | 'compare'
 
-  const [vectorLoading, setVectorLoading] = useState(false);
   const { t } = useLang();
 
   const handleDownload = async () => {
@@ -22,55 +21,7 @@ export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeV
     link.click();
   };
 
-  const handleVectorDownload = async () => {
-    // Free for promo users and admins
-    const user = await base44.auth.me();
-    const isFree = freeVector || user?.role === 'admin';
 
-    const isInIframe = window.self !== window.top;
-    if (isInIframe) {
-      alert('Il checkout funziona solo dall\'app pubblicata. Apri l\'app in una nuova scheda.');
-      return;
-    }
-
-    if (!isFree) {
-      setVectorLoading(true);
-      const currentUrl = window.location.href;
-      const res = await base44.functions.invoke('createVectorCheckout', {
-        imageUrl: resultUrl,
-        successUrl: currentUrl + '?vector_success=1',
-        cancelUrl: currentUrl,
-      });
-      const { url } = res.data;
-      if (url) window.location.href = url;
-      setVectorLoading(false);
-      return;
-    }
-
-    // Proceed with real SVG vectorization
-    const confirmed = window.confirm(
-      t('vectorWarning') ||
-      '⏳ Generating a real SVG vector file may take 30–90 seconds depending on image complexity. Proceed?'
-    );
-    if (!confirmed) return;
-
-    setVectorLoading(true);
-    const response = await base44.functions.invoke('vectorizeImage', { imageUrl: resultUrl });
-    const svgContent = response.data?.svg;
-    if (!svgContent || !svgContent.includes('<svg')) {
-      alert(t('vectorError') || 'Vector generation failed. Please try again.');
-      setVectorLoading(false);
-      return;
-    }
-    const blob = new Blob([svgContent], { type: 'image/svg+xml' });
-    const blobUrl = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = blobUrl;
-    link.download = 'industrial-design-sketch.svg';
-    link.click();
-    URL.revokeObjectURL(blobUrl);
-    setVectorLoading(false);
-  };
 
   return (
     <motion.div
@@ -115,17 +66,7 @@ export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeV
               <img src={resultUrl} alt="Full size result" className="w-full rounded-lg" />
             </DialogContent>
           </Dialog>
-          <Button size="sm" variant="outline" onClick={handleVectorDownload} disabled={vectorLoading}>
-            {vectorLoading ? (
-              <>
-                <div className="w-3.5 h-3.5 border-2 border-current/30 border-t-current rounded-full animate-spin" />
-                <span className="text-xs">{t('vectorGenerating') || 'Generating…'}</span>
-              </>
-            ) : (
-              <Layers className="w-3.5 h-3.5 mr-1.5" />
-            )}
-            {!vectorLoading && t('vectorDownload')}
-          </Button>
+
 
         </div>
       </div>
