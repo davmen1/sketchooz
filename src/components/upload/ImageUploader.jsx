@@ -7,8 +7,14 @@ export default function ImageUploader({ onImageUploaded, uploadedUrl, onClear })
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
+  const SUPPORTED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
+
   const handleFile = useCallback(async (file) => {
-    if (!file || !file.type.startsWith('image/')) return;
+    if (!file) return;
+    if (!SUPPORTED_TYPES.includes(file.type)) {
+      alert('Formato non supportato. Usa PNG, JPG o WEBP.');
+      return;
+    }
     setIsUploading(true);
     const { file_url } = await base44.integrations.Core.UploadFile({ file });
     onImageUploaded(file_url);
@@ -99,7 +105,7 @@ export default function ImageUploader({ onImageUploaded, uploadedUrl, onClear })
                 {isDragging ? 'Rilascia qui' : 'Carica immagine o sketch'}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                PNG, JPG, WEBP — Foto, disegni, bozze
+                PNG, JPG, WEBP (no AVIF/HEIC) — Foto, disegni, bozze
               </p>
             </div>
           </motion.div>
