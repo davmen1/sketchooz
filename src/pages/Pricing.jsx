@@ -226,6 +226,24 @@ export default function Pricing() {
             );
           })}
         </div>
+
+        {/* Disclaimer */}
+        <div className="rounded-xl border border-border bg-muted/50 p-4 space-y-2 text-xs text-muted-foreground">
+          <p className="font-semibold text-foreground text-sm">
+            {lang === 'it' ? '⚠️ Leggi prima di acquistare' : '⚠️ Please read before purchasing'}
+          </p>
+          <p>
+            {lang === 'it'
+              ? 'SketchForge utilizza intelligenza artificiale generativa. I risultati possono variare e non sono garantiti al 100%: la fedeltà al prodotto originale dipende dalla complessità dell\'oggetto e dalle impostazioni scelte.'
+              : 'SketchForge uses generative AI. Results may vary and are not 100% guaranteed — fidelity to the original product depends on object complexity and chosen settings.'}
+          </p>
+          <p>
+            {lang === 'it'
+              ? '💳 Il rimborso è disponibile esclusivamente per i pack da €14,99 in su (Mese, Semestre, Annuale), entro 7 giorni dall\'acquisto, e solo nei casi in cui il servizio non abbia funzionato correttamente (errore tecnico documentato). Il pack Starter (€3,99) non è rimborsabile. Per richieste contatta support@sketchforge.app.'
+              : '💳 Refunds are available only for packs starting from €14.99 (Month, Semester, Annual), within 7 days of purchase, and only if the service did not work correctly (documented technical error). The Starter pack (€3.99) is non-refundable. For requests contact support@sketchforge.app.'}
+          </p>
+        </div>
+
       </main>
     </div>
   );
