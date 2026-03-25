@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Check, Zap, Sparkles, Crown, Gift } from 'lucide-react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 import MobileHeader from '@/components/MobileHeader';
@@ -48,7 +49,10 @@ const PACK_CONFIGS = [
 // Detect iOS native WebView (WKWebView) — Stripe checkout not allowed by Apple IAP rules
 const isIOSWebView = () => {
   const ua = navigator.userAgent || '';
-  return /iPhone|iPad|iPod/.test(ua) && !ua.includes('Safari');
+  const isIOS = /iPhone|iPad|iPod/.test(ua);
+  const hasWebKit = typeof window !== 'undefined' && !!(window.webkit?.messageHandlers);
+  const notSafari = isIOS && !ua.includes('Safari');
+  return isIOS && (hasWebKit || notSafari);
 };
 
 export default function Pricing() {
@@ -72,7 +76,7 @@ export default function Pricing() {
       return;
     }
     if (window.self !== window.top) {
-      alert(t('iframeAlert'));
+      toast.error(t('iframeAlert'));
       return;
     }
     setLoading(packId);
@@ -265,6 +269,12 @@ export default function Pricing() {
               ? '💳 Il rimborso è disponibile esclusivamente per i pack da €14,99 in su (Mese, Semestre, Annuale), entro 7 giorni dall\'acquisto, e solo nei casi in cui il servizio non abbia funzionato correttamente (errore tecnico documentato). Il pack Starter (€3,99) non è rimborsabile. Per richieste contatta treddistudio@gmail.com.'
               : '💳 Refunds are available only for packs starting from €14.99 (Month, Semester, Annual), within 7 days of purchase, and only if the service did not work correctly (documented technical error). The Starter pack (€3.99) is non-refundable. For requests contact treddistudio@gmail.com.'}
           </p>
+        </div>
+
+        <div className="text-center pb-4">
+          <a href="/privacy" className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground">
+            {lang === 'it' ? 'Privacy Policy' : 'Privacy Policy'}
+          </a>
         </div>
 
       </main>
