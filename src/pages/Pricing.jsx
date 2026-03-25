@@ -45,9 +45,15 @@ const PACK_CONFIGS = [
   },
 ];
 
+// Detect iOS native WebView (WKWebView) — Stripe checkout not allowed by Apple IAP rules
+const isIOSWebView = () => {
+  const ua = navigator.userAgent || '';
+  return /iPhone|iPad|iPod/.test(ua) && !ua.includes('Safari');
+};
+
 export default function Pricing() {
   const [loading, setLoading] = useState(null);
-  const [creditsRemaining, setCreditsRemaining] = useState(null);
+  const [iosWebView] = useState(isIOSWebView);
   const { t, lang } = useLang();
 
   useEffect(() => {
@@ -61,6 +67,10 @@ export default function Pricing() {
   }, []);
 
   const handleCheckout = async (packId) => {
+    if (iosWebView) {
+      window.open('https://www.sketch-forge.com/pricing', '_blank');
+      return;
+    }
     if (window.self !== window.top) {
       alert(t('iframeAlert'));
       return;
@@ -94,6 +104,19 @@ export default function Pricing() {
       <MobileHeader title={t('pricingTitle')} subtitle={t('pricingSubtitle')} />
 
       <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8 w-full space-y-6">
+
+        {iosWebView && (
+          <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl text-sm text-blue-800 text-center space-y-2">
+            <p className="font-semibold">🛒 {lang === 'it' ? 'Acquista su sketch-forge.com' : 'Purchase at sketch-forge.com'}</p>
+            <p className="text-xs text-blue-700">{lang === 'it' ? 'Per acquistare i pack, visita il nostro sito dal browser.' : 'To purchase packs, visit our website from your browser.'}</p>
+            <button
+              onClick={() => window.open('https://www.sketch-forge.com/pricing', '_blank')}
+              className="mt-1 inline-block bg-blue-600 text-white text-xs font-semibold px-4 py-2 rounded-lg"
+            >
+              {lang === 'it' ? 'Vai al sito →' : 'Open website →'}
+            </button>
+          </div>
+        )}
 
         {/* Free tier + credits info */}
         <div className="p-4 bg-muted rounded-xl text-sm text-muted-foreground text-center">

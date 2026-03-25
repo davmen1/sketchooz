@@ -11,6 +11,7 @@ import { useLang } from '@/lib/LangContext';
 import WatermarkCanvas from '@/components/result/WatermarkCanvas';
 import SketchSettings from '@/components/settings/SketchSettings';
 import MobileHeader from '@/components/MobileHeader';
+import PromoDialog from '@/components/PromoDialog';
 import PullToRefresh from '@/components/PullToRefresh';
 import ResultView from '@/components/result/ResultView';
 import GeneratingOverlay from '@/components/result/GeneratingOverlay';
@@ -172,6 +173,7 @@ export default function Home() {
   const [promoRendersUsed, setPromoRendersUsed] = useState(() =>
     parseInt(localStorage.getItem('promo_renders_used') || '0', 10)
   );
+  const [promoDialogOpen, setPromoDialogOpen] = useState(false);
 
 
   const getTodayKey = () => new Date().toISOString().slice(0, 10);
@@ -342,21 +344,25 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
               <div className="text-center">
                 <button
                   className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
-                  onClick={() => {
-                    const code = window.prompt(t('promoPrompt'));
-                    if (code && ['WANNATRY1'].includes(code.trim().toUpperCase())) {
-                      localStorage.setItem('promo_code', code.trim().toUpperCase());
-                      setPromoRendersUsed(parseInt(localStorage.getItem('promo_renders_used') || '0', 10));
-                      toast.success(t('promoApplied'));
-                    } else if (code) {
-                      toast.error(t('promoInvalid'));
-                    }
-                  }}
+                  onClick={() => setPromoDialogOpen(true)}
                 >
                   {t('promoLink')}
                 </button>
               </div>
             )}
+            <PromoDialog
+              open={promoDialogOpen}
+              onOpenChange={setPromoDialogOpen}
+              onApply={(code) => {
+                if (['WANNATRY1'].includes(code)) {
+                  localStorage.setItem('promo_code', code);
+                  setPromoRendersUsed(parseInt(localStorage.getItem('promo_renders_used') || '0', 10));
+                  toast.success(t('promoApplied'));
+                } else {
+                  toast.error(t('promoInvalid'));
+                }
+              }}
+            />
           </motion.div>
         ) : (
           /* Editor Layout */
