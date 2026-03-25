@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeftRight, Maximize2 } from 'lucide-react';
+import { ArrowLeftRight, Maximize2, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 import { useLang } from '@/lib/LangContext';
@@ -66,8 +66,12 @@ export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeV
               <img src={resultUrl} alt="Full size result" className="w-full rounded-lg" />
             </DialogContent>
           </Dialog>
-
-
+          {showRasterDownload && (
+            <Button size="sm" onClick={handleDownload} className="bg-accent hover:bg-accent/90 text-accent-foreground">
+              <Download className="w-3.5 h-3.5 mr-1.5" />
+              {t('download')}
+            </Button>
+          )}
         </div>
       </div>
 

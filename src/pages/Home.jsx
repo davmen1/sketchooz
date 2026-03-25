@@ -410,6 +410,7 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
                       resultUrl={needsWatermark ? (watermarkedUrl || resultUrl) : resultUrl}
                       hasWatermark={needsWatermark}
                       freeVector={hasPromo()}
+                      showRasterDownload={resultIsBW}
 
                     />
                   </>
