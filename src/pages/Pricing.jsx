@@ -239,8 +239,8 @@ export default function Pricing() {
           </p>
           <p>
             {lang === 'it'
-              ? '💳 Il rimborso è disponibile esclusivamente per i pack da €14,99 in su (Mese, Semestre, Annuale), entro 7 giorni dall\'acquisto, e solo nei casi in cui il servizio non abbia funzionato correttamente (errore tecnico documentato). Il pack Starter (€3,99) non è rimborsabile. Per richieste contatta support@sketchforge.app.'
-              : '💳 Refunds are available only for packs starting from €14.99 (Month, Semester, Annual), within 7 days of purchase, and only if the service did not work correctly (documented technical error). The Starter pack (€3.99) is non-refundable. For requests contact support@sketchforge.app.'}
+              ? '💳 Il rimborso è disponibile esclusivamente per i pack da €14,99 in su (Mese, Semestre, Annuale), entro 7 giorni dall\'acquisto, e solo nei casi in cui il servizio non abbia funzionato correttamente (errore tecnico documentato). Il pack Starter (€3,99) non è rimborsabile. Per richieste contatta treddistudio@gmail.com.'
+              : '💳 Refunds are available only for packs starting from €14.99 (Month, Semester, Annual), within 7 days of purchase, and only if the service did not work correctly (documented technical error). The Starter pack (€3.99) is non-refundable. For requests contact treddistudio@gmail.com.'}
           </p>
         </div>
 
