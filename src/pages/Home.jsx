@@ -210,14 +210,11 @@ export default function Home() {
       }
       return { allowed: false, watermark: false };
     }
-    // Check active subscription
-    const subs = await base44.entities.Subscription.filter({ user_email: user.email, status: 'active' });
-    if (subs.length > 0) return { allowed: true, watermark: false };
-    // Check render pack credits
+    // Check credits (3 credits per render)
     const packs = await base44.entities.RenderPack.filter({ user_email: user.email });
-    const pack = packs.find(p => p.renders_remaining > 0);
+    const pack = packs.find(p => (p.credits_remaining || 0) >= 3);
     if (pack) {
-      await base44.entities.RenderPack.update(pack.id, { renders_remaining: pack.renders_remaining - 1 });
+      await base44.entities.RenderPack.update(pack.id, { credits_remaining: pack.credits_remaining - 3 });
       return { allowed: true, watermark: false };
     }
     // Check daily free usage

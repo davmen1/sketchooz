@@ -3,10 +3,11 @@ import Stripe from 'npm:stripe@14';
 
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
 
-const PRICE_IDS = {
-  monthly: 'price_1TEcKiGZjmfYQdyYy4RtZgSZ',
-  semestral: 'price_1TEcKiGZjmfYQdyYRywEYxz1',
-  yearly: 'price_1TEcKiGZjmfYQdyY94H6UIOK',
+const PACK_CONFIGS = {
+  starter:    { priceId: 'price_1TEw8kK53QlV9AaGwlQrNyXN', credits: 12 },
+  monthly:    { priceId: 'price_1TEw8kK53QlV9AaG5wrJjTnu', credits: 50 },
+  semestral:  { priceId: 'price_1TEw8kK53QlV9AaGeB8GFVLz', credits: 350 },
+  yearly:     { priceId: 'price_1TEw8kK53QlV9AaGXRTKmi3X', credits: 1000 },
 };
 
 Deno.serve(async (req) => {
@@ -15,21 +16,23 @@ Deno.serve(async (req) => {
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { plan, successUrl, cancelUrl } = await req.json();
+    const { pack, successUrl, cancelUrl } = await req.json();
 
-    if (!PRICE_IDS[plan]) return Response.json({ error: 'Invalid plan' }, { status: 400 });
+    const config = PACK_CONFIGS[pack];
+    if (!config) return Response.json({ error: 'Invalid pack' }, { status: 400 });
 
     const session = await stripe.checkout.sessions.create({
-      mode: 'subscription',
+      mode: 'payment',
       payment_method_types: ['card'],
-      line_items: [{ price: PRICE_IDS[plan], quantity: 1 }],
+      line_items: [{ price: config.priceId, quantity: 1 }],
       customer_email: user.email,
       success_url: successUrl || 'https://app.base44.com',
       cancel_url: cancelUrl || 'https://app.base44.com',
       metadata: {
         base44_app_id: Deno.env.get('BASE44_APP_ID'),
         user_email: user.email,
-        plan,
+        pack,
+        credits: String(config.credits),
       },
     });
 

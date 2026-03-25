@@ -1,181 +1,169 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Check, Sparkles, Zap, Crown, Gift } from 'lucide-react';
+import { Check, Zap, Sparkles, Crown, Gift } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 import MobileHeader from '@/components/MobileHeader';
 import { useLang } from '@/lib/LangContext';
 
-const PLAN_CONFIGS = [
-  { id: 'monthly', price: '€14,99', icon: Zap, color: 'border-border', translationKey: 'planMonthly' },
-  { id: 'semestral', price: '€75', icon: Sparkles, color: 'border-accent', highlight: true, translationKey: 'planSemestral' },
-  { id: 'yearly', price: '€100', icon: Crown, color: 'border-border', translationKey: 'planYearly' },
+const PACK_CONFIGS = [
+  {
+    id: 'starter',
+    price: '€3,99',
+    credits: 12,
+    icon: Gift,
+    color: 'border-amber-300',
+    bg: 'bg-amber-50',
+    badge: '🎁 PROVA',
+    highlight: false,
+  },
+  {
+    id: 'monthly',
+    price: '€14,99',
+    credits: 50,
+    icon: Zap,
+    color: 'border-border',
+    highlight: false,
+  },
+  {
+    id: 'semestral',
+    price: '€69,99',
+    credits: 350,
+    icon: Sparkles,
+    color: 'border-accent',
+    highlight: true,
+    badge: '🔥 PIÙ POPOLARE',
+  },
+  {
+    id: 'yearly',
+    price: '€119,99',
+    credits: 1000,
+    icon: Crown,
+    color: 'border-border',
+    highlight: false,
+    badge: '💎 MIGLIOR VALORE',
+  },
 ];
 
 export default function Pricing() {
   const [loading, setLoading] = useState(null);
-  const [subscription, setSubscription] = useState(null);
-  const [hasPack, setHasPack] = useState(false);
-  const { t } = useLang();
+  const [creditsRemaining, setCreditsRemaining] = useState(null);
+  const { t, lang } = useLang();
 
   useEffect(() => {
-    base44.functions.invoke('getSubscription', {}).then(r => {
-      setSubscription(r.data?.subscription || null);
-    }).catch(() => {});
     base44.entities.RenderPack.filter({}).then(packs => {
-      setHasPack(packs.length > 0);
-    }).catch(() => {});
+      if (packs.length > 0) {
+        setCreditsRemaining(packs[0].credits_remaining || 0);
+      } else {
+        setCreditsRemaining(0);
+      }
+    }).catch(() => setCreditsRemaining(0));
   }, []);
 
-  const handlePackCheckout = async () => {
-    const isInIframe = window.self !== window.top;
-    if (isInIframe) {
+  const handleCheckout = async (packId) => {
+    if (window.self !== window.top) {
       alert(t('iframeAlert'));
       return;
     }
-    setLoading('starter_pack');
+    setLoading(packId);
     const currentUrl = window.location.href;
-    const res = await base44.functions.invoke('createPackCheckout', {
-      successUrl: currentUrl + '?success=1',
+    const res = await base44.functions.invoke('createCheckout', {
+      pack: packId,
+      successUrl: currentUrl + (currentUrl.includes('?') ? '&' : '?') + 'success=1',
       cancelUrl: currentUrl,
     });
-    if (res.data?.error === 'already_purchased') {
-      alert(t('alreadyPurchasedAlert'));
-      setLoading(null);
-      return;
-    }
-    const { url } = res.data;
-    if (url) window.location.href = url;
+    if (res.data?.url) window.location.href = res.data.url;
     setLoading(null);
   };
 
-  const handleCheckout = async (planId) => {
-    const isInIframe = window.self !== window.top;
-    if (isInIframe) {
-      alert(t('iframeAlert'));
-      return;
-    }
-    setLoading(planId);
-    const currentUrl = window.location.href;
-    const res = await base44.functions.invoke('createCheckout', {
-      plan: planId,
-      successUrl: currentUrl + '?success=1',
-      cancelUrl: currentUrl,
-    });
-    const { url } = res.data;
-    if (url) window.location.href = url;
-    setLoading(null);
+  const getCostPerRender = (credits) => `${(credits / 3).toFixed(0)} render`;
+  const getPricePerRender = (price, credits) => {
+    const num = parseFloat(price.replace('€', '').replace(',', '.'));
+    return `€${(num / (credits / 3)).toFixed(2)}/render`;
+  };
+
+  const packLabels = {
+    starter:   lang === 'it' ? { name: 'Starter',   period: 'una tantum', features: ['12 crediti = 4 render', 'Nessun watermark', 'Tutti gli stili', 'I crediti non scadono'] } : { name: 'Starter', period: 'one-time', features: ['12 credits = 4 renders', 'No watermark', 'All styles', 'Credits never expire'] },
+    monthly:   lang === 'it' ? { name: 'Mese',      period: 'una tantum', features: ['50 crediti = ~16 render', 'Nessun watermark', 'Tutti gli stili', 'I crediti non scadono'] } : { name: 'Month',   period: 'one-time', features: ['50 credits = ~16 renders', 'No watermark', 'All styles', 'Credits never expire'] },
+    semestral: lang === 'it' ? { name: 'Semestre',  period: 'una tantum', features: ['350 crediti = ~116 render', 'Nessun watermark', 'Tutti gli stili', 'I crediti non scadono', 'Risparmio del 40%'] } : { name: 'Semester', period: 'one-time', features: ['350 credits = ~116 renders', 'No watermark', 'All styles', 'Credits never expire', '40% savings'] },
+    yearly:    lang === 'it' ? { name: 'Annuale',   period: 'una tantum', features: ['1000 crediti = ~333 render', 'Nessun watermark', 'Tutti gli stili', 'I crediti non scadono', 'Risparmio del 60%'] } : { name: 'Annual',   period: 'one-time', features: ['1000 credits = ~333 renders', 'No watermark', 'All styles', 'Credits never expire', '60% savings'] },
   };
 
   return (
     <div className="flex flex-col flex-1">
       <MobileHeader title={t('pricingTitle')} subtitle={t('pricingSubtitle')} />
 
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8 w-full">
-        {/* Free tier notice */}
-        <div className="mb-8 p-4 bg-muted rounded-xl text-sm text-muted-foreground text-center">
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8 w-full space-y-6">
+
+        {/* Free tier + credits info */}
+        <div className="p-4 bg-muted rounded-xl text-sm text-muted-foreground text-center">
           {t('freeTierDesc')}
         </div>
 
-        {subscription && (
-          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-sm text-green-800 text-center">
-            ✅ {t('subscriptionActive')}: <strong className="capitalize">{subscription.plan}</strong>
-            {subscription.current_period_end && (
-              <span className="ml-2 text-green-600">
-                · {t('expiresOn')} {new Date(subscription.current_period_end).toLocaleDateString()}
-              </span>
-            )}
+        {creditsRemaining !== null && creditsRemaining > 0 && (
+          <div className="p-4 bg-green-50 border border-green-200 rounded-xl text-sm text-green-800 text-center">
+            ✅ {lang === 'it' ? 'Crediti disponibili' : 'Available credits'}: <strong>{creditsRemaining}</strong>
+            <span className="text-green-600 ml-2">· {Math.floor(creditsRemaining / 3)} render {lang === 'it' ? 'rimasti' : 'remaining'}</span>
           </div>
         )}
 
-        {/* Starter Pack promo */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8 relative bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-300 rounded-2xl p-6 flex flex-col sm:flex-row items-center gap-5"
-        >
-          <div className="absolute -top-3 left-6 bg-amber-400 text-white text-xs font-bold px-3 py-1 rounded-full tracking-wide">{t('oneTimeOfferBadge')}</div>
-          <div className="p-3 rounded-xl bg-amber-100 shrink-0">
-            <Gift className="w-7 h-7 text-amber-600" />
-          </div>
-          <div className="flex-1 text-center sm:text-left">
-            <h3 className="font-bold text-lg text-amber-900">{t('starterPackTitle')}</h3>
-            <p className="text-sm text-amber-700 mt-0.5">{t('starterPackDesc')}</p>
-            <ul className="flex flex-wrap gap-x-4 gap-y-1 mt-2">
-              {t('starterPackFeatures').map(f => (
-                <li key={f} className="flex items-center gap-1 text-xs text-amber-800">
-                  <Check className="w-3.5 h-3.5 text-green-600" />{f}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="flex flex-col items-center gap-2 shrink-0">
-            <span className="text-3xl font-bold text-amber-900">€2,99</span>
-            <Button
-              onClick={handlePackCheckout}
-              disabled={!!loading || hasPack}
-              className="bg-amber-500 hover:bg-amber-600 text-white font-semibold px-6"
-            >
-              {loading === 'starter_pack' ? (
-                <div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-              ) : hasPack ? t('alreadyPurchased') : t('buyNow')}
-            </Button>
-          </div>
-        </motion.div>
+        {/* Cost info banner */}
+        <div className="p-3 bg-accent/10 border border-accent/20 rounded-xl text-xs text-center text-accent font-medium">
+          🎨 {lang === 'it' ? 'Ogni render consuma 3 crediti. I crediti non scadono mai.' : 'Each render costs 3 credits. Credits never expire.'}
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {PLAN_CONFIGS.map((plan, i) => {
-            const Icon = plan.icon;
-            const planT = t(plan.translationKey);
+        {/* Pack grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {PACK_CONFIGS.map((pack, i) => {
+            const Icon = pack.icon;
+            const labels = packLabels[pack.id];
             return (
               <motion.div
-                key={plan.id}
+                key={pack.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
-                className={`relative bg-card rounded-2xl border-2 ${plan.color} p-6 flex flex-col ${plan.highlight ? 'shadow-lg' : ''}`}
+                transition={{ delay: i * 0.08 }}
+                className={`relative bg-card rounded-2xl border-2 ${pack.color} p-5 flex flex-col ${pack.highlight ? 'shadow-lg' : ''}`}
               >
-                {plan.highlight && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-accent text-accent-foreground text-xs font-semibold px-3 py-1 rounded-full">
-                  {t('mostPopular')}
-                </div>
+                {pack.badge && (
+                  <div className={`absolute -top-3 left-1/2 -translate-x-1/2 text-white text-[10px] font-bold px-3 py-1 rounded-full whitespace-nowrap ${pack.highlight ? 'bg-accent' : 'bg-amber-500'}`}>
+                    {pack.badge}
+                  </div>
                 )}
 
-                <div className="flex items-center gap-3 mb-4">
-                  <div className={`p-2 rounded-lg ${plan.highlight ? 'bg-accent/10' : 'bg-muted'}`}>
-                    <Icon className={`w-5 h-5 ${plan.highlight ? 'text-accent' : 'text-muted-foreground'}`} />
+                <div className="flex items-center gap-2 mb-4 mt-1">
+                  <div className={`p-2 rounded-lg ${pack.highlight ? 'bg-accent/10' : 'bg-muted'}`}>
+                    <Icon className={`w-4 h-4 ${pack.highlight ? 'text-accent' : 'text-muted-foreground'}`} />
                   </div>
                   <div>
-                    <h3 className="font-semibold">{planT.name}</h3>
-                    {planT.savings && (
-                      <span className="text-[11px] text-green-600 font-medium">{planT.savings}</span>
-                    )}
+                    <h3 className="font-semibold text-sm">{labels.name}</h3>
+                    <p className="text-[10px] text-muted-foreground">{getPricePerRender(pack.price, pack.credits)}</p>
                   </div>
                 </div>
 
-                <div className="mb-6">
-                  <span className="text-3xl font-bold">{plan.price}</span>
-                  <span className="text-muted-foreground text-sm ml-1">{planT.period}</span>
+                <div className="mb-1">
+                  <span className="text-2xl font-bold">{pack.price}</span>
                 </div>
+                <div className="text-xs text-accent font-semibold mb-4">{pack.credits} crediti · {getCostPerRender(pack.credits)}</div>
 
-                <ul className="space-y-2.5 flex-1 mb-6">
-                  {planT.features.map(f => (
-                    <li key={f} className="flex items-start gap-2 text-sm">
-                      <Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                <ul className="space-y-1.5 flex-1 mb-4">
+                  {labels.features.map(f => (
+                    <li key={f} className="flex items-start gap-1.5 text-xs">
+                      <Check className="w-3.5 h-3.5 text-green-500 mt-0.5 shrink-0" />
                       {f}
                     </li>
                   ))}
                 </ul>
 
                 <Button
-                  onClick={() => handleCheckout(plan.id)}
-                  disabled={!!loading || subscription?.status === 'active'}
-                  className={`w-full ${plan.highlight ? 'bg-accent hover:bg-accent/90 text-accent-foreground' : ''}`}
-                  variant={plan.highlight ? 'default' : 'outline'}
+                  onClick={() => handleCheckout(pack.id)}
+                  disabled={!!loading}
+                  className={`w-full text-sm ${pack.highlight ? 'bg-accent hover:bg-accent/90 text-accent-foreground' : ''}`}
+                  variant={pack.highlight ? 'default' : 'outline'}
                 >
-                  {loading === plan.id ? (
+                  {loading === pack.id ? (
                     <div className="w-4 h-4 border-2 border-current/30 border-t-current rounded-full animate-spin" />
-                  ) : subscription?.status === 'active' ? t('subscribed') : t('subscribeNow')}
+                  ) : (lang === 'it' ? 'Acquista' : 'Buy now')}
                 </Button>
               </motion.div>
             );

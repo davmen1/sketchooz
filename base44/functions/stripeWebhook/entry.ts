@@ -19,63 +19,39 @@ Deno.serve(async (req) => {
 
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
-    const { user_email, plan } = session.metadata || {};
-    if (!user_email || !plan) return new Response('OK');
-
-    // One-time starter pack
-    if (plan === 'starter_pack') {
-      const stripeSessionId = session.id;
-      // Idempotency: skip if already created
-      const existing = await base44.asServiceRole.entities.RenderPack.filter({ stripe_session_id: stripeSessionId });
-      if (existing.length === 0) {
-        await base44.asServiceRole.entities.RenderPack.create({
-          user_email,
-          renders_remaining: 3,
-          stripe_session_id: stripeSessionId,
-        });
-        console.log(`Starter pack created for ${user_email}`);
-      }
+    const { user_email, pack, credits } = session.metadata || {};
+    if (!user_email || !pack || !credits) {
+      console.log('Missing metadata, skipping:', session.metadata);
       return new Response('OK');
     }
 
-    const subscriptionId = session.subscription;
-    const customerId = session.customer;
-
-    let periodEnd = null;
-    if (subscriptionId) {
-      const sub = await stripe.subscriptions.retrieve(subscriptionId);
-      periodEnd = new Date(sub.current_period_end * 1000).toISOString();
+    const stripeSessionId = session.id;
+    // Idempotency check
+    const existing = await base44.asServiceRole.entities.RenderPack.filter({ stripe_session_id: stripeSessionId });
+    if (existing.length > 0) {
+      console.log('Already processed session:', stripeSessionId);
+      return new Response('OK');
     }
 
-    // Upsert: delete existing then create fresh
-    const existingSubs = await base44.asServiceRole.entities.Subscription.filter({ user_email });
-    for (const s of existingSubs) {
-      await base44.asServiceRole.entities.Subscription.delete(s.id);
-    }
-
-    await base44.asServiceRole.entities.Subscription.create({
-      user_email,
-      stripe_customer_id: customerId,
-      stripe_subscription_id: subscriptionId,
-      plan,
-      status: 'active',
-      current_period_end: periodEnd,
-    });
-
-    console.log(`Subscription created for ${user_email} - plan: ${plan}`);
-  }
-
-  if (event.type === 'customer.subscription.deleted' || event.type === 'customer.subscription.updated') {
-    const sub = event.data.object;
-    const customerId = sub.customer;
-    const existing = await base44.asServiceRole.entities.Subscription.filter({ stripe_customer_id: customerId });
-    for (const s of existing) {
-      await base44.asServiceRole.entities.Subscription.update(s.id, {
-        status: sub.status,
-        current_period_end: new Date(sub.current_period_end * 1000).toISOString(),
+    // Find existing pack for user and add credits, or create new
+    const userPacks = await base44.asServiceRole.entities.RenderPack.filter({ user_email });
+    if (userPacks.length > 0) {
+      const existingPack = userPacks[0];
+      await base44.asServiceRole.entities.RenderPack.update(existingPack.id, {
+        credits_remaining: (existingPack.credits_remaining || 0) + parseInt(credits),
+        stripe_session_id: stripeSessionId,
+        pack_type: pack,
       });
+      console.log(`Added ${credits} credits to ${user_email}, total: ${(existingPack.credits_remaining || 0) + parseInt(credits)}`);
+    } else {
+      await base44.asServiceRole.entities.RenderPack.create({
+        user_email,
+        credits_remaining: parseInt(credits),
+        stripe_session_id: stripeSessionId,
+        pack_type: pack,
+      });
+      console.log(`Created pack for ${user_email} with ${credits} credits`);
     }
-    console.log(`Subscription updated for customer ${customerId}: ${sub.status}`);
   }
 
   return new Response('OK');
