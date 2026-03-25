@@ -58,6 +58,7 @@ const isIOSWebView = () => {
 export default function Pricing() {
   const [loading, setLoading] = useState(null);
   const [iosWebView] = useState(isIOSWebView);
+  const [creditsRemaining, setCreditsRemaining] = useState(null);
   const { t, lang } = useLang();
 
   useEffect(() => {
