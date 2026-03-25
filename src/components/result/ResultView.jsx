@@ -56,9 +56,8 @@ export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeV
 
     setVectorLoading(true);
     const response = await base44.functions.invoke('vectorizeImage', { imageUrl: resultUrl });
-    // The function returns SVG text — extract it
-    const svgContent = response.data;
-    if (!svgContent || typeof svgContent !== 'string' || !svgContent.includes('<svg')) {
+    const svgContent = response.data?.svg;
+    if (!svgContent || !svgContent.includes('<svg')) {
       alert(t('vectorError') || 'Vector generation failed. Please try again.');
       setVectorLoading(false);
       return;

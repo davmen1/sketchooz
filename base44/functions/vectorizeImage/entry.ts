@@ -84,13 +84,7 @@ Deno.serve(async (req) => {
 
     console.log('Line art SVG generated, length:', svgClean.length);
 
-    return new Response(svgClean, {
-      status: 200,
-      headers: {
-        'Content-Type': 'image/svg+xml',
-        'Content-Disposition': 'attachment; filename="sketch-lineart.svg"',
-      },
-    });
+    return Response.json({ svg: svgClean });
   } catch (error) {
     console.error('Vectorization error:', error.message, error.stack);
     return Response.json({ error: error.message }, { status: 500 });
