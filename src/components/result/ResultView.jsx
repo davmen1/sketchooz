@@ -11,7 +11,6 @@ export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeV
   const [comparePosition, setComparePosition] = useState(50);
   const [viewMode, setViewMode] = useState('result'); // 'result' | 'compare'
   const [correction, setCorrection] = useState('');
-  const [checkingOut, setCheckingOut] = useState(false);
 
   const { t } = useLang();
 
@@ -26,27 +25,10 @@ export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeV
     URL.revokeObjectURL(objectUrl);
   };
 
-  const handleCorrectionCheckout = async () => {
+  const handleApplyCorrection = () => {
     if (!correction.trim()) return;
-    if (window.self !== window.top) {
-      alert(t('iframeAlert'));
-      return;
-    }
-    setCheckingOut(true);
-    try {
-      // Store correction text in sessionStorage so we can restore it after redirect
-      sessionStorage.setItem('pending_correction', correction.trim());
-      const currentUrl = window.location.href;
-      const res = await base44.functions.invoke('createCorrectionCheckout', {
-        successUrl: currentUrl + (currentUrl.includes('?') ? '&' : '?') + 'correction_paid=1',
-        cancelUrl: currentUrl,
-      });
-      if (res.data?.url) {
-        window.location.href = res.data.url;
-      }
-    } finally {
-      setCheckingOut(false);
-    }
+    onRegenerate(correction.trim());
+    setCorrection('');
   };
 
 
@@ -168,7 +150,7 @@ export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeV
         <div className="rounded-2xl border border-border bg-card p-4 space-y-3">
           <div className="flex items-center justify-between">
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t('correctionsLabel')}</p>
-            <span className="text-[10px] font-semibold text-accent bg-accent/10 px-2 py-0.5 rounded-full">€0,99</span>
+            <span className="text-[10px] font-semibold text-accent bg-accent/10 px-2 py-0.5 rounded-full">3 crediti</span>
           </div>
           <textarea
             value={correction}
@@ -178,21 +160,14 @@ export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeV
             className="w-full text-sm rounded-xl border border-border bg-background px-3 py-2 resize-none focus:outline-none focus:ring-1 focus:ring-ring placeholder:text-muted-foreground/50"
           />
           <Button
-            disabled={!correction.trim() || checkingOut}
-            onClick={handleCorrectionCheckout}
+            disabled={!correction.trim()}
+            onClick={handleApplyCorrection}
             className="w-full bg-accent hover:bg-accent/90 text-accent-foreground rounded-xl"
           >
-            {checkingOut ? (
-              <div className="flex items-center gap-2">
-                <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                {t('generating')}
-              </div>
-            ) : (
-              <div className="flex items-center gap-2">
-                <RefreshCw className="w-3.5 h-3.5" />
-                {t('correctionsApply')} — €0,99
-              </div>
-            )}
+            <div className="flex items-center gap-2">
+              <RefreshCw className="w-3.5 h-3.5" />
+              {t('correctionsApply')}
+            </div>
           </Button>
           <p className="text-[10px] text-muted-foreground text-center">{t('correctionsNote')}</p>
         </div>

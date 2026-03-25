@@ -54,7 +54,7 @@ export const translations = {
     correctionsLabel: 'Correggi il Design',
     correctionsPlaceholder: 'Es: rendi il prodotto più rotondo, aggiungi una maniglia sul lato...',
     correctionsApply: 'Applica correzione',
-    correctionsNote: 'Pagamento sicuro via Stripe. Il render verrà rigenerato con le tue istruzioni.',
+    correctionsNote: 'Verranno scalati 3 crediti dal tuo saldo. Il render verrà rigenerato con le tue istruzioni.',
     correctionsLabel: 'Correzioni',
     correctionsPlaceholder: 'Es: rendi i bordi più netti, usa toni più caldi...',
     // Tabs
@@ -117,7 +117,7 @@ export const translations = {
     correctionsLabel: 'Correct the Design',
     correctionsPlaceholder: 'E.g. make the product rounder, add a handle on the side...',
     correctionsApply: 'Apply correction',
-    correctionsNote: 'Secure payment via Stripe. The render will be regenerated with your instructions.',
+    correctionsNote: '3 credits will be deducted. The render will be regenerated with your instructions.'
     correctionsLabel: 'Corrections',
     correctionsPlaceholder: 'E.g. sharper edges, warmer tones, more detail on handles...',
     // Tabs

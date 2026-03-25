@@ -171,24 +171,11 @@ export default function Home() {
   const [promoRendersUsed, setPromoRendersUsed] = useState(() =>
     parseInt(localStorage.getItem('promo_renders_used') || '0', 10)
   );
-  const [pendingCorrection, setPendingCorrection] = useState(null);
+
 
   const getTodayKey = () => new Date().toISOString().slice(0, 10);
 
-  // Handle post-correction-payment redirect
-  React.useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('correction_paid') === '1') {
-      const saved = sessionStorage.getItem('pending_correction');
-      sessionStorage.removeItem('pending_correction');
-      // Clean URL
-      const clean = window.location.pathname;
-      window.history.replaceState({}, '', clean);
-      if (saved && imageUrl) {
-        setPendingCorrection(saved);
-      }
-    }
-  }, []);
+
 
   const PROMO_EXPIRY = new Date('2026-04-23T23:59:59Z');
   const hasPromo = () => {
@@ -232,13 +219,7 @@ export default function Home() {
     return { allowed: false, watermark: true };
   };
 
-  // After paid correction redirect, trigger regen
-  useEffect(() => {
-    if (pendingCorrection && imageUrl && !isGenerating) {
-      handleRegenerate(pendingCorrection);
-      setPendingCorrection(null);
-    }
-  }, [pendingCorrection, imageUrl]);
+
 
   const generateMutation = useMutation({
     mutationFn: async (correctionNote) => {
