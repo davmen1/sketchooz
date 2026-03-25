@@ -37,9 +37,8 @@ Deno.serve(async (req) => {
     // 2. Boost contrast strongly to separate lines from fills
     image.contrast(0.6);
 
-    // 3. Threshold: only very dark pixels (edges/lines) stay black, rest white
-    // max: 80 means pixels with brightness < 80 → black, rest → white
-    image.threshold({ max: 80 });
+    // 3. Threshold: pixels below midpoint → black (lines), rest → white
+    image.threshold({ max: 128 });
 
     // (lines = black, background/fills = white — coloring book style)
 
@@ -77,7 +76,11 @@ Deno.serve(async (req) => {
     }
 
     // Remove white background paths so SVG has transparent bg + black lines only
-    const svgClean = svgRaw.replace(/<path fill="rgb\(25[0-9],25[0-9],25[0-9]\)"[^>]*\/>/gs, '');
+    // Remove any near-white paths (all channels >= 220)
+    const svgClean = svgRaw.replace(/<path\b[^>]*fill="rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)"[^>]*\/>/gs, (match, r, g, b) => {
+      return (parseInt(r) >= 220 && parseInt(g) >= 220 && parseInt(b) >= 220) ? '' : match;
+    });
+    console.log('SVG clean length:', svgClean.length, '| raw paths removed:', (svgRaw.match(/<path/g)||[]).length - (svgClean.match(/<path/g)||[]).length);
 
     console.log('Line art SVG generated, length:', svgClean.length);
 
