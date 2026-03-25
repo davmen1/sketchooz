@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import BottomTabBar from './BottomTabBar';
+import SupportAgent from './SupportAgent';
 import Home from '../pages/Home';
 import Pricing from '../pages/Pricing';
 import Settings from '../pages/Settings';
@@ -78,6 +79,7 @@ export default function AppLayout() {
         );
       })}
       <BottomTabBar />
+      <SupportAgent />
     </div>
   );
 }
