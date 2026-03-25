@@ -292,28 +292,6 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
         />
       </div>
 
-      {/* Metal Palette Presets */}
-      <div className="space-y-2">
-        <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Metal Palette</Label>
-        <div className="flex flex-wrap gap-1.5">
-          {METAL_PALETTES.map((m) => {
-            const isSelected = JSON.stringify(settings.pantoneColors) === JSON.stringify(m.colors);
-            return (
-              <button
-                key={m.label}
-                onClick={() => update('pantoneColors', m.colors)}
-                className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all border ${
-                  isSelected
-                    ? 'bg-foreground text-background border-foreground'
-                    : 'bg-card text-muted-foreground border-border hover:border-muted-foreground/50 hover:text-foreground'
-                }`}
-              >
-                {m.label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
 
       {/* Suggest Palette */}
       <SuggestPalette
