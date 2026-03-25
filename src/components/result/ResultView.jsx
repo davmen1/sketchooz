@@ -126,12 +126,7 @@ export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeV
             )}
             {!vectorLoading && t('vectorDownload')}
           </Button>
-          {showRasterDownload && (
-            <Button size="sm" onClick={handleDownload} className="bg-accent hover:bg-accent/90 text-accent-foreground">
-              <Download className="w-3.5 h-3.5 mr-1.5" />
-              {t('download')}
-            </Button>
-          )}
+
         </div>
       </div>
 
