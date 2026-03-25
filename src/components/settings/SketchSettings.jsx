@@ -271,6 +271,18 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
         />
       </div>
 
+      {/* BW for Raster toggle */}
+      <div className="flex items-center justify-between">
+        <div>
+          <Label className="text-xs font-semibold">BW for Raster</Label>
+          <p className="text-[10px] text-muted-foreground mt-0.5">Generate in black & white — enables raster PNG download</p>
+        </div>
+        <Switch
+          checked={!!settings.bwForRaster}
+          onCheckedChange={(v) => update('bwForRaster', v)}
+        />
+      </div>
+
       {/* Suggest Palette */}
       <SuggestPalette
         imageUrl={imageUrl}

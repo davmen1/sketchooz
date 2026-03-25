@@ -26,6 +26,7 @@ const DEFAULT_SETTINGS = {
   finishing: 'none',
   textures: [],
   bgColor: { type: 'preset', value: 'white' },
+  bwForRaster: false,
 };
 
 const STYLE_LABELS = {
@@ -69,7 +70,9 @@ const SURFACE_LABELS = {
 };
 
 function buildPrompt(settings, productDescription) {
-  const colorPart = settings.pantoneColors.length > 0
+  const colorPart = settings.bwForRaster
+    ? 'CRITICAL: Render in pure black and white ONLY — no color, no tints, no grays other than pure black lines on white background. This is a coloring book / line art style output.'
+    : settings.pantoneColors.length > 0
     ? `The color palette must use strictly these Pantone colors: ${settings.pantoneColors.map(c => `PANTONE ${c}`).join(', ')}.`
     : 'Render in monochromatic black, white, and cool grays only.';
 
@@ -164,6 +167,7 @@ export default function Home() {
   const [genPhase, setGenPhase] = useState(null); // 'analyzing' | 'generating'
   const [needsWatermark, setNeedsWatermark] = useState(false);
   const [watermarkedUrl, setWatermarkedUrl] = useState(null);
+  const [resultIsBW, setResultIsBW] = useState(false);
   const [promoRendersUsed, setPromoRendersUsed] = useState(() =>
     parseInt(localStorage.getItem('promo_renders_used') || '0', 10)
   );
@@ -224,9 +228,8 @@ export default function Home() {
     }
     setNeedsWatermark(watermark);
     setWatermarkedUrl(null);
+    setResultIsBW(settings.bwForRaster);
     setIsGenerating(true);
-    setGenPhase('analyzing');
-    setResultUrl(null);
 
     // Step 1: Analyze the image to get a precise product description
     let productDescription = '';
@@ -264,6 +267,7 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
   const handleReset = () => {
     setImageUrl(null);
     setResultUrl(null);
+    setResultIsBW(false);
     setSettings(DEFAULT_SETTINGS);
   };
 
@@ -406,6 +410,7 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
                       resultUrl={needsWatermark ? (watermarkedUrl || resultUrl) : resultUrl}
                       hasWatermark={needsWatermark}
                       freeVector={hasPromo()}
+                      showRasterDownload={resultIsBW}
                     />
                   </>
                 )}

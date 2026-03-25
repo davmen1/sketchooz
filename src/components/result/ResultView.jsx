@@ -7,7 +7,7 @@ import { useLang } from '@/lib/LangContext';
 import { Slider } from '@/components/ui/slider';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 
-export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeVector }) {
+export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeVector, showRasterDownload }) {
   const [comparePosition, setComparePosition] = useState(50);
   const [viewMode, setViewMode] = useState('result'); // 'result' | 'compare'
 
@@ -127,10 +127,12 @@ export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeV
             )}
             {!vectorLoading && t('vectorDownload')}
           </Button>
-          <Button size="sm" onClick={handleDownload} className="bg-accent hover:bg-accent/90 text-accent-foreground">
-            <Download className="w-3.5 h-3.5 mr-1.5" />
-            {t('download')}
-          </Button>
+          {showRasterDownload && (
+            <Button size="sm" onClick={handleDownload} className="bg-accent hover:bg-accent/90 text-accent-foreground">
+              <Download className="w-3.5 h-3.5 mr-1.5" />
+              {t('download')}
+            </Button>
+          )}
         </div>
       </div>
 
