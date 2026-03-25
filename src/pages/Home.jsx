@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -171,8 +171,24 @@ export default function Home() {
   const [promoRendersUsed, setPromoRendersUsed] = useState(() =>
     parseInt(localStorage.getItem('promo_renders_used') || '0', 10)
   );
+  const [pendingCorrection, setPendingCorrection] = useState(null);
 
   const getTodayKey = () => new Date().toISOString().slice(0, 10);
+
+  // Handle post-correction-payment redirect
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('correction_paid') === '1') {
+      const saved = sessionStorage.getItem('pending_correction');
+      sessionStorage.removeItem('pending_correction');
+      // Clean URL
+      const clean = window.location.pathname;
+      window.history.replaceState({}, '', clean);
+      if (saved && imageUrl) {
+        setPendingCorrection(saved);
+      }
+    }
+  }, []);
 
   const PROMO_EXPIRY = new Date('2026-04-23T23:59:59Z');
   const hasPromo = () => {
@@ -219,10 +235,16 @@ export default function Home() {
     return { allowed: false, watermark: true };
   };
 
-  const [correctionNote, setCorrectionNote] = useState(null);
+  // After paid correction redirect, trigger regen
+  useEffect(() => {
+    if (pendingCorrection && imageUrl && !isGenerating) {
+      handleRegenerate(pendingCorrection);
+      setPendingCorrection(null);
+    }
+  }, [pendingCorrection, imageUrl]);
 
   const generateMutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (correctionNote) => {
       setGenPhase('analyzing');
       const analysis = await base44.integrations.Core.InvokeLLM({
         prompt: `You are an industrial designer doing a precise visual analysis for sketch reproduction. Study this product image and describe it with maximum fidelity for a sketch artist who must reproduce it WITHOUT any creative interpretation.
@@ -265,7 +287,6 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
     onSuccess: (url) => {
       setResultUrl(url);
       setGenPhase(null);
-      setCorrectionNote(null);
     },
     onError: (err) => {
       setGenPhase(null);
@@ -277,14 +298,12 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
 
   const handleGenerate = () => {
     if (!imageUrl) return;
-    setCorrectionNote(null);
-    generateMutation.mutate();
+    generateMutation.mutate(null);
   };
 
   const handleRegenerate = (note) => {
     if (!imageUrl) return;
-    setCorrectionNote(note);
-    generateMutation.mutate();
+    generateMutation.mutate(note);
   };
 
   const handleReset = () => {
