@@ -63,6 +63,15 @@ const TEXTURES = [
   { value: 'metal', label: 'Metal' },
   { value: 'carbon', label: 'Carbon' },
   { value: 'ceramic', label: 'Ceramic' },
+  { value: 'glass', label: 'Glass' },
+];
+
+const METAL_PALETTES = [
+  { label: 'Silver', colors: ['877C', 'Cool Gray 11C'] },
+  { label: 'Gold', colors: ['871C', '1235C'] },
+  { label: 'Bronze', colors: ['876C', '7519C'] },
+  { label: 'Titanium', colors: ['Cool Gray 9C', '432C'] },
+  { label: 'Chrome', colors: ['877C', 'Cool Gray 1C'] },
 ];
 
 function OptionButton({ label, selected, onClick }) {
@@ -281,6 +290,29 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
           checked={!!settings.bwForRaster}
           onCheckedChange={(v) => update('bwForRaster', v)}
         />
+      </div>
+
+      {/* Metal Palette Presets */}
+      <div className="space-y-2">
+        <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Metal Palette</Label>
+        <div className="flex flex-wrap gap-1.5">
+          {METAL_PALETTES.map((m) => {
+            const isSelected = JSON.stringify(settings.pantoneColors) === JSON.stringify(m.colors);
+            return (
+              <button
+                key={m.label}
+                onClick={() => update('pantoneColors', m.colors)}
+                className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all border ${
+                  isSelected
+                    ? 'bg-foreground text-background border-foreground'
+                    : 'bg-card text-muted-foreground border-border hover:border-muted-foreground/50 hover:text-foreground'
+                }`}
+              >
+                {m.label}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Suggest Palette */}

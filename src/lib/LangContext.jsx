@@ -51,6 +51,8 @@ export const translations = {
     promoInvalid: '❌ Codice promo non valido.',
     promoPrompt: 'Inserisci il codice promo:',
     promoLink: 'Hai un codice promo?',
+    correctionsLabel: 'Correzioni',
+    correctionsPlaceholder: 'Es: rendi i bordi più netti, usa toni più caldi...',
     // Tabs
     tabHome: 'Home',
     tabPlans: 'Piani',
@@ -124,6 +126,8 @@ export const translations = {
     promoInvalid: '❌ Invalid promo code.',
     promoPrompt: 'Enter promo code:',
     promoLink: 'Have a promo code?',
+    correctionsLabel: 'Corrections',
+    correctionsPlaceholder: 'E.g. sharper edges, warmer tones, more detail on handles...',
     // Tabs
     tabHome: 'Home',
     tabPlans: 'Plans',

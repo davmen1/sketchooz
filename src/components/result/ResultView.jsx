@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeftRight, Maximize2, Download } from 'lucide-react';
+import { ArrowLeftRight, Maximize2, Download, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 import { useLang } from '@/lib/LangContext';
 import { Slider } from '@/components/ui/slider';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 
-export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeVector, showRasterDownload }) {
+export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeVector, showRasterDownload, onRegenerate }) {
   const [comparePosition, setComparePosition] = useState(50);
   const [viewMode, setViewMode] = useState('result'); // 'result' | 'compare'
 
   const { t } = useLang();
+
+  const [correction, setCorrection] = useState('');
 
   const handleDownload = async () => {
     const res = await fetch(resultUrl);
@@ -134,6 +136,30 @@ export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeV
           <div className="flex justify-between mt-1">
             <span className="text-xs text-muted-foreground">{t('original')}</span>
             <span className="text-xs text-muted-foreground">{t('sketch')}</span>
+          </div>
+        </div>
+      )}
+
+      {/* Correction box */}
+      {onRegenerate && (
+        <div className="space-y-2">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t('correctionsLabel')}</p>
+          <div className="flex gap-2">
+            <textarea
+              value={correction}
+              onChange={(e) => setCorrection(e.target.value)}
+              placeholder={t('correctionsPlaceholder')}
+              rows={2}
+              className="flex-1 text-sm rounded-xl border border-border bg-card px-3 py-2 resize-none focus:outline-none focus:ring-1 focus:ring-ring placeholder:text-muted-foreground/50"
+            />
+            <Button
+              size="sm"
+              disabled={!correction.trim()}
+              onClick={() => { onRegenerate(correction.trim()); setCorrection(''); }}
+              className="self-end bg-accent hover:bg-accent/90 text-accent-foreground rounded-xl px-3"
+            >
+              <RefreshCw className="w-3.5 h-3.5" />
+            </Button>
           </div>
         </div>
       )}

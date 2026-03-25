@@ -219,6 +219,8 @@ export default function Home() {
     return { allowed: false, watermark: true };
   };
 
+  const [correctionNote, setCorrectionNote] = useState(null);
+
   const generateMutation = useMutation({
     mutationFn: async () => {
       setGenPhase('analyzing');
@@ -239,10 +241,14 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
         file_urls: [imageUrl],
       });
       setGenPhase('generating');
-      const prompt = buildPrompt(settings, analysis);
+      const basePrompt = buildPrompt(settings, analysis);
+      const prompt = correctionNote
+        ? `${basePrompt}\n\nUSER CORRECTION (apply this to the new render): ${correctionNote}`
+        : basePrompt;
+      const refImages = correctionNote && resultUrl ? [imageUrl, resultUrl] : [imageUrl];
       const { url } = await base44.integrations.Core.GenerateImage({
         prompt,
-        existing_image_urls: [imageUrl],
+        existing_image_urls: refImages,
       });
       return url;
     },
@@ -259,6 +265,7 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
     onSuccess: (url) => {
       setResultUrl(url);
       setGenPhase(null);
+      setCorrectionNote(null);
     },
     onError: (err) => {
       setGenPhase(null);
@@ -270,6 +277,13 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
 
   const handleGenerate = () => {
     if (!imageUrl) return;
+    setCorrectionNote(null);
+    generateMutation.mutate();
+  };
+
+  const handleRegenerate = (note) => {
+    if (!imageUrl) return;
+    setCorrectionNote(note);
     generateMutation.mutate();
   };
 
@@ -420,6 +434,7 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
                       hasWatermark={needsWatermark}
                       freeVector={hasPromo()}
                       showRasterDownload={resultIsBW}
+                      onRegenerate={handleRegenerate}
 
                     />
                   </>
