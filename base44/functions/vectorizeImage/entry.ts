@@ -75,16 +75,9 @@ Deno.serve(async (req) => {
       throw new Error('SVG generation failed — empty output');
     }
 
-    // Remove white background paths so SVG has transparent bg + black lines only
-    // Remove any near-white paths (all channels >= 220)
-    const svgClean = svgRaw.replace(/<path\b[^>]*fill="rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)"[^>]*\/>/gs, (match, r, g, b) => {
-      return (parseInt(r) >= 220 && parseInt(g) >= 220 && parseInt(b) >= 220) ? '' : match;
-    });
-    console.log('SVG clean length:', svgClean.length, '| raw paths removed:', (svgRaw.match(/<path/g)||[]).length - (svgClean.match(/<path/g)||[]).length);
+    console.log('SVG generated, length:', svgRaw.length, '| paths:', (svgRaw.match(/<path/g)||[]).length);
 
-    console.log('Line art SVG generated, length:', svgClean.length);
-
-    return Response.json({ svg: svgClean });
+    return Response.json({ svg: svgRaw });
   } catch (error) {
     console.error('Vectorization error:', error.message, error.stack);
     return Response.json({ error: error.message }, { status: 500 });
