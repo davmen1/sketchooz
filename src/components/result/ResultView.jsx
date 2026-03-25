@@ -14,11 +14,14 @@ export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeV
   const { t } = useLang();
 
   const handleDownload = async () => {
+    const res = await fetch(resultUrl);
+    const blob = await res.blob();
+    const objectUrl = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    link.href = resultUrl;
-    link.download = 'industrial-design-sketch.png';
-    link.target = '_blank';
+    link.href = objectUrl;
+    link.download = 'sketchforge-render.png';
     link.click();
+    URL.revokeObjectURL(objectUrl);
   };
 
 
