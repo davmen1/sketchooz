@@ -271,7 +271,7 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
       setNeedsWatermark(watermark);
       setWatermarkedUrl(null);
       setResultIsBW(settings.bwForRaster);
-      toast.info('⏳ A few seconds are required to generate your sketch…', { duration: 4000 });
+      toast.info(t('generatingToast'), { duration: 4000 });
     },
     onSuccess: (url) => {
       setResultUrl(url);
