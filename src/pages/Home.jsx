@@ -12,6 +12,7 @@ import { useLang } from '@/lib/LangContext';
 import SketchSettings from '@/components/settings/SketchSettings';
 import MobileHeader from '@/components/MobileHeader';
 import PromoDialog from '@/components/PromoDialog';
+import PullToRefresh from '@/components/PullToRefresh';
 import InstructionsPopup from '@/components/InstructionsPopup';
 import ResultView from '@/components/result/ResultView';
 import GeneratingOverlay from '@/components/result/GeneratingOverlay';
