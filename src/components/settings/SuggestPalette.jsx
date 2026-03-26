@@ -15,7 +15,13 @@ export default function SuggestPalette({ imageUrl, onSuggest }) {
     setSuccess(false);
     try {
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are an industrial design color expert. Analyze this product image and extract ALL major visible colors (reds, blues, greens, neutrals, metallics, etc.) and suggest 3-5 Pantone colors that accurately represent them while forming a cohesive palette. Rules: (1) MUST include all dominant visible colors in the product (if you see red, include a red; if you see blue, include a blue). (2) Colors must work together as a professional design system. (3) Use only exact Pantone color names from Pantone Solid Coated books (e.g. "485 C", "Cool Gray 11C", "7699 C"). (4) Prioritize color accuracy over aesthetic harmony. (5) Return ONLY the Pantone color names as a JSON array of strings, nothing else.`,
+        prompt: `You are an industrial design color expert. Analyze this product image carefully:
+1. First, identify EVERY distinct visible color hue in the product (reds, oranges, yellows, greens, blues, purples, neutrals, metallics, etc.).
+2. For EACH color you identified, map it to the closest matching Pantone Solid Coated color name.
+3. Do NOT skip colors. If red is visible anywhere, include a red Pantone. If blue is visible, include a blue Pantone.
+4. Return 3-5 Pantone colors that cover all major hues present in the product.
+5. Use ONLY exact Pantone color names (e.g. "485 C", "Cool Gray 11C", "200 C", "3005 C").
+6. Return ONLY the Pantone color names as a JSON array of strings, nothing else.`,
         file_urls: [imageUrl],
         add_context_from_internet: false,
         response_json_schema: {
