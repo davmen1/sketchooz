@@ -72,22 +72,26 @@ export default function Pricing() {
   }, []);
 
   const handleCheckout = async (packId) => {
-    if (iosWebView) {
-      window.open('https://www.sketch-forge.com/pricing', '_blank');
-      return;
-    }
     if (window.self !== window.top) {
       toast.error(t('iframeAlert'));
       return;
     }
     setLoading(packId);
-    const currentUrl = window.location.href;
+    const successUrl = 'https://www.sketch-forge.com/pricing?success=1';
+    const cancelUrl = 'https://www.sketch-forge.com/pricing';
     const res = await base44.functions.invoke('createCheckout', {
       pack: packId,
-      successUrl: currentUrl + (currentUrl.includes('?') ? '&' : '?') + 'success=1',
-      cancelUrl: currentUrl,
+      successUrl,
+      cancelUrl,
     });
-    if (res.data?.url) window.location.href = res.data.url;
+    if (res.data?.url) {
+      // In iOS WebView, open Stripe checkout in Safari (external browser)
+      if (iosWebView) {
+        window.open(res.data.url, '_blank');
+      } else {
+        window.location.href = res.data.url;
+      }
+    }
     setLoading(null);
   };
 
