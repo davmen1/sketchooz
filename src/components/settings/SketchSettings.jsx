@@ -265,8 +265,8 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
           <p className="text-[10px] text-muted-foreground mt-0.5">{t('markerBgNote')}</p>
         </div>
         <Switch
-          checked={settings.finishing === 'marker_background'}
-          onCheckedChange={(v) => update('finishing', v ? 'marker_background' : 'none')}
+          checked={!!settings.markerBg}
+          onCheckedChange={(v) => update('markerBg', v)}
           disabled={settings.style === 'bw_lines'}
         />
       </div>
@@ -278,14 +278,14 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
           <p className="text-[10px] text-muted-foreground mt-0.5">{t('splashBgNote')}</p>
         </div>
         <Switch
-          checked={settings.finishing === 'splash_background'}
-          onCheckedChange={(v) => update('finishing', v ? 'splash_background' : 'none')}
+          checked={!!settings.splashBg}
+          onCheckedChange={(v) => update('splashBg', v)}
           disabled={settings.style === 'bw_lines'}
         />
       </div>
 
       {/* Background Color Selector — shown only when Splash BG is enabled */}
-      {settings.finishing === 'splash_background' && (
+      {settings.splashBg && (
         <BackgroundSelector
           selected={settings.bgColor}
           onChange={(val) => update('bgColor', val)}
