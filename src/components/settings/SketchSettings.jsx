@@ -258,34 +258,35 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
         </>
       )}
 
-      {/* Marker Background Toggle */}
-      <div className="flex items-center justify-between">
-        <div>
-          <Label className="text-xs font-semibold flex items-center gap-1.5"><Sparkles className="w-3.5 h-3.5" /> {t('markerBg')}</Label>
-          <p className="text-[10px] text-muted-foreground mt-0.5">{t('markerBgNote')}</p>
+      {/* Background Type: Colorful vs Splash vs None */}
+      {settings.style !== 'bw_lines' && (
+        <div className="space-y-2">
+          <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            <Sparkles className="w-3.5 h-3.5" />
+            {t('background')}
+          </Label>
+          <div className="flex flex-wrap gap-2">
+            <OptionButton
+              label={t('colorful')}
+              selected={settings.backgroundType === 'colorful'}
+              onClick={() => update('backgroundType', 'colorful')}
+            />
+            <OptionButton
+              label={t('splash')}
+              selected={settings.backgroundType === 'splash'}
+              onClick={() => update('backgroundType', 'splash')}
+            />
+            <OptionButton
+              label={t('noBackground')}
+              selected={settings.backgroundType === 'none'}
+              onClick={() => update('backgroundType', 'none')}
+            />
+          </div>
         </div>
-        <Switch
-          checked={!!settings.markerBg}
-          onCheckedChange={(v) => update('markerBg', v)}
-          disabled={settings.style === 'bw_lines'}
-        />
-      </div>
+      )}
 
-      {/* Splash Background Toggle + Color Picker */}
-      <div className="flex items-center justify-between">
-        <div>
-          <Label className="text-xs font-semibold flex items-center gap-1.5"><Sparkles className="w-3.5 h-3.5" /> {t('splashBgColor')}</Label>
-          <p className="text-[10px] text-muted-foreground mt-0.5">{t('splashBgNote')}</p>
-        </div>
-        <Switch
-          checked={!!settings.splashBg}
-          onCheckedChange={(v) => update('splashBg', v)}
-          disabled={settings.style === 'bw_lines'}
-        />
-      </div>
-
-      {/* Background Color Selector — shown only when Splash BG is enabled */}
-      {settings.splashBg && (
+      {/* Background Color Selector — shown for Colorful mode */}
+      {settings.backgroundType === 'colorful' && settings.style !== 'bw_lines' && (
         <BackgroundSelector
           selected={settings.bgColor}
           onChange={(val) => update('bgColor', val)}
