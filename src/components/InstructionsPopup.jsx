@@ -17,14 +17,12 @@ const tips = [
 const STORAGE_KEY = 'sketchooz_tips_read';
 
 export default function InstructionsPopup({ onRead }) {
-  const [expanded, setExpanded] = useState(false);
-  const [read, setRead] = useState(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) { setTimeout(() => onRead?.(), 0); }
-    return !!stored;
-  });
+  const alreadyRead = !!localStorage.getItem(STORAGE_KEY);
+  const [expanded, setExpanded] = useState(!alreadyRead);
+  const [read, setRead] = useState(alreadyRead);
 
-  const handleConfirm = () => {
+  const handleConfirm = (v) => {
+    if (!v) return;
     localStorage.setItem(STORAGE_KEY, '1');
     setRead(true);
     setExpanded(false);
@@ -32,23 +30,32 @@ export default function InstructionsPopup({ onRead }) {
   };
 
   return (
-    <div className={`rounded-xl border text-xs transition-colors ${read ? 'border-accent/30 bg-accent/5' : 'border-border bg-card'}`}>
-      <button
-        onClick={() => setExpanded(v => !v)}
-        className="w-full flex items-center justify-between px-3 py-2 gap-2 text-left"
-      >
-        <div className="flex items-center gap-1.5">
+    <div className={`rounded-xl border text-xs transition-colors ${read ? 'border-accent/30 bg-accent/5' : 'border-amber-300 bg-amber-50/60'}`}>
+      {/* Header row: label + switch */}
+      <div className="flex items-center justify-between px-3 py-2 gap-3">
+        <button
+          onClick={() => setExpanded(v => !v)}
+          className="flex items-center gap-1.5 flex-1 text-left"
+        >
           <span>{read ? '✅' : '📋'}</span>
-          <span className={`font-medium ${read ? 'text-accent' : 'text-muted-foreground'}`}>
-            {read ? 'Tips already read' : 'Tips for best results'}
+          <span className={`font-medium ${read ? 'text-accent' : 'text-amber-700'}`}>
+            {read ? 'Tips for best results' : 'Read tips for best results'}
           </span>
-        </div>
-        {expanded
-          ? <ChevronUp className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-          : <ChevronDown className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-        }
-      </button>
+          {expanded
+            ? <ChevronUp className="w-3 h-3 text-muted-foreground ml-1" />
+            : <ChevronDown className="w-3 h-3 text-muted-foreground ml-1" />
+          }
+        </button>
 
+        {!read && (
+          <div className="flex items-center gap-1.5 shrink-0">
+            <span className="text-muted-foreground text-xs">Done</span>
+            <Switch onCheckedChange={handleConfirm} />
+          </div>
+        )}
+      </div>
+
+      {/* Collapsible tips list */}
       <AnimatePresence initial={false}>
         {expanded && (
           <motion.div
@@ -58,7 +65,7 @@ export default function InstructionsPopup({ onRead }) {
             transition={{ duration: 0.22, ease: 'easeInOut' }}
             className="overflow-hidden"
           >
-            <ul className="px-3 pb-3 space-y-2">
+            <ul className="px-3 pb-3 space-y-2 border-t border-border pt-2">
               {tips.map((tip, i) => (
                 <li key={i} className="flex items-start gap-2">
                   <span className="leading-none mt-0.5">{tip.emoji}</span>
@@ -66,17 +73,6 @@ export default function InstructionsPopup({ onRead }) {
                 </li>
               ))}
             </ul>
-
-            {!read && (
-              <div className="px-3 pb-3 pt-3 border-t border-border flex items-center justify-end">
-                <button
-                  onClick={handleConfirm}
-                  className="flex items-center gap-2 bg-accent text-accent-foreground text-xs font-semibold px-4 py-2 rounded-lg hover:bg-accent/90 transition-colors"
-                >
-                  ✅ I've read it
-                </button>
-              </div>
-            )}
           </motion.div>
         )}
       </AnimatePresence>
