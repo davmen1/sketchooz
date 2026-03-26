@@ -18,7 +18,7 @@ export default function MobileHeader({ title, subtitle, right }) {
         <div className="flex items-center gap-3 min-w-0">
           {!isRoot ? (
             <button
-              onClick={() => navigate('/')}
+              onClick={() => navigate(-1)}
               className="flex items-center justify-center w-11 h-11 -ml-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-colors select-none"
               aria-label="Back"
             >
