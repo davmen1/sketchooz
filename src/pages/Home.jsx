@@ -110,7 +110,7 @@ function buildPrompt(settings, productDescription) {
   };
   const bg = settings.bgColor || { type: 'preset', value: 'white' };
   // When splash not active OR bw_lines style, background is always white
-  const bgColorLabel = (settings.finishing !== 'marker_background' || settings.style === 'bw_lines')
+  const bgColorLabel = (!settings.splashBg || settings.style === 'bw_lines')
     ? 'pure white background'
     : bg.type === 'custom'
       ? `solid custom color background with exact hex value ${bg.hex?.toUpperCase()}, rendered for maximum contrast`
@@ -147,7 +147,7 @@ function buildPrompt(settings, productDescription) {
     return SPLASH_PRESET_LABELS[bg.value] || 'a bold contrasting Pantone color';
   })();
 
-  const finishingPart = settings.finishing === 'marker_background'
+  const finishingPart = settings.markerBg
     ? `FINISHING — MANDATORY: Behind the product, paint a raw loose marker color splash/patch using ${splashColorLabel}, applied in rough irregular strokes like a real Copic marker on paper. The product silhouette must have a very bold black outline (3-4pt) on its outer boundary, plus crisp white highlight lines on key edges and curved surfaces, making the design pop dramatically against the marker backdrop. The rest of the paper/background outside the splash MUST remain pure white. Aesthetic: professional ID marker sketch on white paper with a raw color backdrop, competition-style industrial design presentation.`
     : '';
 
