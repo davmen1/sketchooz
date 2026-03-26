@@ -10,6 +10,7 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 // Add page imports here
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import Home from './pages/Home';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
