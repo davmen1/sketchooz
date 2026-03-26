@@ -272,10 +272,13 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
       </div>
 
       {/* Background Selector — shown only when Marker BG is enabled */}
-      {settings.finishing === 'marker_background' && settings.style !== 'bw_lines' && (
+      {settings.finishing === 'marker_background' && (
         <BackgroundSelector
           selected={settings.bgColor}
           onChange={(val) => update('bgColor', val)}
+          pantoneColors={settings.pantoneColors}
+        />
+      )}
           pantoneColors={settings.pantoneColors}
         />
       )}
