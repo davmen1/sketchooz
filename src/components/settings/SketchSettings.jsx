@@ -244,7 +244,7 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
         )}
       </div>
 
-      {/* Color options & Marker Background — hidden for BW Lines */}
+      {/* Pantone palette & suggestions — hidden for BW Lines */}
       {settings.style !== 'bw_lines' && (
         <>
           <SuggestPalette
@@ -255,6 +255,12 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
             selected={settings.pantoneColors}
             onChange={(colors) => update('pantoneColors', colors)}
           />
+        </>
+      )}
+
+      {/* Marker Background Toggle — always visible (but disabled for BW Lines) */}
+      {settings.style !== 'bw_lines' ? (
+        <>
           <div className="flex items-center justify-between">
             <div>
               <Label className="text-xs font-semibold flex items-center gap-1.5"><Sparkles className="w-3.5 h-3.5" /> {t('splashBgColor')}</Label>
@@ -273,7 +279,7 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
             />
           )}
         </>
-      )}
+      ) : null}
     </div>
   );
 }
