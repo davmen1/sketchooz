@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 import ImageUploader from '@/components/upload/ImageUploader';
 import { useLang } from '@/lib/LangContext';
-import WatermarkCanvas from '@/components/result/WatermarkCanvas';
+
 import SketchSettings from '@/components/settings/SketchSettings';
 import MobileHeader from '@/components/MobileHeader';
 import PromoDialog from '@/components/PromoDialog';
@@ -157,8 +157,7 @@ ${finishingPart}
 BACKGROUND: Use a ${bgColorLabel}. No watermarks, professional presentation quality.`;
 }
 
-const FREE_RENDERS_PER_DAY = 1;
-const FREE_RENDERS_PER_MONTH = 10;
+
 
 export default function Home() {
   const { t } = useLang();
@@ -166,16 +165,12 @@ export default function Home() {
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const [resultUrl, setResultUrl] = useState(null);
   const [genPhase, setGenPhase] = useState(null);
-  const [needsWatermark, setNeedsWatermark] = useState(false);
-  const [watermarkedUrl, setWatermarkedUrl] = useState(null);
-  const [resultIsBW, setResultIsBW] = useState(false);
+
   const [promoRendersUsed, setPromoRendersUsed] = useState(() =>
     parseInt(localStorage.getItem('promo_renders_used') || '0', 10)
   );
   const [promoDialogOpen, setPromoDialogOpen] = useState(false);
   const [tipsRead, setTipsRead] = useState(() => !!localStorage.getItem('sketchooz_tips_read'));
-
-  const getTodayKey = () => new Date().toISOString().slice(0, 10);
 
   const PROMO_EXPIRY = new Date('2026-04-23T23:59:59Z');
   const hasPromo = () => {
@@ -185,40 +180,23 @@ export default function Home() {
 
   const checkAndIncrementUsage = async () => {
     const user = await base44.auth.me();
-    if (user.role === 'admin') return { allowed: true, watermark: false };
+    if (user.role === 'admin') return { allowed: true };
     if (hasPromo()) {
       const used = parseInt(localStorage.getItem('promo_renders_used') || '0', 10);
       if (used < 2) {
         localStorage.setItem('promo_renders_used', String(used + 1));
         setPromoRendersUsed(used + 1);
-        return { allowed: true, watermark: false };
+        return { allowed: true };
       }
-      return { allowed: false, watermark: false };
+      return { allowed: false };
     }
     const packs = await base44.entities.RenderPack.filter({ user_email: user.email });
     const pack = packs.find(p => (p.credits_remaining || 0) >= 3);
     if (pack) {
       await base44.entities.RenderPack.update(pack.id, { credits_remaining: pack.credits_remaining - 3 });
-      return { allowed: true, watermark: false };
+      return { allowed: true };
     }
-    const thisMonth = getTodayKey().slice(0, 7);
-    const allUsages = await base44.entities.RenderUsage.filter({ user_email: user.email });
-    const monthlyTotal = allUsages
-      .filter(u => u.date && u.date.startsWith(thisMonth))
-      .reduce((sum, u) => sum + (u.count || 0), 0);
-    if (monthlyTotal >= FREE_RENDERS_PER_MONTH) return { allowed: false, watermark: true };
-
-    const today = getTodayKey();
-    const usage = allUsages.find(u => u.date === today);
-    if (!usage) {
-      await base44.entities.RenderUsage.create({ user_email: user.email, date: today, count: 1 });
-      return { allowed: true, watermark: true };
-    }
-    if (usage.count < FREE_RENDERS_PER_DAY) {
-      await base44.entities.RenderUsage.update(usage.id, { count: usage.count + 1 });
-      return { allowed: true, watermark: true };
-    }
-    return { allowed: false, watermark: true };
+    return { allowed: false };
   };
 
   const generateMutation = useMutation({
@@ -253,14 +231,11 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
       return url;
     },
     onMutate: async () => {
-      const { allowed, watermark } = await checkAndIncrementUsage();
+      const { allowed } = await checkAndIncrementUsage();
       if (!allowed) {
         toast.error(hasPromo() ? t('promoExhausted') : t('freeLimit'));
         throw new Error('limit_reached');
       }
-      setNeedsWatermark(watermark);
-      setWatermarkedUrl(null);
-      setResultIsBW(settings.bwForRaster);
       toast.info(t('generatingToast'), { duration: 4000 });
     },
     onSuccess: (url) => {
@@ -288,7 +263,6 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
   const handleReset = () => {
     setImageUrl(null);
     setResultUrl(null);
-    setResultIsBW(false);
     setSettings(DEFAULT_SETTINGS);
   };
 
@@ -436,19 +410,13 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
                     {isGenerating && <GeneratingOverlay key="gen" phase={genPhase} />}
                     {resultUrl && !isGenerating && (
                       <>
-                        {needsWatermark && resultUrl && !watermarkedUrl && (
-                          <WatermarkCanvas
-                            imageUrl={resultUrl}
-                            onReady={(url) => setWatermarkedUrl(url)}
-                          />
-                        )}
-                        <ResultView
+                            <ResultView
                           key="result"
                           originalUrl={imageUrl}
-                          resultUrl={needsWatermark ? (watermarkedUrl || resultUrl) : resultUrl}
-                          hasWatermark={needsWatermark}
+                          resultUrl={resultUrl}
+                          hasWatermark={false}
                           freeVector={hasPromo()}
-                          showRasterDownload={resultIsBW}
+                          showRasterDownload={settings.bwForRaster}
                           onRegenerate={handleRegenerate}
                         />
                       </>

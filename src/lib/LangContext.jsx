@@ -40,8 +40,7 @@ export const translations = {
     markerBgNote: 'Splash di marker grezzo dietro il prodotto · bordi bold nero + bianco',
     textureComboNote: 'Combo: {t1} + {t2} — l\'AI distribuirà le texture intelligentemente',
     selected: 'selezionati',
-    freeLimit: 'Limite raggiunto: 1 render gratuito al giorno (max 10/mese). Acquista crediti per continuare.',
-    watermarkBanner: 'Render gratuito — con watermark. Acquista crediti per esportare senza.',
+    freeLimit: 'Crediti esauriti. Acquista un pacchetto per continuare.',
     upgrade: 'Acquista crediti',
     promoActive: 'Promo attiva',
     promoExpiry: 'Scade 23 apr 2026',
@@ -63,7 +62,6 @@ export const translations = {
     // Pricing page
     pricingTitle: 'Crediti',
     pricingSubtitle: 'Pacchetti senza abbonamento',
-    freeTierDesc: '🎨 Piano Gratuito — 1 render gratuito al giorno con filigrana (max 10/mese)',
   },
   en: {
     appSubtitle: 'Industrial Design AI',
@@ -102,8 +100,7 @@ export const translations = {
     markerBgNote: 'Raw marker color splash behind the object · bold black + white boundary lines',
     textureComboNote: 'Combo: {t1} + {t2} — AI will intelligently blend both textures',
     selected: 'selected',
-    freeLimit: 'Limit reached: 1 free render per day (max 10/month). Buy credits to continue.',
-    watermarkBanner: 'Free render — watermarked. Buy credits for clean exports.',
+    freeLimit: 'No credits left. Buy a pack to continue.',
     upgrade: 'Buy credits',
     promoActive: 'Promo active',
     promoExpiry: 'Expires Apr 23 2026',
@@ -125,7 +122,6 @@ export const translations = {
     // Pricing page
     pricingTitle: 'Credits',
     pricingSubtitle: 'No subscription — pay as you go',
-    freeTierDesc: '🎨 Free Plan — 1 free render per day with watermark (max 10/month)',
   },
 };
 

@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
+import CreditCounter from './CreditCounter';
 import { useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import BottomTabBar from './BottomTabBar';
@@ -85,6 +86,11 @@ export default function AppLayout() {
       })}
       {/* Outlet renders matched nested route (null elements — tabs are self-managed) */}
       <Outlet />
+      <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center pointer-events-none" style={{ bottom: 'calc(60px + env(safe-area-inset-bottom) + 8px)' }}>
+        <div className="pointer-events-auto">
+          <CreditCounter />
+        </div>
+      </div>
       <BottomTabBar />
       <SupportAgent />
     </div>

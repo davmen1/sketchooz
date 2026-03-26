@@ -127,11 +127,6 @@ export default function Pricing() {
           </div>
         )}
 
-        {/* Free tier + credits info */}
-        <div className="p-4 bg-muted rounded-xl text-sm text-muted-foreground text-center">
-          {t('freeTierDesc')}
-        </div>
-
         {creditsRemaining !== null && creditsRemaining > 0 && (
           <div className="p-4 bg-green-50 border border-green-200 rounded-xl text-sm text-green-800 text-center">
             ✅ {lang === 'it' ? 'Crediti disponibili' : 'Available credits'}: <strong>{creditsRemaining}</strong>
