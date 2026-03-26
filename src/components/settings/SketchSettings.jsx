@@ -258,10 +258,10 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
         </>
       )}
 
-      {/* Marker Background Toggle — always visible */}
+      {/* Marker Background Toggle */}
       <div className="flex items-center justify-between">
         <div>
-          <Label className="text-xs font-semibold flex items-center gap-1.5"><Sparkles className="w-3.5 h-3.5" /> {t('splashBgColor')}</Label>
+          <Label className="text-xs font-semibold flex items-center gap-1.5"><Sparkles className="w-3.5 h-3.5" /> {t('markerBg')}</Label>
           <p className="text-[10px] text-muted-foreground mt-0.5">{t('markerBgNote')}</p>
         </div>
         <Switch
@@ -271,8 +271,21 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
         />
       </div>
 
-      {/* Background Selector — shown only when Marker BG is enabled */}
-      {settings.finishing === 'marker_background' && (
+      {/* Splash Background Toggle + Color Picker */}
+      <div className="flex items-center justify-between">
+        <div>
+          <Label className="text-xs font-semibold flex items-center gap-1.5"><Sparkles className="w-3.5 h-3.5" /> {t('splashBgColor')}</Label>
+          <p className="text-[10px] text-muted-foreground mt-0.5">{t('splashBgNote')}</p>
+        </div>
+        <Switch
+          checked={settings.finishing === 'splash_background'}
+          onCheckedChange={(v) => update('finishing', v ? 'splash_background' : 'none')}
+          disabled={settings.style === 'bw_lines'}
+        />
+      </div>
+
+      {/* Background Color Selector — shown only when Splash BG is enabled */}
+      {settings.finishing === 'splash_background' && (
         <BackgroundSelector
           selected={settings.bgColor}
           onChange={(val) => update('bgColor', val)}
