@@ -75,7 +75,7 @@ function buildPrompt(settings, productDescription) {
   const colorPart = settings.bwForRaster
     ? 'CRITICAL: Render in pure black and white ONLY — no color, no tints, no grays other than pure black lines on white background. This is a coloring book / line art style output.'
     : settings.pantoneColors.length > 0
-    ? `The color palette must use strictly these Pantone colors: ${settings.pantoneColors.map(c => `PANTONE ${c}`).join(', ')}.`
+    ? `CRITICAL COLOR RULE — NO EXCEPTIONS: You MUST use EXCLUSIVELY these exact Pantone colors and NO other colors: ${settings.pantoneColors.map(c => `PANTONE ${c}`).join(', ')}. Do NOT substitute, approximate, or replace these colors with any other hue. If a Pantone color is orange, render it as orange — not red, not brown, not yellow. Reproduce the exact hue faithfully.`
     : 'Render in monochromatic black, white, and cool grays only.';
 
   const detailLabel = settings.detail >= 80 ? 'highly detailed and refined' : settings.detail >= 50 ? 'moderately detailed' : 'loose, gestural, and quick';
