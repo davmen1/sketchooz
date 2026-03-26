@@ -125,6 +125,7 @@ export const translations = {
     // Pricing page
     pricingTitle: 'Credits',
     pricingSubtitle: 'No subscription — pay as you go',
+    freeTierDesc: '🎨 Free Plan — 1 free render per day with watermark (max 10/month)',
   },
 };
 

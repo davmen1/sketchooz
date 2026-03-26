@@ -76,7 +76,7 @@ export default function PrivacyPolicy() {
         <section className="space-y-2">
           <h2 className="font-bold text-base">{it ? '8. Contatti' : '8. Contact'}</h2>
           <p>treddistudio@gmail.com</p>
-          <p>www.sketch-forge.com</p>
+          <p>www.sketchooz.com</p>
         </section>
       </main>
     </div>

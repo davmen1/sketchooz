@@ -77,8 +77,8 @@ export default function Pricing() {
       return;
     }
     setLoading(packId);
-    const successUrl = 'https://www.sketch-forge.com/pricing?success=1';
-    const cancelUrl = 'https://www.sketch-forge.com/pricing';
+    const successUrl = 'https://www.sketchooz.com/pricing?success=1';
+    const cancelUrl = 'https://www.sketchooz.com/pricing';
     const res = await base44.functions.invoke('createCheckout', {
       pack: packId,
       successUrl,
@@ -116,10 +116,10 @@ export default function Pricing() {
 
         {iosWebView && (
           <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl text-sm text-blue-800 text-center space-y-2">
-            <p className="font-semibold">🛒 {lang === 'it' ? 'Acquista su sketch-forge.com' : 'Purchase at sketch-forge.com'}</p>
+            <p className="font-semibold">🛒 {lang === 'it' ? 'Acquista su sketchooz.com' : 'Purchase at sketch-forge.com'}</p>
             <p className="text-xs text-blue-700">{lang === 'it' ? 'Per acquistare i pack, visita il nostro sito dal browser.' : 'To purchase packs, visit our website from your browser.'}</p>
             <button
-              onClick={() => window.open('https://www.sketch-forge.com/pricing', '_blank')}
+              onClick={() => window.open('https://www.sketchooz.com/pricing', '_blank')}
               className="mt-1 inline-block bg-blue-600 text-white text-xs font-semibold px-4 py-2 rounded-lg"
             >
               {lang === 'it' ? 'Vai al sito →' : 'Open website →'}
@@ -266,8 +266,8 @@ export default function Pricing() {
           </p>
           <p>
             {lang === 'it'
-              ? 'SketchForge utilizza intelligenza artificiale generativa. I risultati possono variare e non sono garantiti al 100%: la fedeltà al prodotto originale dipende dalla complessità dell\'oggetto e dalle impostazioni scelte.'
-              : 'SketchForge uses generative AI. Results may vary and are not 100% guaranteed — fidelity to the original product depends on object complexity and chosen settings.'}
+              ? 'Sketchooz utilizza intelligenza artificiale generativa. I risultati possono variare e non sono garantiti al 100%: la fedeltà al prodotto originale dipende dalla complessità dell\'oggetto e dalle impostazioni scelte.'
+              : 'Sketchooz uses generative AI. Results may vary and are not 100% guaranteed — fidelity to the original product depends on object complexity and chosen settings.'}
           </p>
           <p>
             {lang === 'it'
