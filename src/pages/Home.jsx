@@ -12,6 +12,7 @@ import WatermarkCanvas from '@/components/result/WatermarkCanvas';
 import SketchSettings from '@/components/settings/SketchSettings';
 import MobileHeader from '@/components/MobileHeader';
 import PromoDialog from '@/components/PromoDialog';
+import InstructionsPopup from '@/components/InstructionsPopup';
 import ResultView from '@/components/result/ResultView';
 import GeneratingOverlay from '@/components/result/GeneratingOverlay';
 
@@ -328,6 +329,9 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
                 uploadedUrl={imageUrl}
                 onClear={() => setImageUrl(null)}
               />
+              <div className="flex justify-center">
+                <InstructionsPopup />
+              </div>
               {!hasPromo() && (
                 <div className="text-center">
                   <button
