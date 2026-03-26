@@ -346,7 +346,8 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
           }
         />
 
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full">
+        <PullToRefresh onRefresh={() => { /* refresh handler */ }}>
+          <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full">
           {!imageUrl && !resultUrl ? (
             /* Hero + Upload */
             <motion.div
@@ -490,7 +491,8 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
               </div>
             </>
           )}
-        </main>
+          </main>
+        </PullToRefresh>
       </div>
     </ErrorBoundary>
   );

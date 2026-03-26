@@ -7,6 +7,7 @@ import AppLayout from './components/AppLayout';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { LangProvider } from '@/lib/LangContext';
+import { ThemeProvider } from '@/lib/ThemeProvider';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 // Add page imports here
@@ -61,16 +62,18 @@ function App() {
 
   return (
     <ErrorBoundary>
-    <LangProvider>
-    <AuthProvider>
-      <QueryClientProvider client={queryClientInstance}>
-        <Router>
-          <AuthenticatedApp />
-        </Router>
-        <Toaster />
-      </QueryClientProvider>
-    </AuthProvider>
-    </LangProvider>
+      <ThemeProvider>
+        <LangProvider>
+          <AuthProvider>
+            <QueryClientProvider client={queryClientInstance}>
+              <Router>
+                <AuthenticatedApp />
+              </Router>
+              <Toaster />
+            </QueryClientProvider>
+          </AuthProvider>
+        </LangProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   )
 }

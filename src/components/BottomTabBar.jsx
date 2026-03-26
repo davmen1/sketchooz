@@ -3,8 +3,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Home, Settings, CreditCard } from 'lucide-react';
 import { useLang } from '@/lib/LangContext';
 
-// TABS defined inside component to use translations
-
 export default function BottomTabBar() {
   const location = useLocation();
   const { t } = useLang();
@@ -15,6 +13,17 @@ export default function BottomTabBar() {
   ];
 
   const navigate = useNavigate();
+
+  const handleTabClick = (path) => {
+    const isActive = location.pathname === path || (path !== '/' && location.pathname.startsWith(path));
+    if (isActive) {
+      // If already on this tab, reset to root (double-tap to top)
+      navigate(path);
+    } else {
+      // Navigate without replace to preserve stack
+      navigate(path);
+    }
+  };
 
   return (
     <nav
@@ -28,7 +37,7 @@ export default function BottomTabBar() {
         return (
           <button
             key={path}
-            onClick={() => navigate(path, { replace: true })}
+            onClick={() => handleTabClick(path)}
             className="flex-1 flex flex-col items-center justify-center gap-0.5 py-2.5 select-none transition-colors"
           >
             <Icon
