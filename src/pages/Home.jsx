@@ -26,6 +26,7 @@ const DEFAULT_SETTINGS = {
   studySheet: 'four_views_eu',
   cleanDesign: false,
   backgroundType: 'colorful',
+  markerBg: false,
   textures: [],
   bgColor: { type: 'preset', value: 'white' },
   bwForRaster: false,
@@ -162,20 +163,22 @@ function buildPrompt(settings, productDescription) {
     return MARKER_PRESET_LABELS[bg.value] || 'white';
   })();
 
-  // Background logic based on backgroundType
+  // Background logic: markerBg toggle overrides backgroundType
   let bgPart = '';
   if (settings.style !== 'bw_lines') {
-    if (settings.backgroundType === 'colorful') {
-      bgPart = `BACKGROUND: Use a ${splashColorLabel}. The entire background is solid, no gradients, no variations.`;
-    } else if (settings.backgroundType === 'splash') {
+    if (settings.markerBg) {
       bgPart = `FINISHING — MANDATORY MARKER BACKGROUND STYLE:
 1. PRODUCT OUTLINE: Apply a BOLD, THICK BLACK OUTLINE (minimum 4-5pt stroke) around the ENTIRE product silhouette. This outline MUST be dark, crisp, and define every boundary.
 2. WHITE HIGHLIGHTS: Paint bright WHITE HIGHLIGHT LINES (2-3pt) on ALL key edges, creases, top curves, and prominent surfaces to create a strong halo/glow effect that makes the product pop.
 3. BACKGROUND: Behind the product, create a loose, raw MARKER SPLASH/PATCH in ${markerColorLabel} with irregular organic strokes (like a real Copic marker on paper). The splash should be bold and visible.
 4. SURROUNDING: The area outside the marker splash MUST be pure white paper.
 Aesthetic: Professional industrial design marker sketch on white paper with dramatic color backdrop, competition-style presentation. Bold, confident strokes. High contrast between black outline, white highlights, and colored marker splash.`;
+    } else if (settings.backgroundType === 'colorful') {
+      bgPart = `BACKGROUND: Use a ${splashColorLabel}. The entire background is solid, no gradients, no variations.`;
+    } else if (settings.backgroundType === 'splash') {
+      bgPart = `BACKGROUND: Use a ${splashColorLabel}. The entire background is solid, no gradients, no variations.`;
     }
-    // backgroundType 'none' → no background instruction
+    // backgroundType 'none' and markerBg off → no background instruction
   }
 
   if (settings.outputMode === 'study_sheet') {

@@ -183,6 +183,20 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
         />
       </div>
 
+      {/* Marker BG toggle */}
+      {settings.style !== 'bw_lines' && (
+        <div className="flex items-center justify-between">
+          <div>
+            <Label className="text-xs font-semibold">{t('markerBg')}</Label>
+            <p className="text-[10px] text-muted-foreground mt-0.5">{t('markerBgDesc')}</p>
+          </div>
+          <Switch
+            checked={!!settings.markerBg}
+            onCheckedChange={(v) => update('markerBg', v)}
+          />
+        </div>
+      )}
+
       {/* Surface */}
       <div className="space-y-2">
         <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -258,8 +272,8 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
         </>
       )}
 
-      {/* Background Type: Colorful vs Splash vs None */}
-      {settings.style !== 'bw_lines' && (
+      {/* Background Type: Colorful vs None (Splash controlled by toggle) */}
+      {!settings.markerBg && settings.style !== 'bw_lines' && (
         <div className="space-y-2">
           <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             <Sparkles className="w-3.5 h-3.5" />
@@ -272,11 +286,6 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
               onClick={() => update('backgroundType', 'colorful')}
             />
             <OptionButton
-              label={t('splash')}
-              selected={settings.backgroundType === 'splash'}
-              onClick={() => update('backgroundType', 'splash')}
-            />
-            <OptionButton
               label={t('noBackground')}
               selected={settings.backgroundType === 'none'}
               onClick={() => update('backgroundType', 'none')}
@@ -285,8 +294,8 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
         </div>
       )}
 
-      {/* Background Color Selector — shown for Colorful and Splash modes */}
-      {(settings.backgroundType === 'colorful' || settings.backgroundType === 'splash') && settings.style !== 'bw_lines' && (
+      {/* Background Color Selector — shown for Colorful mode or Marker BG toggle */}
+      {(settings.backgroundType === 'colorful' || settings.markerBg) && settings.style !== 'bw_lines' && (
         <BackgroundSelector
           selected={settings.bgColor}
           onChange={(val) => update('bgColor', val)}
