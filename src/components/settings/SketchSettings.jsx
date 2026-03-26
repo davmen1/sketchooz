@@ -285,8 +285,8 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
         </div>
       )}
 
-      {/* Background Color Selector — shown for Colorful mode */}
-      {settings.backgroundType === 'colorful' && settings.style !== 'bw_lines' && (
+      {/* Background Color Selector — shown for Colorful and Splash modes */}
+      {(settings.backgroundType === 'colorful' || settings.backgroundType === 'splash') && settings.style !== 'bw_lines' && (
         <BackgroundSelector
           selected={settings.bgColor}
           onChange={(val) => update('bgColor', val)}
