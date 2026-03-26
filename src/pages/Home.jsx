@@ -173,6 +173,7 @@ export default function Home() {
     parseInt(localStorage.getItem('promo_renders_used') || '0', 10)
   );
   const [promoDialogOpen, setPromoDialogOpen] = useState(false);
+  const [tipsRead, setTipsRead] = useState(false);
 
   const getTodayKey = () => new Date().toISOString().slice(0, 10);
 
@@ -324,13 +325,16 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
                   {t('heroDesc')}
                 </p>
               </div>
-              <ImageUploader
-                onImageUploaded={setImageUrl}
-                uploadedUrl={imageUrl}
-                onClear={() => setImageUrl(null)}
-              />
-              <div className="flex justify-center">
-                <InstructionsPopup />
+              <InstructionsPopup onRead={() => setTipsRead(true)} />
+              <div className={`transition-opacity duration-300 ${tipsRead ? 'opacity-100 pointer-events-auto' : 'opacity-40 pointer-events-none'}`}>
+                <ImageUploader
+                  onImageUploaded={setImageUrl}
+                  uploadedUrl={imageUrl}
+                  onClear={() => setImageUrl(null)}
+                />
+                {!tipsRead && (
+                  <p className="text-center text-xs text-muted-foreground mt-2">Read the tips above first ↑</p>
+                )}
               </div>
               {!hasPromo() && (
                 <div className="text-center">
