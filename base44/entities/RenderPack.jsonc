@@ -1,0 +1,54 @@
+{
+  "name": "RenderPack",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string"
+    },
+    "credits_remaining": {
+      "type": "number"
+    },
+    "stripe_session_id": {
+      "type": "string"
+    },
+    "pack_type": {
+      "type": "string"
+    },
+    "watermark_only": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "user_email",
+    "credits_remaining"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "data.user_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

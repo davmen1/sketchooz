@@ -165,6 +165,7 @@ export default function Home() {
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const [resultUrl, setResultUrl] = useState(null);
   const [genPhase, setGenPhase] = useState(null);
+  const [hasWatermark, setHasWatermark] = useState(false);
 
   const [promoRendersUsed, setPromoRendersUsed] = useState(() =>
     parseInt(localStorage.getItem('promo_renders_used') || '0', 10)
@@ -194,7 +195,7 @@ export default function Home() {
     const pack = packs.find(p => (p.credits_remaining || 0) >= 3);
     if (pack) {
       await base44.entities.RenderPack.update(pack.id, { credits_remaining: pack.credits_remaining - 3 });
-      return { allowed: true };
+      return { allowed: true, watermark: !!pack.watermark_only };
     }
     return { allowed: false };
   };
@@ -231,7 +232,8 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
       return url;
     },
     onMutate: async () => {
-      const { allowed } = await checkAndIncrementUsage();
+      const { allowed, watermark } = await checkAndIncrementUsage();
+      setHasWatermark(watermark || false);
       if (!allowed) {
         toast.error(hasPromo() ? t('promoExhausted') : t('freeLimit'));
         throw new Error('limit_reached');
@@ -264,6 +266,7 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
     setImageUrl(null);
     setResultUrl(null);
     setSettings(DEFAULT_SETTINGS);
+    setHasWatermark(false);
   };
 
   return (
@@ -414,7 +417,7 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
                           key="result"
                           originalUrl={imageUrl}
                           resultUrl={resultUrl}
-                          hasWatermark={false}
+                          hasWatermark={hasWatermark}
                           freeVector={hasPromo()}
                           showRasterDownload={settings.bwForRaster}
                           onRegenerate={handleRegenerate}
