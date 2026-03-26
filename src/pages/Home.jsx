@@ -106,11 +106,14 @@ function buildPrompt(settings, productDescription) {
     deep_red: 'deep red (#4A0E0E) background, sketch rendered in light lines',
   };
   const bg = settings.bgColor || { type: 'preset', value: 'white' };
-  const bgColorLabel = bg.type === 'custom'
-    ? `solid custom color background with exact hex value ${bg.hex?.toUpperCase()}, rendered for maximum contrast`
-    : bg.type === 'pantone'
-      ? `solid ${bg.label} background (${bg.hex?.toUpperCase()}), rendered for maximum contrast with the sketch lines`
-      : BG_PRESET_LABELS[bg.value] || 'pure white background';
+  // When marker_background is active, main background is always white
+  const bgColorLabel = settings.finishing === 'marker_background'
+    ? 'pure white background'
+    : bg.type === 'custom'
+      ? `solid custom color background with exact hex value ${bg.hex?.toUpperCase()}, rendered for maximum contrast`
+      : bg.type === 'pantone'
+        ? `solid ${bg.label} background (${bg.hex?.toUpperCase()}), rendered for maximum contrast with the sketch lines`
+        : BG_PRESET_LABELS[bg.value] || 'pure white background';
 
   const textures = settings.textures || [];
   const texturePart = textures.length === 0
@@ -119,8 +122,30 @@ function buildPrompt(settings, productDescription) {
       ? `MATERIAL TEXTURE: Product surfaces must clearly show a realistic ${textures[0]} texture — render the grain/weave/surface character with faithful detail in the sketch style.`
       : `MATERIAL TEXTURE COMBO: The product uses two distinct materials — ${textures[0]} and ${textures[1]}. Intelligently assign each texture to different surfaces/components (e.g. primary body in ${textures[0]}, details or panels in ${textures[1]}). Both textures must be visibly distinct and rendered with faithful surface character in the sketch style.`;
 
+  // Compute splash color label from bgColor for marker_background
+  const splashColorLabel = (() => {
+    const bg = settings.bgColor || { type: 'preset', value: 'white' };
+    if (bg.type === 'custom') return `a bold solid custom color with hex value ${bg.hex?.toUpperCase()}`;
+    if (bg.type === 'pantone') return `${bg.label} (${bg.hex?.toUpperCase()})`;
+    const SPLASH_PRESET_LABELS = {
+      white: 'a bold contrasting Pantone color (auto-selected for contrast)',
+      off_white: 'off-white (#F5F2EE)',
+      cream: 'warm cream (#F5F0E0)',
+      kraft: 'warm kraft tan (#C8A882)',
+      light_gray: 'light cool gray (#D8D8D8)',
+      mid_gray: 'medium gray (#888888)',
+      charcoal: 'dark charcoal (#2A2A2A)',
+      black: 'deep black (#111111)',
+      navy: 'dark navy (#0D1B2A)',
+      deep_blue: 'deep indigo blue (#1A237E)',
+      forest: 'deep forest green (#1B3A2A)',
+      deep_red: 'deep red (#4A0E0E)',
+    };
+    return SPLASH_PRESET_LABELS[bg.value] || 'a bold contrasting Pantone color';
+  })();
+
   const finishingPart = settings.finishing === 'marker_background'
-    ? `FINISHING — MANDATORY: Behind the product, paint a raw loose marker color splash/patch using a bold contrasting solid Pantone color, applied in rough irregular strokes like a real Copic marker on paper. The product silhouette must have a very bold black outline (3-4pt) on its outer boundary, plus crisp white highlight lines on key edges and curved surfaces, making the design pop dramatically against the marker backdrop. Aesthetic: professional ID marker sketch on white paper with a raw color backdrop, competition-style industrial design presentation.`
+    ? `FINISHING — MANDATORY: Behind the product, paint a raw loose marker color splash/patch using ${splashColorLabel}, applied in rough irregular strokes like a real Copic marker on paper. The product silhouette must have a very bold black outline (3-4pt) on its outer boundary, plus crisp white highlight lines on key edges and curved surfaces, making the design pop dramatically against the marker backdrop. The rest of the paper/background outside the splash MUST remain pure white. Aesthetic: professional ID marker sketch on white paper with a raw color backdrop, competition-style industrial design presentation.`
     : '';
 
   if (settings.outputMode === 'study_sheet') {

@@ -255,10 +255,10 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
         onChange={(colors) => update('pantoneColors', colors)}
       />
 
-      {/* Marker BG switch */}
+      {/* Splash Background Color */}
       <div className="flex items-center justify-between">
         <div>
-          <Label className="text-xs font-semibold flex items-center gap-1.5"><Sparkles className="w-3.5 h-3.5" /> Marker BG</Label>
+          <Label className="text-xs font-semibold flex items-center gap-1.5"><Sparkles className="w-3.5 h-3.5" /> {t('splashBgColor')}</Label>
           <p className="text-[10px] text-muted-foreground mt-0.5">{t('markerBgNote')}</p>
         </div>
         <Switch
@@ -267,12 +267,14 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
         />
       </div>
 
-      {/* Background Color — last */}
-      <BackgroundSelector
-        selected={settings.bgColor}
-        onChange={(val) => update('bgColor', val)}
-        pantoneColors={settings.pantoneColors}
-      />
+      {/* Background Color — only shown when splash is active */}
+      {settings.finishing === 'marker_background' && (
+        <BackgroundSelector
+          selected={settings.bgColor}
+          onChange={(val) => update('bgColor', val)}
+          pantoneColors={settings.pantoneColors}
+        />
+      )}
     </div>
   );
 }
