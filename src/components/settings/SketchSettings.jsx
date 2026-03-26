@@ -279,9 +279,6 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
           pantoneColors={settings.pantoneColors}
         />
       )}
-          pantoneColors={settings.pantoneColors}
-        />
-      )}
-    </div>
-  );
-}
+      </div>
+      );
+      }
