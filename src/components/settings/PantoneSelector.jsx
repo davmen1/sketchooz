@@ -185,7 +185,7 @@ export default function PantoneSelector({ selected, onChange }) {
         </div>
       )}
 
-      <div className="space-y-1.5">
+      <div className="space-y-0.5">
         {PANTONE_PALETTES.map((palette) => {
           const isOpen = openPalette === palette.name;
           const selectedInPalette = palette.colors.filter(c => selected.includes(c.name)).length;
