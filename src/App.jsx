@@ -39,7 +39,7 @@ const AuthenticatedApp = () => {
   return (
     <Routes location={location}>
       <Route path="/" element={<AppLayout />}>
-        <Route index element={<Navigate to="/settings" replace />} />
+        <Route index element={<Home />} />
         <Route path="pricing" element={null} />
         <Route path="settings" element={null} />
       </Route>
