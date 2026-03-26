@@ -1,9 +1,11 @@
 import React, { useCallback, useState } from 'react';
+import { useLang } from '@/lib/LangContext';
 import { Upload, Image as ImageIcon, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 
 export default function ImageUploader({ onImageUploaded, uploadedUrl, onClear }) {
+  const { t, lang } = useLang();
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -50,7 +52,7 @@ export default function ImageUploader({ onImageUploaded, uploadedUrl, onClear })
           <X className="w-4 h-4" />
         </button>
         <div className="absolute bottom-0 left-0 right-0 px-4 py-2 bg-gradient-to-t from-black/40 to-transparent">
-          <p className="text-white/80 text-xs font-medium">Immagine caricata</p>
+          <p className="text-white/80 text-xs font-medium">{lang === 'it' ? 'Immagine caricata' : 'Image uploaded'}</p>
         </div>
       </div>
     );
@@ -87,7 +89,7 @@ export default function ImageUploader({ onImageUploaded, uploadedUrl, onClear })
             className="flex flex-col items-center gap-3"
           >
             <div className="w-10 h-10 border-3 border-muted-foreground/20 border-t-accent rounded-full animate-spin" />
-            <p className="text-sm text-muted-foreground">Caricamento...</p>
+            <p className="text-sm text-muted-foreground">{lang === 'it' ? 'Caricamento...' : 'Uploading...'}</p>
           </motion.div>
         ) : (
           <motion.div
@@ -106,10 +108,10 @@ export default function ImageUploader({ onImageUploaded, uploadedUrl, onClear })
             </div>
             <div className="text-center">
               <p className="text-sm font-medium text-foreground">
-                {isDragging ? 'Rilascia qui' : 'Carica immagine o sketch'}
+                {isDragging ? (lang === 'it' ? 'Rilascia qui' : 'Drop here') : (lang === 'it' ? 'Carica immagine o sketch' : 'Upload image or sketch')}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                PNG, JPG, WEBP (no AVIF/HEIC) — Foto, disegni, bozze
+                {lang === 'it' ? 'PNG, JPG, WEBP (no AVIF/HEIC) — Foto, disegni, bozze' : 'PNG, JPG, WEBP (no AVIF/HEIC) — Photos, drawings, drafts'}
               </p>
             </div>
           </motion.div>
