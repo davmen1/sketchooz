@@ -163,10 +163,11 @@ function buildPrompt(settings, productDescription) {
     return MARKER_PRESET_LABELS[bg.value] || 'white';
   })();
 
-  // Background logic: markerBg toggle overrides backgroundType
+  // Background logic
   let bgPart = '';
   if (settings.style !== 'bw_lines') {
     if (settings.markerBg) {
+      // Marker BG: Feature del design (contorni audaci + highlights) + marker splash background
       bgPart = `FINISHING — MANDATORY MARKER BACKGROUND STYLE:
 1. PRODUCT OUTLINE: Apply a BOLD, THICK BLACK OUTLINE (minimum 4-5pt stroke) around the ENTIRE product silhouette. This outline MUST be dark, crisp, and define every boundary.
 2. WHITE HIGHLIGHTS: Paint bright WHITE HIGHLIGHT LINES (2-3pt) on ALL key edges, creases, top curves, and prominent surfaces to create a strong halo/glow effect that makes the product pop.
@@ -174,11 +175,13 @@ function buildPrompt(settings, productDescription) {
 4. SURROUNDING: The area outside the marker splash MUST be pure white paper.
 Aesthetic: Professional industrial design marker sketch on white paper with dramatic color backdrop, competition-style presentation. Bold, confident strokes. High contrast between black outline, white highlights, and colored marker splash.`;
     } else if (settings.backgroundType === 'colorful') {
+      // Colorful background: pieno uniforme
       bgPart = `BACKGROUND: Use a ${splashColorLabel}. The entire background is solid, no gradients, no variations.`;
     } else if (settings.backgroundType === 'splash') {
-      bgPart = `BACKGROUND: Use a ${splashColorLabel}. The entire background is solid, no gradients, no variations.`;
+      // Splash background: raw, loose, hand-drawn marker-like
+      bgPart = `BACKGROUND: Behind the product, create a loose, raw background splash/wash in ${splashColorLabel} with irregular organic strokes (like drawn freehand with marker or watercolor). The splash should feel natural and uncontrolled. Only the splash area is colored; the rest of the background is pure white paper.`;
     }
-    // backgroundType 'none' and markerBg off → no background instruction
+    // backgroundType 'none' → no background instruction
   }
 
   if (settings.outputMode === 'study_sheet') {
