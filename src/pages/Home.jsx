@@ -366,8 +366,9 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
             />
           </motion.div>
         ) : (
-          /* Editor Layout */
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <>
+          {/* Image preview always at top */}
+          {imageUrl && (
             {/* Settings Panel */}
             <motion.aside
               initial={{ opacity: 0, x: -20 }}
@@ -420,14 +421,7 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
 
             {/* Result Area */}
             <div className="lg:col-span-9 space-y-4">
-              {/* Original Image (small) */}
-              {!resultUrl && !isGenerating && (
-                <ImageUploader
-                  onImageUploaded={setImageUrl}
-                  uploadedUrl={imageUrl}
-                  onClear={() => { setImageUrl(null); setResultUrl(null); }}
-                />
-              )}
+              {/* Image is shown at the top above the grid, not repeated here */}
 
               <AnimatePresence mode="wait">
                 {isGenerating && <GeneratingOverlay key="gen" phase={genPhase} />}
@@ -454,6 +448,7 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
               </AnimatePresence>
             </div>
           </div>
+          </>
         )}
       </main>
     </div>

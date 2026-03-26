@@ -10,10 +10,6 @@ import { useLang } from '@/lib/LangContext';
 
 const SKETCH_STYLES = [
   { value: 'marker_render', label: 'Marker Render' },
-  { value: 'pencil_sketch', label: 'Pencil Sketch' },
-  { value: 'ballpoint_pen', label: 'Ballpoint Pen' },
-  { value: 'technical_drawing', label: 'Technical Drawing' },
-  { value: 'watercolor_sketch', label: 'Watercolor Sketch' },
 ];
 
 // Single views
@@ -50,10 +46,7 @@ const SURFACES = [
   { value: 'mixed', label: 'Mixed' },
 ];
 
-const FINISHING_OPTIONS = [
-  { value: 'none', label: 'None' },
-  { value: 'marker_background', label: 'Marker BG' },
-];
+
 
 const TEXTURES = [
   { value: 'wood', label: 'Wood' },
@@ -159,7 +152,7 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
         </div>
       )}
 
-      {/* Sketch Style */}
+      {/* Sketch Style — Marker Render only */}
       <div className="space-y-2">
         <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           <Pen className="w-3.5 h-3.5" />
@@ -175,6 +168,18 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
             />
           ))}
         </div>
+      </div>
+
+      {/* Clean Design toggle */}
+      <div className="flex items-center justify-between">
+        <div>
+          <Label className="text-xs font-semibold">{t('cleanDesign')}</Label>
+          <p className="text-[10px] text-muted-foreground mt-0.5">{t('cleanDesignDesc')}</p>
+        </div>
+        <Switch
+          checked={!!settings.cleanDesign}
+          onCheckedChange={(v) => update('cleanDesign', v)}
+        />
       </div>
 
       {/* Surface */}
@@ -213,36 +218,6 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
         />
       </div>
 
-      {/* Finishing */}
-      <div className="space-y-2">
-        <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          <Sparkles className="w-3.5 h-3.5" />
-          {t('finishing')}
-        </Label>
-        <div className="flex flex-wrap gap-1.5">
-          {FINISHING_OPTIONS.map((f) => (
-            <OptionButton
-              key={f.value}
-              label={f.label}
-              selected={settings.finishing === f.value}
-              onClick={() => update('finishing', f.value)}
-            />
-          ))}
-        </div>
-        {settings.finishing === 'marker_background' && (
-          <p className="text-[10px] text-muted-foreground mt-1">
-            {t('markerBgNote')}
-          </p>
-        )}
-      </div>
-
-      {/* Background Color */}
-      <BackgroundSelector
-        selected={settings.bgColor}
-        onChange={(val) => update('bgColor', val)}
-        pantoneColors={settings.pantoneColors}
-      />
-
       {/* Texture (max 2 combo) */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
@@ -268,31 +243,6 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
         )}
       </div>
 
-      {/* Clean Design toggle */}
-      <div className="flex items-center justify-between">
-        <div>
-          <Label className="text-xs font-semibold">{t('cleanDesign')}</Label>
-          <p className="text-[10px] text-muted-foreground mt-0.5">{t('cleanDesignDesc')}</p>
-        </div>
-        <Switch
-          checked={!!settings.cleanDesign}
-          onCheckedChange={(v) => update('cleanDesign', v)}
-        />
-      </div>
-
-      {/* BW for Raster toggle */}
-      <div className="flex items-center justify-between">
-        <div>
-          <Label className="text-xs font-semibold">BW for Raster</Label>
-          <p className="text-[10px] text-muted-foreground mt-0.5">Generate in black & white — enables raster PNG download</p>
-        </div>
-        <Switch
-          checked={!!settings.bwForRaster}
-          onCheckedChange={(v) => update('bwForRaster', v)}
-        />
-      </div>
-
-
       {/* Suggest Palette */}
       <SuggestPalette
         imageUrl={imageUrl}
@@ -303,6 +253,25 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
       <PantoneSelector
         selected={settings.pantoneColors}
         onChange={(colors) => update('pantoneColors', colors)}
+      />
+
+      {/* Marker BG switch */}
+      <div className="flex items-center justify-between">
+        <div>
+          <Label className="text-xs font-semibold flex items-center gap-1.5"><Sparkles className="w-3.5 h-3.5" /> Marker BG</Label>
+          <p className="text-[10px] text-muted-foreground mt-0.5">{t('markerBgNote')}</p>
+        </div>
+        <Switch
+          checked={settings.finishing === 'marker_background'}
+          onCheckedChange={(v) => update('finishing', v ? 'marker_background' : 'none')}
+        />
+      </div>
+
+      {/* Background Color — last */}
+      <BackgroundSelector
+        selected={settings.bgColor}
+        onChange={(val) => update('bgColor', val)}
+        pantoneColors={settings.pantoneColors}
       />
     </div>
   );
