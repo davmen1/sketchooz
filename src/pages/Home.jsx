@@ -325,7 +325,7 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
                   {t('heroDesc')}
                 </p>
               </div>
-              <InstructionsPopup onRead={() => setTipsRead(true)} />
+              {!tipsRead && <InstructionsPopup onRead={() => setTipsRead(true)} />}
               <div className={`transition-opacity duration-300 ${tipsRead ? 'opacity-100 pointer-events-auto' : 'opacity-40 pointer-events-none'}`}>
                 <ImageUploader
                   onImageUploaded={setImageUrl}
@@ -336,6 +336,7 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
                   <p className="text-center text-xs text-muted-foreground mt-2">Read the tips above first ↑</p>
                 )}
               </div>
+              {tipsRead && <InstructionsPopup onRead={() => setTipsRead(true)} />}
               {!hasPromo() && (
                 <div className="text-center">
                   <button
