@@ -10,6 +10,7 @@ import { useLang } from '@/lib/LangContext';
 
 const SKETCH_STYLES = [
   { value: 'marker_render', label: 'Marker Render' },
+  { value: 'bw_lines', label: 'BW Lines' },
 ];
 
 // Single views

@@ -124,6 +124,19 @@ export const PANTONE_PALETTES = [
       { name: 'Platinum 9161 C', hex: '#C8C9C7' },
     ],
   },
+  {
+    name: 'Gems',
+    colors: [
+      { name: 'Ruby 200 C', hex: '#BA0C2F' },
+      { name: 'Emerald 348 C', hex: '#00843D' },
+      { name: 'Sapphire 2955 C', hex: '#00315E' },
+      { name: 'Amethyst 2685 C', hex: '#56368A' },
+      { name: 'Topaz 137 C', hex: '#FFA300' },
+      { name: 'Turquoise 3265 C', hex: '#2DCCD3' },
+      { name: 'Onyx Black C', hex: '#2D2926' },
+      { name: 'Pearl 9180 C', hex: '#F2EFE8' },
+    ],
+  },
 ];
 
 export default function PantoneSelector({ selected, onChange }) {

@@ -33,6 +33,7 @@ const DEFAULT_SETTINGS = {
 
 const STYLE_LABELS = {
   marker_render: 'marker render with bold strokes and smooth gradients',
+  bw_lines: 'clean black and white line drawing with precise confident strokes, no color fills, no shading, only black lines on white paper',
   pencil_sketch: 'detailed graphite pencil sketch with fine hatching',
   ballpoint_pen: 'ballpoint pen sketch with confident line work',
   technical_drawing: 'precise technical drawing with clean construction lines',
@@ -72,7 +73,9 @@ const SURFACE_LABELS = {
 };
 
 function buildPrompt(settings, productDescription) {
-  const colorPart = settings.bwForRaster
+  const colorPart = settings.style === 'bw_lines'
+    ? 'CRITICAL: This is a pure BLACK AND WHITE LINE DRAWING. Use ONLY black lines on a white background. No color, no gray fills, no shading, no tints. Pure line art only.'
+    : settings.bwForRaster
     ? 'CRITICAL: Render in pure black and white ONLY — no color, no tints, no grays other than pure black lines on white background. This is a coloring book / line art style output.'
     : settings.pantoneColors.length > 0
     ? `CRITICAL COLOR RULE — NO EXCEPTIONS: You MUST use EXCLUSIVELY these exact Pantone colors and NO other colors: ${settings.pantoneColors.map(c => `PANTONE ${c}`).join(', ')}. Do NOT substitute, approximate, or replace these colors with any other hue. If a Pantone color is orange, render it as orange — not red, not brown, not yellow. Reproduce the exact hue faithfully.`
