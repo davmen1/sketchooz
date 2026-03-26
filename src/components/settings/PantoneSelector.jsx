@@ -213,7 +213,7 @@ export default function PantoneSelector({ selected, onChange }) {
                 </div>
               </button>
               {isOpen && (
-                <div className="grid grid-cols-5 gap-1.5 p-3 bg-card">
+                <div className="grid grid-cols-6 gap-1 p-2 bg-card">
                   {palette.colors.map((color) => {
                     const isSelected = selected.includes(color.name);
                     return (
