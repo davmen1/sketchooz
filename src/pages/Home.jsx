@@ -294,7 +294,7 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
     <ErrorBoundary>
       <div className="flex flex-col flex-1">
         <MobileHeader
-          title="SketchForge"
+          title="Sketchooz"
           subtitle={t('appSubtitle')}
           right={
             (imageUrl || resultUrl) ? (

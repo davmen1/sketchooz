@@ -30,7 +30,7 @@ export default function MobileHeader({ title, subtitle, right }) {
             </div>
           )}
           <div className="min-w-0">
-            <h1 className="text-sm font-semibold leading-tight truncate">{title || 'SketchForge'}</h1>
+            <h1 className="text-sm font-semibold leading-tight truncate">{title || 'Sketchooz'}</h1>
             {subtitle && <p className="text-[11px] text-muted-foreground leading-tight truncate">{subtitle}</p>}
           </div>
         </div>
