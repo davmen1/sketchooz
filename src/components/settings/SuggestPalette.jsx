@@ -15,7 +15,7 @@ export default function SuggestPalette({ imageUrl, onSuggest }) {
     setSuccess(false);
     try {
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are an industrial design color expert. Analyze this product image carefully and suggest 2-3 Pantone colors that best match the product's actual colors (body, accents, hardware). Rules: (1) Choose colors that are as close as possible to the real visible hues in the product — do not invent colors. (2) Use exact Pantone color names from Pantone Solid Coated books (e.g. "485 C", "Cool Gray 11C", "7699 C"). (3) Return ONLY the Pantone color names as a JSON array of strings, nothing else.`,
+        prompt: `You are an industrial design color expert. Analyze this product image and create a coherent, harmonious color palette that would be used for rendering it in a sketch style. Consider the product's dominant colors, materials, and design aesthetic. Suggest 3-5 Pantone colors that form a balanced, professional palette (primary color, secondary accents, neutrals). Rules: (1) Colors must complement each other and work as a cohesive design system. (2) Use only exact Pantone color names from Pantone Solid Coated books (e.g. "485 C", "Cool Gray 11C", "7699 C"). (3) Prioritize colors that enhance the product's visual impact when used for sketching and rendering. (4) Return ONLY the Pantone color names as a JSON array of strings, nothing else.`,
         file_urls: [imageUrl],
         add_context_from_internet: false,
         response_json_schema: {
