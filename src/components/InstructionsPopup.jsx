@@ -68,9 +68,12 @@ export default function InstructionsPopup({ onRead }) {
             </ul>
 
             {!read && (
-              <div className="px-3 pb-3 flex items-center justify-end gap-2 border-t border-border pt-3">
-                <span className="text-muted-foreground">I've read it</span>
-                <Switch onCheckedChange={(v) => v && handleConfirm()} />
+              <div className="px-3 pb-3 pt-3 border-t border-border flex items-center justify-between gap-3">
+                <span className="text-muted-foreground font-medium">👆 Toggle to confirm you've read it</span>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="text-muted-foreground/60">I've read it</span>
+                  <Switch onCheckedChange={(v) => v && handleConfirm()} />
+                </div>
               </div>
             )}
           </motion.div>
