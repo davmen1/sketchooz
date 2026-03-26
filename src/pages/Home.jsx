@@ -20,7 +20,7 @@ const DEFAULT_SETTINGS = {
   style: 'marker_render',
   detail: 75,
   perspective: 'keep_original',
-  surface: 'matte',
+  surface: 'mixed',
   pantoneColors: ['Cool Gray 11C', 'Black C'],
   outputMode: 'single',
   studySheet: 'four_views_eu',

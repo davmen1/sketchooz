@@ -140,7 +140,7 @@ export const PANTONE_PALETTES = [
 ];
 
 export default function PantoneSelector({ selected, onChange }) {
-  const [openPalette, setOpenPalette] = useState('Neutrals');
+  const [openPalette, setOpenPalette] = useState(null);
 
   const toggle = (colorName) => {
     if (selected.includes(colorName)) {
