@@ -244,37 +244,35 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
         )}
       </div>
 
-      {/* Suggest Palette */}
-      <SuggestPalette
-        imageUrl={imageUrl}
-        onSuggest={(colors) => update('pantoneColors', colors)}
-      />
-
-      {/* Pantone Colors */}
-      <PantoneSelector
-        selected={settings.pantoneColors}
-        onChange={(colors) => update('pantoneColors', colors)}
-      />
-
-      {/* Splash Background Color */}
-      <div className="flex items-center justify-between">
-        <div>
-          <Label className="text-xs font-semibold flex items-center gap-1.5"><Sparkles className="w-3.5 h-3.5" /> {t('splashBgColor')}</Label>
-          <p className="text-[10px] text-muted-foreground mt-0.5">{t('markerBgNote')}</p>
-        </div>
-        <Switch
-          checked={settings.finishing === 'marker_background'}
-          onCheckedChange={(v) => update('finishing', v ? 'marker_background' : 'none')}
-        />
-      </div>
-
-      {/* Background Color — only shown when splash is active */}
-      {settings.finishing === 'marker_background' && (
-        <BackgroundSelector
-          selected={settings.bgColor}
-          onChange={(val) => update('bgColor', val)}
-          pantoneColors={settings.pantoneColors}
-        />
+      {/* Color options — hidden for BW Lines */}
+      {settings.style !== 'bw_lines' && (
+        <>
+          <SuggestPalette
+            imageUrl={imageUrl}
+            onSuggest={(colors) => update('pantoneColors', colors)}
+          />
+          <PantoneSelector
+            selected={settings.pantoneColors}
+            onChange={(colors) => update('pantoneColors', colors)}
+          />
+          <div className="flex items-center justify-between">
+            <div>
+              <Label className="text-xs font-semibold flex items-center gap-1.5"><Sparkles className="w-3.5 h-3.5" /> {t('splashBgColor')}</Label>
+              <p className="text-[10px] text-muted-foreground mt-0.5">{t('markerBgNote')}</p>
+            </div>
+            <Switch
+              checked={settings.finishing === 'marker_background'}
+              onCheckedChange={(v) => update('finishing', v ? 'marker_background' : 'none')}
+            />
+          </div>
+          {settings.finishing === 'marker_background' && (
+            <BackgroundSelector
+              selected={settings.bgColor}
+              onChange={(val) => update('bgColor', val)}
+              pantoneColors={settings.pantoneColors}
+            />
+          )}
+        </>
       )}
     </div>
   );

@@ -109,8 +109,8 @@ function buildPrompt(settings, productDescription) {
     deep_red: 'deep red (#4A0E0E) background, sketch rendered in light lines',
   };
   const bg = settings.bgColor || { type: 'preset', value: 'white' };
-  // When marker_background is active, main background is always white
-  const bgColorLabel = settings.finishing === 'marker_background'
+  // When splash not active OR bw_lines style, background is always white
+  const bgColorLabel = (settings.finishing !== 'marker_background' || settings.style === 'bw_lines')
     ? 'pure white background'
     : bg.type === 'custom'
       ? `solid custom color background with exact hex value ${bg.hex?.toUpperCase()}, rendered for maximum contrast`
