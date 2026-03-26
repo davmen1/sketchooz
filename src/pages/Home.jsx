@@ -173,7 +173,7 @@ export default function Home() {
     parseInt(localStorage.getItem('promo_renders_used') || '0', 10)
   );
   const [promoDialogOpen, setPromoDialogOpen] = useState(false);
-  const [tipsRead, setTipsRead] = useState(false);
+  const [tipsRead, setTipsRead] = useState(() => !!localStorage.getItem('sketchooz_tips_read'));
 
   const getTodayKey = () => new Date().toISOString().slice(0, 10);
 
