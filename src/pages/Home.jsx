@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -12,7 +12,6 @@ import WatermarkCanvas from '@/components/result/WatermarkCanvas';
 import SketchSettings from '@/components/settings/SketchSettings';
 import MobileHeader from '@/components/MobileHeader';
 import PromoDialog from '@/components/PromoDialog';
-import PullToRefresh from '@/components/PullToRefresh';
 import ResultView from '@/components/result/ResultView';
 import GeneratingOverlay from '@/components/result/GeneratingOverlay';
 
@@ -60,7 +59,7 @@ const STUDY_SHEET_LABELS = {
   cross_section: 'a technical cross-section study sheet showing 2–3 key sectional cuts through the object, with hatching on cut surfaces, internal components visible, and section markers on a plan view — all on a single white sheet',
   exploded: 'a professional exploded-view illustration showing all components separated along their assembly axes with thin leader lines indicating assembly order, on a white sheet',
   detail_focus: 'a detail-focus study sheet with one main three-quarter view large in the center and 3–4 zoomed detail callouts around it showing joints, textures, and key features — no text labels, only visual detail circles',
-  ideation_sheet: 'an ideation study sheet with 6–8 quick concept sketches of the same product at different stages of refinement, arranged loosely on a white sheet like a real designer\'s sketchbook page',
+  ideation_sheet: "an ideation study sheet with 6–8 quick concept sketches of the same product at different stages of refinement, arranged loosely on a white sheet like a real designer's sketchbook page",
 };
 
 const SURFACE_LABELS = {
@@ -91,7 +90,6 @@ function buildPrompt(settings, productDescription) {
     ? `CRITICAL SUBJECT — reproduce with absolute fidelity, do NOT alter shape or proportions:\n${productDescription}\nThe sketch must show the EXACT SAME product: same silhouette, same proportions, same components. Do not invent, add, remove or reshape any part.`
     : '';
 
-  // Resolve background label from structured bgColor object
   const BG_PRESET_LABELS = {
     white: 'pure white background',
     off_white: 'off-white background (#F5F2EE)',
@@ -166,7 +164,7 @@ export default function Home() {
   const [imageUrl, setImageUrl] = useState(null);
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const [resultUrl, setResultUrl] = useState(null);
-  const [genPhase, setGenPhase] = useState(null); // 'analyzing' | 'generating'
+  const [genPhase, setGenPhase] = useState(null);
   const [needsWatermark, setNeedsWatermark] = useState(false);
   const [watermarkedUrl, setWatermarkedUrl] = useState(null);
   const [resultIsBW, setResultIsBW] = useState(false);
@@ -175,10 +173,7 @@ export default function Home() {
   );
   const [promoDialogOpen, setPromoDialogOpen] = useState(false);
 
-
   const getTodayKey = () => new Date().toISOString().slice(0, 10);
-
-
 
   const PROMO_EXPIRY = new Date('2026-04-23T23:59:59Z');
   const hasPromo = () => {
@@ -188,9 +183,7 @@ export default function Home() {
 
   const checkAndIncrementUsage = async () => {
     const user = await base44.auth.me();
-    // Admins always get free unlimited rendering
     if (user.role === 'admin') return { allowed: true, watermark: false };
-    // Promo code: 6 credits = 2 renders total, no watermark
     if (hasPromo()) {
       const used = parseInt(localStorage.getItem('promo_renders_used') || '0', 10);
       if (used < 2) {
@@ -200,22 +193,19 @@ export default function Home() {
       }
       return { allowed: false, watermark: false };
     }
-    // Check credits (3 credits per render)
     const packs = await base44.entities.RenderPack.filter({ user_email: user.email });
     const pack = packs.find(p => (p.credits_remaining || 0) >= 3);
     if (pack) {
       await base44.entities.RenderPack.update(pack.id, { credits_remaining: pack.credits_remaining - 3 });
       return { allowed: true, watermark: false };
     }
-    // Check monthly free cap
-    const thisMonth = getTodayKey().slice(0, 7); // 'YYYY-MM'
+    const thisMonth = getTodayKey().slice(0, 7);
     const allUsages = await base44.entities.RenderUsage.filter({ user_email: user.email });
     const monthlyTotal = allUsages
       .filter(u => u.date && u.date.startsWith(thisMonth))
       .reduce((sum, u) => sum + (u.count || 0), 0);
     if (monthlyTotal >= FREE_RENDERS_PER_MONTH) return { allowed: false, watermark: true };
 
-    // Check daily free usage
     const today = getTodayKey();
     const usage = allUsages.find(u => u.date === today);
     if (!usage) {
@@ -228,8 +218,6 @@ export default function Home() {
     }
     return { allowed: false, watermark: true };
   };
-
-
 
   const generateMutation = useMutation({
     mutationFn: async (correctionNote) => {
@@ -304,154 +292,165 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
 
   return (
     <ErrorBoundary>
-    <div className="flex flex-col flex-1">
-      <MobileHeader
-        title="SketchForge"
-        subtitle={t('appSubtitle')}
-        right={
-          (imageUrl || resultUrl) ? (
-            <Button variant="ghost" size="sm" onClick={handleReset} className="min-h-[44px]">
-              <RotateCcw className="w-3.5 h-3.5 mr-1.5" />
-              <span className="hidden sm:inline">Ricomincia</span>
-            </Button>
-          ) : null
-        }
-      />
+      <div className="flex flex-col flex-1">
+        <MobileHeader
+          title="SketchForge"
+          subtitle={t('appSubtitle')}
+          right={
+            (imageUrl || resultUrl) ? (
+              <Button variant="ghost" size="sm" onClick={handleReset} className="min-h-[44px]">
+                <RotateCcw className="w-3.5 h-3.5 mr-1.5" />
+                <span className="hidden sm:inline">Ricomincia</span>
+              </Button>
+            ) : null
+          }
+        />
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-        {!imageUrl && !resultUrl ? (
-          /* Hero + Upload */
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="max-w-2xl mx-auto space-y-8"
-          >
-            <div className="text-center space-y-3">
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
-                {t('heroTitle')} <br />
-                <span className="text-accent">{t('heroTitleAccent')}</span>
-              </h2>
-              <p className="text-muted-foreground text-sm sm:text-base max-w-md mx-auto">
-                {t('heroDesc')}
-              </p>
-            </div>
-            <ImageUploader
-              onImageUploaded={setImageUrl}
-              uploadedUrl={imageUrl}
-              onClear={() => setImageUrl(null)}
-            />
-            {!hasPromo() && (
-              <div className="text-center">
-                <button
-                  className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
-                  onClick={() => setPromoDialogOpen(true)}
-                >
-                  {t('promoLink')}
-                </button>
-              </div>
-            )}
-            <PromoDialog
-              open={promoDialogOpen}
-              onOpenChange={setPromoDialogOpen}
-              onApply={(code) => {
-                if (['WANNATRY1'].includes(code)) {
-                  localStorage.setItem('promo_code', code);
-                  setPromoRendersUsed(parseInt(localStorage.getItem('promo_renders_used') || '0', 10));
-                  toast.success(t('promoApplied'));
-                } else {
-                  toast.error(t('promoInvalid'));
-                }
-              }}
-            />
-          </motion.div>
-        ) : (
-          <>
-          {/* Image preview always at top */}
-          {imageUrl && (
-            {/* Settings Panel */}
-            <motion.aside
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="lg:col-span-3 space-y-6"
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full">
+          {!imageUrl && !resultUrl ? (
+            /* Hero + Upload */
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="max-w-2xl mx-auto space-y-8"
             >
-              <div className="bg-card rounded-2xl border border-border p-5 space-y-6">
-                <div>
-                  <h3 className="text-sm font-semibold">{t('settings')}</h3>
-                  <p className="text-xs text-muted-foreground mt-0.5">{t('settingsDesc')}</p>
-                </div>
-                <SketchSettings settings={settings} onChange={setSettings} imageUrl={imageUrl} />
+              <div className="text-center space-y-3">
+                <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
+                  {t('heroTitle')} <br />
+                  <span className="text-accent">{t('heroTitleAccent')}</span>
+                </h2>
+                <p className="text-muted-foreground text-sm sm:text-base max-w-md mx-auto">
+                  {t('heroDesc')}
+                </p>
               </div>
-
-              <Button
-                onClick={handleGenerate}
-                disabled={isGenerating || !imageUrl}
-                className="w-full h-12 bg-accent hover:bg-accent/90 text-accent-foreground font-semibold rounded-xl"
-            >
-              {isGenerating ? (
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  {t('generating')}
-                </div>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <Sparkles className="w-4 h-4" />
-                  {t('generate')}
+              <ImageUploader
+                onImageUploaded={setImageUrl}
+                uploadedUrl={imageUrl}
+                onClear={() => setImageUrl(null)}
+              />
+              {!hasPromo() && (
+                <div className="text-center">
+                  <button
+                    className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
+                    onClick={() => setPromoDialogOpen(true)}
+                  >
+                    {t('promoLink')}
+                  </button>
                 </div>
               )}
-            </Button>
+              <PromoDialog
+                open={promoDialogOpen}
+                onOpenChange={setPromoDialogOpen}
+                onApply={(code) => {
+                  if (['WANNATRY1'].includes(code)) {
+                    localStorage.setItem('promo_code', code);
+                    setPromoRendersUsed(parseInt(localStorage.getItem('promo_renders_used') || '0', 10));
+                    toast.success(t('promoApplied'));
+                  } else {
+                    toast.error(t('promoInvalid'));
+                  }
+                }}
+              />
+            </motion.div>
+          ) : (
+            <>
+              {/* Image preview always at top */}
+              {imageUrl && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mb-6"
+                >
+                  <ImageUploader
+                    onImageUploaded={setImageUrl}
+                    uploadedUrl={imageUrl}
+                    onClear={() => { setImageUrl(null); setResultUrl(null); }}
+                  />
+                </motion.div>
+              )}
 
-            {hasPromo() && (
-              <div className="rounded-xl border border-border bg-muted/50 px-4 py-3 text-xs space-y-1">
-                <div className="flex items-center justify-between">
-                  <span className="font-semibold text-foreground">🎟️ {t('promoActive')}</span>
-                  <span className="text-muted-foreground">{t('promoExpiry')}</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  {[0, 1].map(i => (
-                    <div key={i} className={`h-2 flex-1 rounded-full ${
-                      i < promoRendersUsed ? 'bg-muted-foreground/40' : 'bg-accent'
-                    }`} />
-                  ))}
-                </div>
-                <p className="text-muted-foreground">{Math.max(0, 2 - promoRendersUsed)} {t('promoRendersLeft')}</p>
-              </div>
-            )}
-            </motion.aside>
+              {/* Editor Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                {/* Settings Panel */}
+                <motion.aside
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="lg:col-span-3 space-y-6"
+                >
+                  <div className="bg-card rounded-2xl border border-border p-5 space-y-6">
+                    <div>
+                      <h3 className="text-sm font-semibold">{t('settings')}</h3>
+                      <p className="text-xs text-muted-foreground mt-0.5">{t('settingsDesc')}</p>
+                    </div>
+                    <SketchSettings settings={settings} onChange={setSettings} imageUrl={imageUrl} />
+                  </div>
 
-            {/* Result Area */}
-            <div className="lg:col-span-9 space-y-4">
-              {/* Image is shown at the top above the grid, not repeated here */}
-
-              <AnimatePresence mode="wait">
-                {isGenerating && <GeneratingOverlay key="gen" phase={genPhase} />}
-                {resultUrl && !isGenerating && (
-                  <>
-                    {needsWatermark && resultUrl && !watermarkedUrl && (
-                      <WatermarkCanvas
-                        imageUrl={resultUrl}
-                        onReady={(url) => setWatermarkedUrl(url)}
-                      />
+                  <Button
+                    onClick={handleGenerate}
+                    disabled={isGenerating || !imageUrl}
+                    className="w-full h-12 bg-accent hover:bg-accent/90 text-accent-foreground font-semibold rounded-xl"
+                  >
+                    {isGenerating ? (
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        {t('generating')}
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <Sparkles className="w-4 h-4" />
+                        {t('generate')}
+                      </div>
                     )}
-                    <ResultView
-                      key="result"
-                      originalUrl={imageUrl}
-                      resultUrl={needsWatermark ? (watermarkedUrl || resultUrl) : resultUrl}
-                      hasWatermark={needsWatermark}
-                      freeVector={hasPromo()}
-                      showRasterDownload={resultIsBW}
-                      onRegenerate={handleRegenerate}
+                  </Button>
 
-                    />
-                  </>
-                )}
-              </AnimatePresence>
-            </div>
-          </div>
-          </>
-        )}
-      </main>
-    </div>
+                  {hasPromo() && (
+                    <div className="rounded-xl border border-border bg-muted/50 px-4 py-3 text-xs space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="font-semibold text-foreground">🎟️ {t('promoActive')}</span>
+                        <span className="text-muted-foreground">{t('promoExpiry')}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        {[0, 1].map(i => (
+                          <div key={i} className={`h-2 flex-1 rounded-full ${
+                            i < promoRendersUsed ? 'bg-muted-foreground/40' : 'bg-accent'
+                          }`} />
+                        ))}
+                      </div>
+                      <p className="text-muted-foreground">{Math.max(0, 2 - promoRendersUsed)} {t('promoRendersLeft')}</p>
+                    </div>
+                  )}
+                </motion.aside>
+
+                {/* Result Area */}
+                <div className="lg:col-span-9 space-y-4">
+                  <AnimatePresence mode="wait">
+                    {isGenerating && <GeneratingOverlay key="gen" phase={genPhase} />}
+                    {resultUrl && !isGenerating && (
+                      <>
+                        {needsWatermark && resultUrl && !watermarkedUrl && (
+                          <WatermarkCanvas
+                            imageUrl={resultUrl}
+                            onReady={(url) => setWatermarkedUrl(url)}
+                          />
+                        )}
+                        <ResultView
+                          key="result"
+                          originalUrl={imageUrl}
+                          resultUrl={needsWatermark ? (watermarkedUrl || resultUrl) : resultUrl}
+                          hasWatermark={needsWatermark}
+                          freeVector={hasPromo()}
+                          showRasterDownload={resultIsBW}
+                          onRegenerate={handleRegenerate}
+                        />
+                      </>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </div>
+            </>
+          )}
+        </main>
+      </div>
     </ErrorBoundary>
   );
 }
