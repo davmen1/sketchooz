@@ -168,7 +168,12 @@ function buildPrompt(settings, productDescription) {
     if (settings.backgroundType === 'colorful') {
       bgPart = `BACKGROUND: Use a ${splashColorLabel}. The entire background is solid, no gradients, no variations.`;
     } else if (settings.backgroundType === 'splash') {
-      bgPart = `FINISHING — MANDATORY: Behind the product, paint a raw loose marker color splash/patch using ${markerColorLabel}, applied in rough irregular strokes like a real Copic marker on paper. The product silhouette must have a VERY BOLD BLACK OUTLINE (3-4pt minimum) on its outer boundary, plus crisp WHITE HIGHLIGHT LINES on all key edges and curved surfaces creating a strong halo effect, making the design pop dramatically against the marker backdrop. The rest of the paper/background outside the splash MUST remain pure white. Aesthetic: professional ID marker sketch on white paper with a raw color marker backdrop, competition-style industrial design presentation.`;
+      bgPart = `FINISHING — MANDATORY MARKER BACKGROUND STYLE:
+1. PRODUCT OUTLINE: Apply a BOLD, THICK BLACK OUTLINE (minimum 4-5pt stroke) around the ENTIRE product silhouette. This outline MUST be dark, crisp, and define every boundary.
+2. WHITE HIGHLIGHTS: Paint bright WHITE HIGHLIGHT LINES (2-3pt) on ALL key edges, creases, top curves, and prominent surfaces to create a strong halo/glow effect that makes the product pop.
+3. BACKGROUND: Behind the product, create a loose, raw MARKER SPLASH/PATCH in ${markerColorLabel} with irregular organic strokes (like a real Copic marker on paper). The splash should be bold and visible.
+4. SURROUNDING: The area outside the marker splash MUST be pure white paper.
+Aesthetic: Professional industrial design marker sketch on white paper with dramatic color backdrop, competition-style presentation. Bold, confident strokes. High contrast between black outline, white highlights, and colored marker splash.`;
     }
     // backgroundType 'none' → no background instruction
   }
