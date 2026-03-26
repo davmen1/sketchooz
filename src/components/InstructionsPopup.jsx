@@ -14,43 +14,41 @@ const tips = [
   { emoji: '🖼️', text: 'For study sheets, a front-facing or 3/4 view gives the best results' },
 ];
 
+const STORAGE_KEY = 'sketchooz_tips_read';
+
 export default function InstructionsPopup({ onRead }) {
   const [expanded, setExpanded] = useState(false);
-  const [read, setRead] = useState(false);
+  const [read, setRead] = useState(() => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) { setTimeout(() => onRead?.(), 0); }
+    return !!stored;
+  });
 
-  const handleSwitch = (val) => {
-    setRead(val);
-    if (val) {
-      setExpanded(false);
-      onRead?.();
-    }
+  const handleConfirm = () => {
+    localStorage.setItem(STORAGE_KEY, '1');
+    setRead(true);
+    setExpanded(false);
+    onRead?.();
   };
 
   return (
-    <div className={`rounded-2xl border transition-colors ${read ? 'border-accent/40 bg-accent/5' : 'border-border bg-card'}`}>
-      {/* Header row */}
-      <div className="flex items-center justify-between px-4 py-3 gap-3">
-        <button
-          onClick={() => setExpanded(v => !v)}
-          className="flex items-center gap-2 flex-1 text-left min-w-0"
-        >
-          <span className="text-sm leading-none">📋</span>
-          <span className="text-sm font-medium text-foreground truncate">
-            Tips for best results
+    <div className={`rounded-xl border text-xs transition-colors ${read ? 'border-accent/30 bg-accent/5' : 'border-border bg-card'}`}>
+      <button
+        onClick={() => setExpanded(v => !v)}
+        className="w-full flex items-center justify-between px-3 py-2 gap-2 text-left"
+      >
+        <div className="flex items-center gap-1.5">
+          <span>{read ? '✅' : '📋'}</span>
+          <span className={`font-medium ${read ? 'text-accent' : 'text-muted-foreground'}`}>
+            {read ? 'Tips already read' : 'Tips for best results'}
           </span>
-          {expanded
-            ? <ChevronUp className="w-4 h-4 text-muted-foreground shrink-0" />
-            : <ChevronDown className="w-4 h-4 text-muted-foreground shrink-0" />
-          }
-        </button>
-
-        <div className="flex items-center gap-2 shrink-0">
-          <span className="text-xs text-muted-foreground">{read ? "Got it ✓" : "I've read it"}</span>
-          <Switch checked={read} onCheckedChange={handleSwitch} />
         </div>
-      </div>
+        {expanded
+          ? <ChevronUp className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+          : <ChevronDown className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+        }
+      </button>
 
-      {/* Collapsible tips */}
       <AnimatePresence initial={false}>
         {expanded && (
           <motion.div
@@ -60,14 +58,21 @@ export default function InstructionsPopup({ onRead }) {
             transition={{ duration: 0.22, ease: 'easeInOut' }}
             className="overflow-hidden"
           >
-            <ul className="px-4 pb-4 space-y-2.5">
+            <ul className="px-3 pb-3 space-y-2">
               {tips.map((tip, i) => (
-                <li key={i} className="flex items-start gap-3">
-                  <span className="text-sm leading-none mt-0.5">{tip.emoji}</span>
-                  <span className="text-xs text-foreground/75 leading-snug">{tip.text}</span>
+                <li key={i} className="flex items-start gap-2">
+                  <span className="leading-none mt-0.5">{tip.emoji}</span>
+                  <span className="text-foreground/70 leading-snug">{tip.text}</span>
                 </li>
               ))}
             </ul>
+
+            {!read && (
+              <div className="px-3 pb-3 flex items-center justify-end gap-2 border-t border-border pt-3">
+                <span className="text-muted-foreground">I've read it</span>
+                <Switch onCheckedChange={(v) => v && handleConfirm()} />
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
