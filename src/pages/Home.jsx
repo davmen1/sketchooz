@@ -25,7 +25,7 @@ const DEFAULT_SETTINGS = {
   outputMode: 'single',
   studySheet: 'four_views_eu',
   cleanDesign: false,
-  finishing: 'none',
+  backgroundType: 'colorful',
   textures: [],
   bgColor: { type: 'preset', value: 'white' },
   bwForRaster: false,
@@ -160,17 +160,18 @@ function buildPrompt(settings, productDescription) {
       deep_red: 'deep red (#4A0E0E)',
     };
     return MARKER_PRESET_LABELS[bg.value] || 'white';
-  });
+  })();
 
-  // Splash BG: solid color background
-  const splashBgPart = settings.splashBg && settings.style !== 'bw_lines'
-    ? `BACKGROUND: Use a ${splashColorLabel}. The entire background is solid, no gradients, no variations.`
-    : '';
-
-  // Marker BG: raw marker splash with bold outline and white halo
-  const markerBgPart = settings.markerBg && settings.style !== 'bw_lines'
-    ? `FINISHING — MANDATORY: Behind the product, paint a raw loose marker color splash/patch using ${markerColorLabel}, applied in rough irregular strokes like a real Copic marker on paper. The product silhouette must have a VERY BOLD BLACK OUTLINE (3-4pt minimum) on its outer boundary, plus crisp WHITE HIGHLIGHT LINES on all key edges and curved surfaces creating a strong halo effect, making the design pop dramatically against the marker backdrop. The rest of the paper/background outside the splash MUST remain pure white. Aesthetic: professional ID marker sketch on white paper with a raw color marker backdrop, competition-style industrial design presentation.`
-    : '';
+  // Background logic based on backgroundType
+  let bgPart = '';
+  if (settings.style !== 'bw_lines') {
+    if (settings.backgroundType === 'colorful') {
+      bgPart = `BACKGROUND: Use a ${splashColorLabel}. The entire background is solid, no gradients, no variations.`;
+    } else if (settings.backgroundType === 'splash') {
+      bgPart = `FINISHING — MANDATORY: Behind the product, paint a raw loose marker color splash/patch using ${markerColorLabel}, applied in rough irregular strokes like a real Copic marker on paper. The product silhouette must have a VERY BOLD BLACK OUTLINE (3-4pt minimum) on its outer boundary, plus crisp WHITE HIGHLIGHT LINES on all key edges and curved surfaces creating a strong halo effect, making the design pop dramatically against the marker backdrop. The rest of the paper/background outside the splash MUST remain pure white. Aesthetic: professional ID marker sketch on white paper with a raw color marker backdrop, competition-style industrial design presentation.`;
+    }
+    // backgroundType 'none' → no background instruction
+  }
 
   if (settings.outputMode === 'study_sheet') {
     const sheetLabel = STUDY_SHEET_LABELS[settings.studySheet];
@@ -186,8 +187,7 @@ Rendering style: ${styleLabel}. Surface material: ${surfaceLabel}.
 ${detailLabel} line quality. ${colorPart}
 ${texturePart}
 ${cleanPart}
-${splashBgPart}
-${markerBgPart}
+${bgPart}
 No watermarks, professional industrial design presentation quality.`;
   }
 
@@ -203,8 +203,7 @@ Render it as a ${styleLabel}, ${perspLabel}, with ${surfaceLabel}.
 ${detailLabel} line quality. ${colorPart}
 ${texturePart}
 ${cleanPart}
-${splashBgPart}
-${markerBgPart}
+${bgPart}
 No watermarks, professional presentation quality.`;
 }
 
