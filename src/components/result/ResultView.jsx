@@ -15,14 +15,21 @@ export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeV
   const { t } = useLang();
 
   const handleDownload = async () => {
-    const res = await fetch(resultUrl);
-    const blob = await res.blob();
-    const objectUrl = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = objectUrl;
-    link.download = 'sketchforge-render.png';
-    link.click();
-    URL.revokeObjectURL(objectUrl);
+    try {
+      const res = await fetch(resultUrl, { mode: 'cors' });
+      const blob = await res.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = objectUrl;
+      link.download = 'sketchooz-render.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(objectUrl);
+    } catch {
+      // Fallback: open image in new tab so user can long-press save (mobile)
+      window.open(resultUrl, '_blank');
+    }
   };
 
   const handleApplyCorrection = () => {
