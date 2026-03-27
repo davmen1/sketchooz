@@ -15,6 +15,19 @@ export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeV
   const { t } = useLang();
 
   const handleDownload = async () => {
+    // On iOS/mobile, use Web Share API if available
+    if (navigator.share) {
+      try {
+        const res = await fetch(resultUrl);
+        const blob = await res.blob();
+        const file = new File([blob], 'sketchooz-render.png', { type: 'image/png' });
+        await navigator.share({ files: [file], title: 'Sketchooz render' });
+        return;
+      } catch {
+        // If share fails or cancelled, fall through to open in tab
+      }
+    }
+    // Desktop: fetch + blob download
     try {
       const res = await fetch(resultUrl, { mode: 'cors' });
       const blob = await res.blob();
@@ -27,7 +40,6 @@ export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeV
       document.body.removeChild(link);
       URL.revokeObjectURL(objectUrl);
     } catch {
-      // Fallback: open image in new tab so user can long-press save (mobile)
       window.open(resultUrl, '_blank');
     }
   };
