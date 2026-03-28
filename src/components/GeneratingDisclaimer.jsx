@@ -23,7 +23,7 @@ export default function GeneratingDisclaimer({ visible, onClose }) {
           exit={{ opacity: 0, y: -12 }}
           transition={{ duration: 0.3 }}
           onClick={handleClose}
-          className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[90vw] max-w-sm cursor-pointer"
+          className="fixed inset-0 z-50 flex items-center justify-center px-6 cursor-pointer"
         >
           <div className="flex items-start gap-3 bg-foreground text-background rounded-2xl px-4 py-3 shadow-lg">
             <span className="text-lg mt-0.5">⏳</span>
