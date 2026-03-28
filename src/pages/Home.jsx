@@ -20,7 +20,7 @@ import GeneratingOverlay from '@/components/result/GeneratingOverlay';
 
 const DEFAULT_SETTINGS = {
   style: 'marker_render',
-  detail: 75,
+  creative: false,
   perspective: 'keep_original',
   surface: 'mixed',
   pantoneColors: ['Cool Gray 11C', 'Black C'],
@@ -84,7 +84,9 @@ function buildPrompt(settings, productDescription) {
     ? `CRITICAL COLOR RULE — NO EXCEPTIONS: You MUST use EXCLUSIVELY these exact Pantone colors and NO other colors: ${settings.pantoneColors.map(c => `PANTONE ${c}`).join(', ')}. Do NOT substitute, approximate, or replace these colors with any other hue. If a Pantone color is orange, render it as orange — not red, not brown, not yellow. Reproduce the exact hue faithfully.`
     : 'Render in monochromatic black, white, and cool grays only.';
 
-  const detailLabel = settings.detail >= 80 ? 'highly detailed and refined' : settings.detail >= 50 ? 'moderately detailed' : 'loose, gestural, and quick';
+  const detailLabel = settings.creative
+    ? 'loose, gestural and expressive — feel free to reinterpret shapes, proportions and details creatively'
+    : 'highly detailed and refined';
 
   const cleanPart = settings.cleanDesign
     ? 'IMPORTANT: No text, no annotations, no dimension lines, no material callouts, no labels, no quotes, no numbers — pure visual sketch only.'
@@ -94,7 +96,9 @@ function buildPrompt(settings, productDescription) {
   const styleLabel = STYLE_LABELS[settings.style];
 
   const subjectAnchor = productDescription
-    ? `CRITICAL SUBJECT — reproduce with absolute fidelity, do NOT alter shape or proportions:\n${productDescription}\nThe sketch must show the EXACT SAME product: same silhouette, same proportions, same components. Do not invent, add, remove or reshape any part.`
+    ? settings.creative
+      ? `INSPIRATION SUBJECT (use freely as a starting point, you may reinterpret proportions and details):\n${productDescription}`
+      : `CRITICAL SUBJECT — reproduce with absolute fidelity, do NOT alter shape or proportions:\n${productDescription}\nThe sketch must show the EXACT SAME product: same silhouette, same proportions, same components. Do not invent, add, remove or reshape any part.`
     : '';
 
   const BG_PRESET_LABELS = {
@@ -188,36 +192,13 @@ Aesthetic: Professional industrial design marker sketch on white paper with dram
 
   if (settings.outputMode === 'study_sheet') {
     const sheetLabel = STUDY_SHEET_LABELS[settings.studySheet];
-    return `Create a professional industrial design study sheet. ${subjectAnchor}
-
-STRICT RENDERING RULES:
-- Preserve the EXACT silhouette, shape and proportions described above
-- Do NOT simplify, stylize or redesign the product — only apply the rendering style on the faithful form
-- The output must be recognizable as the same product as the input image
-
-Layout: ${sheetLabel}.
-Rendering style: ${styleLabel}. Surface material: ${surfaceLabel}.
-${detailLabel} line quality. ${colorPart}
-${texturePart}
-${cleanPart}
-${bgPart}
-No watermarks, professional industrial design presentation quality.`;
+    const strictRules = settings.creative ? '' : `STRICT RENDERING RULES:\n- Preserve the EXACT silhouette, shape and proportions described above\n- Do NOT simplify, stylize or redesign the product — only apply the rendering style on the faithful form\n- The output must be recognizable as the same product as the input image\n`;
+    return `Create a professional industrial design study sheet. ${subjectAnchor}\n\n${strictRules}Layout: ${sheetLabel}.\nRendering style: ${styleLabel}. Surface material: ${surfaceLabel}.\n${detailLabel} line quality. ${colorPart}\n${texturePart}\n${cleanPart}\n${bgPart}\nNo watermarks, professional industrial design presentation quality.`;
   }
 
   const perspLabel = PERSPECTIVE_LABELS[settings.perspective];
-  return `Create a professional industrial design sketch. ${subjectAnchor}
-
-STRICT RENDERING RULES:
-- Preserve the EXACT silhouette, shape and proportions described above
-- Do NOT simplify, stylize or redesign the product — only apply the rendering style on the faithful form
-- The output must be recognizable as the same product as the input image
-
-Render it as a ${styleLabel}, ${perspLabel}, with ${surfaceLabel}.
-${detailLabel} line quality. ${colorPart}
-${texturePart}
-${cleanPart}
-${bgPart}
-No watermarks, professional presentation quality.`;
+  const strictRules = settings.creative ? '' : `STRICT RENDERING RULES:\n- Preserve the EXACT silhouette, shape and proportions described above\n- Do NOT simplify, stylize or redesign the product — only apply the rendering style on the faithful form\n- The output must be recognizable as the same product as the input image\n`;
+  return `Create a professional industrial design sketch. ${subjectAnchor}\n\n${strictRules}Render it as a ${styleLabel}, ${perspLabel}, with ${surfaceLabel}.\n${detailLabel} line quality. ${colorPart}\n${texturePart}\n${cleanPart}\n${bgPart}\nNo watermarks, professional presentation quality.`;
 }
 
 

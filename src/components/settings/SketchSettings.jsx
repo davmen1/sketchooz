@@ -215,21 +215,22 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
         </div>
       </div>
 
-      {/* Detail Level */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+      {/* Creative / Precise Mode */}
+      <div className="flex items-center justify-between">
+        <div>
+          <Label className="flex items-center gap-2 text-xs font-semibold">
             <Eye className="w-3.5 h-3.5" />
-            {t('detail')}
-            </Label>
-          <span className="text-xs font-mono text-muted-foreground">{settings.detail}%</span>
+            {settings.creative ? t('creativeMode') || 'Creativo' : t('preciseMode') || 'Preciso'}
+          </Label>
+          <p className="text-[10px] text-muted-foreground mt-0.5">
+            {settings.creative
+              ? (t('creativeModeDesc') || 'Più libero e interpretativo')
+              : (t('preciseModeDesc') || 'Massima fedeltà all\'originale')}
+          </p>
         </div>
-        <Slider
-          value={[settings.detail]}
-          onValueChange={([v]) => update('detail', v)}
-          min={20}
-          max={100}
-          step={5}
+        <Switch
+          checked={!!settings.creative}
+          onCheckedChange={(v) => update('creative', v)}
         />
       </div>
 
