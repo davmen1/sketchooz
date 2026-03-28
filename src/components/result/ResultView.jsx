@@ -67,24 +67,15 @@ export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeV
         </div>
       )}
       {/* Toolbar */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Button
-            variant={viewMode === 'result' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setViewMode('result')}
-          >
-            {t('result')}
-          </Button>
-          <Button
-            variant={viewMode === 'compare' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setViewMode('compare')}
-          >
-            <ArrowLeftRight className="w-3.5 h-3.5 mr-1.5" />
-            {t('compare')}
-          </Button>
-        </div>
+      <div className="flex items-center justify-between gap-2">
+        <Button
+          variant={viewMode === 'compare' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => setViewMode(viewMode === 'compare' ? 'result' : 'compare')}
+        >
+          <ArrowLeftRight className="w-3.5 h-3.5 mr-1.5" />
+          {t('compare')}
+        </Button>
         <div className="flex items-center gap-2">
           <Dialog>
             <DialogTrigger asChild>
