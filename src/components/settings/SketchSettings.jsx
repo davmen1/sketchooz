@@ -216,22 +216,38 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
       </div>
 
       {/* Creative / Precise Mode */}
-      <div className="flex items-center justify-between">
-        <div>
-          <Label className="flex items-center gap-2 text-xs font-semibold">
-            <Eye className="w-3.5 h-3.5" />
-            {settings.creative ? t('creativeMode') || 'Creativo' : t('preciseMode') || 'Preciso'}
-          </Label>
-          <p className="text-[10px] text-muted-foreground mt-0.5">
-            {settings.creative
-              ? (t('creativeModeDesc') || 'Più libero e interpretativo')
-              : (t('preciseModeDesc') || 'Massima fedeltà all\'originale')}
-          </p>
+      <div className="space-y-2">
+        <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <Eye className="w-3.5 h-3.5" />
+          {t('detail') || 'Modalità'}
+        </Label>
+        <div className="flex rounded-lg border border-border overflow-hidden">
+          <button
+            onClick={() => update('creative', false)}
+            className={`flex-1 py-2 text-xs font-semibold transition-all ${
+              !settings.creative
+                ? 'bg-foreground text-background'
+                : 'bg-card text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            🎯 {t('preciseMode') || 'Preciso'}
+          </button>
+          <button
+            onClick={() => update('creative', true)}
+            className={`flex-1 py-2 text-xs font-semibold transition-all ${
+              settings.creative
+                ? 'bg-accent text-accent-foreground'
+                : 'bg-card text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            ✨ {t('creativeMode') || 'Creativo'}
+          </button>
         </div>
-        <Switch
-          checked={!!settings.creative}
-          onCheckedChange={(v) => update('creative', v)}
-        />
+        <p className="text-[10px] text-muted-foreground">
+          {settings.creative
+            ? (t('creativeModeDesc') || 'Più libero e interpretativo')
+            : (t('preciseModeDesc') || 'Massima fedeltà all\'originale')}
+        </p>
       </div>
 
       {/* Texture (max 2 combo) */}
