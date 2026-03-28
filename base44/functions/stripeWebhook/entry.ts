@@ -48,12 +48,14 @@ Deno.serve(async (req) => {
     }
 
     const isStarterPack = pack === 'starter';
+    const BONUS_CREDITS = 12;
+    const bonusCredits = isStarterPack ? 0 : BONUS_CREDITS;
     
     try {
       if (userPacks.length > 0) {
         // Update existing pack with latest data
         const existingPack = userPacks[0];
-        const creditsToAdd = parseInt(credits);
+        const creditsToAdd = parseInt(credits) + bonusCredits;
         const newTotal = (existingPack.credits_remaining || 0) + creditsToAdd;
         
         const updateData = {
@@ -69,17 +71,17 @@ Deno.serve(async (req) => {
         }
         
         await base44.asServiceRole.entities.RenderPack.update(existingPack.id, updateData);
-        console.log(`✓ Added ${creditsToAdd} credits to ${user_email}, total: ${newTotal}`);
+        console.log(`✓ Added ${creditsToAdd} credits (incl. ${bonusCredits} bonus) to ${user_email}, total: ${newTotal}`);
       } else {
         // Create new pack with unique stripe_session_id
         const newPack = await base44.asServiceRole.entities.RenderPack.create({
           user_email,
-          credits_remaining: parseInt(credits),
+          credits_remaining: parseInt(credits) + bonusCredits,
           stripe_session_id: stripeSessionId,
           pack_type: pack,
           watermark_only: isStarterPack,
         });
-        console.log(`✓ Created new pack for ${user_email}: ID=${newPack.id}, credits=${credits}`);
+        console.log(`✓ Created new pack for ${user_email}: ID=${newPack.id}, credits=${parseInt(credits) + bonusCredits} (incl. ${bonusCredits} bonus)`);
       }
     } catch (processErr) {
       console.error(`✗ Failed to process payment for ${user_email}:`, processErr.message);
