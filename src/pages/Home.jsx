@@ -319,7 +319,6 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
 
   return (
     <ErrorBoundary>
-      <GeneratingDisclaimer visible={showDisclaimer} onClose={() => setShowDisclaimer(false)} />
       <div className="flex flex-col flex-1">
         <MobileHeader
           title="Sketchooz"
@@ -459,6 +458,9 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
 
                 {/* Result Area */}
                 <div className="lg:col-span-9 space-y-4">
+                  {showDisclaimer && isGenerating && (
+                    <GeneratingDisclaimer visible={showDisclaimer} onClose={() => setShowDisclaimer(false)} />
+                  )}
                   <AnimatePresence mode="wait">
                     {isGenerating && <GeneratingOverlay key="gen" phase={genPhase} />}
                     {resultUrl && !isGenerating && (
