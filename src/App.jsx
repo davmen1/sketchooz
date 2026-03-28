@@ -19,9 +19,12 @@ import Home from './pages/Home';
 
 const AuthenticatedApp = () => {
   const [showSplash, setShowSplash] = useState(true);
+  const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
+  const location = useLocation();
   const isAppRoute = location.pathname.startsWith('/app');
 
   // Show loading spinner while checking app public settings or auth
+
 
   if (isLoadingPublicSettings || isLoadingAuth) {
     return (
