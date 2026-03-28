@@ -116,7 +116,7 @@ export default function Pricing() {
 
           {iosWebView && (
             <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl text-sm text-blue-800 text-center space-y-2">
-              <p className="font-semibold">🛒 {lang === 'it' ? 'Acquista su sketchooz.com' : 'Purchase at sketch-forge.com'}</p>
+              <p className="font-semibold">🛒 {lang === 'it' ? 'Acquista su sketchooz.com' : 'Purchase at sketchooz.com'}</p>
               <p className="text-xs text-blue-700">{lang === 'it' ? 'Per acquistare i pack, visita il nostro sito dal browser.' : 'To purchase packs, visit our website from your browser.'}</p>
               <button
                 onClick={() => window.open('https://www.sketchooz.com/pricing', '_blank')}
