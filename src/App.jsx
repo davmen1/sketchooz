@@ -12,6 +12,7 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 // Add page imports here
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
 import SplashScreen from './components/SplashScreen';
 import Home from './pages/Home';
 
@@ -51,6 +52,7 @@ const AuthenticatedApp = () => {
           <Route path="settings" element={null} />
         </Route>
         <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsOfService />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </>

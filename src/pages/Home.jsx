@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 import ImageUploader from '@/components/upload/ImageUploader';
 import { useLang } from '@/lib/LangContext';
+import { Link } from 'react-router-dom';
 
 import SketchSettings from '@/components/settings/SketchSettings';
 import MobileHeader from '@/components/MobileHeader';
@@ -386,6 +387,12 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
                   }
                 }}
               />
+              {/* Footer links */}
+              <div className="flex items-center justify-center gap-4 pt-2">
+                <Link to="/privacy" className="text-xs text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2">Privacy Policy</Link>
+                <span className="text-muted-foreground/40 text-xs">·</span>
+                <Link to="/terms" className="text-xs text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2">Termini e Condizioni</Link>
+              </div>
             </motion.div>
           ) : (
             <>
