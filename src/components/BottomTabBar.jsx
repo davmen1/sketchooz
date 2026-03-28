@@ -32,8 +32,9 @@ export default function BottomTabBar() {
     >
       {TABS.map(({ path, labelKey, icon: Icon }) => {
         const label = t(labelKey);
-        const active = location.pathname === path ||
-          (path !== '/' && location.pathname.startsWith(path));
+        const active = path === '/app'
+          ? location.pathname === '/app'
+          : location.pathname === path || location.pathname.startsWith(path + '/');
         return (
           <button
             key={path}
