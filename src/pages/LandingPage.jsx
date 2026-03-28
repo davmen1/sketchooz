@@ -63,7 +63,7 @@ export default function LandingPage() {
           <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.3, duration: 0.6 }}
             className="rounded-2xl overflow-hidden border border-border shadow-lg bg-card">
             <img
-              src="https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?w=900&q=80"
+              src="https://images.unsplash.com/photo-1544547289-a374c4a85e99?w=900&q=80"
               alt="Industrial design sketch example"
               className="w-full object-cover max-h-72"
             />
