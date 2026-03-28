@@ -6,19 +6,19 @@ import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 
 const features = [
-  { icon: Sparkles, title: 'AI Sketch Generation', desc: 'Trasforma qualsiasi foto di prodotto in uno sketch professionale di industrial design in pochi secondi.' },
-  { icon: Palette, title: 'Colori Pantone', desc: 'Specifica la tua palette Pantone e l\'AI rispetterà fedelmente i tuoi colori di brand.' },
-  { icon: Layers, title: 'Stili multipli', desc: 'Marker render, line drawing, pencil sketch, technical drawing, watercolor e molto altro.' },
-  { icon: Download, title: 'Pronto per il portfolio', desc: 'Scarica in alta qualità e usa direttamente in presentazioni, pitch e portfolio di design.' },
-];
+{ icon: Sparkles, title: 'AI Sketch Generation', desc: 'Trasforma qualsiasi foto di prodotto in uno sketch professionale di industrial design in pochi secondi.' },
+{ icon: Palette, title: 'Colori Pantone', desc: 'Specifica la tua palette Pantone e l\'AI rispetterà fedelmente i tuoi colori di brand.' },
+{ icon: Layers, title: 'Stili multipli', desc: 'Marker render, line drawing, pencil sketch, technical drawing, watercolor e molto altro.' },
+{ icon: Download, title: 'Pronto per il portfolio', desc: 'Scarica in alta qualità e usa direttamente in presentazioni, pitch e portfolio di design.' }];
+
 
 export default function LandingPage() {
   const navigate = useNavigate();
 
   const handleLogin = () => {
-    base44.auth.isAuthenticated().then(auth => {
-      if (auth) navigate('/app');
-      else base44.auth.redirectToLogin('/app');
+    base44.auth.isAuthenticated().then((auth) => {
+      if (auth) navigate('/app');else
+      base44.auth.redirectToLogin('/app');
     });
   };
 
@@ -30,8 +30,8 @@ export default function LandingPage() {
           <img
             src="https://media.base44.com/images/public/69c0940be94e736c4d6366a0/5e4300c0f_Gemini_Generated_Image_p24ieqp24ieqp24i1.jpg"
             alt="Sketchooz"
-            className="w-8 h-8 object-contain rounded-lg"
-          />
+            className="w-8 h-8 object-contain rounded-lg" />
+          
           <span className="font-semibold tracking-widest text-sm uppercase">Sketchooz</span>
         </div>
         <Button onClick={handleLogin} size="sm" className="gap-2">
@@ -61,20 +61,20 @@ export default function LandingPage() {
 
           {/* Preview image */}
           <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.3, duration: 0.6 }}
-            className="rounded-2xl overflow-hidden border border-border shadow-lg bg-card">
-            <img
-              src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=900&q=80"
-              alt="Industrial design sketch example"
-              className="w-full object-cover max-h-72"
-            />
+          className="rounded-2xl overflow-hidden border border-border shadow-lg bg-card">
+            <img src="https://media.base44.com/images/public/69c0940be94e736c4d6366a0/f8eba66d2_Gemini_Generated_Image_vvcje0vvcje0vvcj.jpg"
+
+            alt="Industrial design sketch example" className="w-full object-cover max-h-72" />
+
+            
           </motion.div>
         </section>
 
         {/* Features */}
         <section className="max-w-4xl mx-auto px-6 pb-20 grid grid-cols-1 sm:grid-cols-2 gap-5">
-          {features.map(({ icon: Icon, title, desc }) => (
-            <motion.div key={title} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-              className="bg-card border border-border rounded-2xl p-5 flex gap-4">
+          {features.map(({ icon: Icon, title, desc }) =>
+          <motion.div key={title} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+          className="bg-card border border-border rounded-2xl p-5 flex gap-4">
               <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center shrink-0">
                 <Icon className="w-5 h-5 text-accent" />
               </div>
@@ -83,7 +83,7 @@ export default function LandingPage() {
                 <p className="text-muted-foreground text-xs mt-1 leading-relaxed">{desc}</p>
               </div>
             </motion.div>
-          ))}
+          )}
         </section>
 
         {/* CTA bottom */}
@@ -104,6 +104,6 @@ export default function LandingPage() {
           <Link to="/terms" className="hover:text-foreground underline underline-offset-2 transition-colors">Termini e Condizioni</Link>
         </div>
       </footer>
-    </div>
-  );
+    </div>);
+
 }
