@@ -7,9 +7,9 @@ export default function BottomTabBar() {
   const location = useLocation();
   const { t } = useLang();
   const TABS = [
-    { path: '/', labelKey: 'tabHome', icon: Home },
-    { path: '/pricing', labelKey: 'tabPlans', icon: CreditCard },
-    { path: '/settings', labelKey: 'tabSettings', icon: Settings },
+    { path: '/app', labelKey: 'tabHome', icon: Home },
+    { path: '/app/pricing', labelKey: 'tabPlans', icon: CreditCard },
+    { path: '/app/settings', labelKey: 'tabSettings', icon: Settings },
   ];
 
   const navigate = useNavigate();
