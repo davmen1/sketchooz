@@ -15,14 +15,11 @@ const features = [
 export default function LandingPage() {
   const navigate = useNavigate();
 
-  useEffect(() => {
+  const handleLogin = () => {
     base44.auth.isAuthenticated().then(auth => {
       if (auth) navigate('/app');
+      else base44.auth.redirectToLogin('/app');
     });
-  }, [navigate]);
-
-  const handleLogin = () => {
-    base44.auth.redirectToLogin('/app');
   };
 
   return (
