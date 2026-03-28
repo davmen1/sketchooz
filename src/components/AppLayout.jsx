@@ -9,7 +9,7 @@ import Pricing from '../pages/Pricing';
 import Settings from '../pages/Settings';
 
 const TAB_PATHS = ['/app', '/app/pricing', '/app/settings'];
-const TAB_COMPONENTS = { '/': Home, '/pricing': Pricing, '/settings': Settings };
+const TAB_COMPONENTS = { '/app': Home, '/app/pricing': Pricing, '/app/settings': Settings };
 
 export default function AppLayout() {
   const { pathname } = useLocation();
