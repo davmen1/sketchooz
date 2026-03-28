@@ -46,10 +46,7 @@ export default function AppLayout() {
     }
   }, [currentIndex, navigate]);
 
-  // Normalize pathname for nested routes (e.g. /pricing matches /pricing)
-  const normalizedPath = '/' + (pathname.replace(/^\//, '').split('/')[0] || '');
-  const resolvedIndex = TAB_PATHS.indexOf(normalizedPath);
-  const activeIndex = resolvedIndex >= 0 ? resolvedIndex : 0;
+  const activeIndex = Math.max(TAB_PATHS.indexOf(pathname), 0);
 
   return (
     <div
@@ -84,8 +81,7 @@ export default function AppLayout() {
           </motion.div>
         );
       })}
-      {/* Outlet renders matched nested route (null elements — tabs are self-managed) */}
-      <Outlet />
+
       <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center pointer-events-none" style={{ bottom: 'calc(60px + env(safe-area-inset-bottom) + 8px)' }}>
         <div className="pointer-events-auto">
           <CreditCounter />
