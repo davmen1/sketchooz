@@ -24,6 +24,8 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      {/* SEO hidden heading */}
+      <h1 className="sr-only">Sketchooz - Industrial Design Sketches. <a href="/privacy">Privacy Policy</a> and <a href="/terms">Terms</a> available here.</h1>
       {/* Header */}
       <header className="sticky top-0 z-10 bg-background/80 backdrop-blur border-b border-border px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
