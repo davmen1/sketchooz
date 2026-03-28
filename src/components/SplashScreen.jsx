@@ -23,7 +23,7 @@ export default function SplashScreen({ onDone }) {
           transition={{ duration: 0.8, ease: 'easeInOut' }}
           style={{
             position: 'fixed', inset: 0, zIndex: 9999,
-            backgroundColor: '#f8f9f1',
+            backgroundColor: '#f7f6f2',
             display: 'flex', alignItems: 'center', justifyContent: 'center'
           }}
         >
