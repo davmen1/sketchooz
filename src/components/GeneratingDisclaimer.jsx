@@ -18,19 +18,18 @@ export default function GeneratingDisclaimer({ visible, onClose }) {
     <AnimatePresence>
       {visible && !dismissed && (
         <motion.div
-          initial={{ opacity: 0, y: -12 }}
+          initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -12 }}
+          exit={{ opacity: 0, y: 24 }}
           transition={{ duration: 0.3 }}
-          onClick={handleClose}
-          className="fixed inset-0 z-50 flex items-center justify-center px-6 cursor-pointer"
+          className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-sm px-4 pointer-events-none"
         >
-          <div className="flex items-start gap-3 bg-foreground text-background rounded-2xl px-4 py-3 shadow-lg">
+          <div className="flex items-start gap-3 bg-foreground text-background rounded-2xl px-4 py-3 shadow-lg pointer-events-auto">
             <span className="text-lg mt-0.5">⏳</span>
             <p className="text-sm leading-snug flex-1">
               La generazione può richiedere fino a <strong>60–90 secondi</strong>. Rimani sulla pagina, il risultato apparirà automaticamente.
             </p>
-            <button className="mt-0.5 opacity-60 hover:opacity-100">
+            <button className="mt-0.5 opacity-60 hover:opacity-100" onClick={handleClose}>
               <X className="w-4 h-4" />
             </button>
           </div>
