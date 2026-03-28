@@ -35,9 +35,13 @@ const AuthenticatedApp = () => {
     if (authError.type === 'user_not_registered') {
       return <UserNotRegisteredError />;
     } else if (authError.type === 'auth_required') {
-      // Redirect to login automatically
-      navigateToLogin();
-      return null;
+      // Allow public routes even when not logged in
+      const publicPaths = ['/', '/privacy', '/terms'];
+      const isPublic = publicPaths.includes(location.pathname);
+      if (!isPublic) {
+        navigateToLogin();
+        return null;
+      }
     }
   }
 
@@ -46,13 +50,13 @@ const AuthenticatedApp = () => {
     <>
       {showSplash && <SplashScreen onDone={() => setShowSplash(false)} />}
         <Routes location={location}>
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsOfService />} />
         <Route path="/" element={<AppLayout />}>
           <Route index element={null} />
           <Route path="pricing" element={null} />
           <Route path="settings" element={null} />
         </Route>
-        <Route path="/privacy" element={<PrivacyPolicy />} />
-        <Route path="/terms" element={<TermsOfService />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </>
