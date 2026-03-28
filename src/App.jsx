@@ -11,6 +11,7 @@ import { ThemeProvider } from '@/lib/ThemeProvider';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 // Add page imports here
+import LandingPage from './pages/LandingPage';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import SplashScreen from './components/SplashScreen';
@@ -50,9 +51,10 @@ const AuthenticatedApp = () => {
     <>
       {showSplash && <SplashScreen onDone={() => setShowSplash(false)} />}
         <Routes location={location}>
+        <Route path="/" element={<LandingPage />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<TermsOfService />} />
-        <Route path="/" element={<AppLayout />}>
+        <Route path="/app" element={<AppLayout />}>
           <Route index element={null} />
           <Route path="pricing" element={null} />
           <Route path="settings" element={null} />
