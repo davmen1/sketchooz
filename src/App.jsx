@@ -16,6 +16,8 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import SplashScreen from './components/SplashScreen';
 import Home from './pages/Home';
+import Pricing from './pages/Pricing';
+import Settings from './pages/Settings';
 
 const AuthenticatedApp = () => {
   const [showSplash, setShowSplash] = useState(true);
@@ -52,9 +54,9 @@ const AuthenticatedApp = () => {
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<TermsOfService />} />
         <Route path="/app" element={<AppLayout />}>
-          <Route index element={null} />
-          <Route path="pricing" element={null} />
-          <Route path="settings" element={null} />
+          <Route index element={<Home />} />
+          <Route path="pricing" element={<Pricing />} />
+          <Route path="settings" element={<Settings />} />
         </Route>
         <Route path="*" element={<PageNotFound />} />
       </Routes>
