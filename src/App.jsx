@@ -19,10 +19,10 @@ import Home from './pages/Home';
 
 const AuthenticatedApp = () => {
   const [showSplash, setShowSplash] = useState(true);
-  const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
-  const location = useLocation();
+  const isAppRoute = location.pathname.startsWith('/app');
 
   // Show loading spinner while checking app public settings or auth
+
   if (isLoadingPublicSettings || isLoadingAuth) {
     return (
       <div className="fixed inset-0 flex items-center justify-center">
@@ -49,7 +49,7 @@ const AuthenticatedApp = () => {
   // Render the main app
   return (
     <>
-      {showSplash && <SplashScreen onDone={() => setShowSplash(false)} />}
+      {showSplash && isAppRoute && <SplashScreen onDone={() => setShowSplash(false)} />}
         <Routes location={location}>
         <Route path="/" element={<LandingPage />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
