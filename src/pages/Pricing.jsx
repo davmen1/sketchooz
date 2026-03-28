@@ -101,10 +101,10 @@ export default function Pricing() {
   };
 
   const packLabels = {
-    starter:   lang === 'it' ? { name: 'Starter',   period: 'abbonamento', features: ['12 crediti = 4 render', 'Nessun watermark', 'Tutti gli stili', 'I crediti non scadono'] } : { name: 'Starter',  period: 'subscription', features: ['12 credits = 4 renders', 'No watermark', 'All styles', 'Credits never expire'] },
-    monthly:   lang === 'it' ? { name: 'Mese',      period: 'abbonamento', features: ['50 crediti = ~16 render', 'Nessun watermark', 'Tutti gli stili', 'I crediti non scadono'] } : { name: 'Month',    period: 'subscription', features: ['50 credits = ~16 renders', 'No watermark', 'All styles', 'Credits never expire'] },
-    semestral: lang === 'it' ? { name: 'Semestre',  period: 'abbonamento', features: ['350 crediti = ~116 render', 'Nessun watermark', 'Tutti gli stili', 'I crediti non scadono', 'Risparmio del 40%'] } : { name: 'Semester', period: 'subscription', features: ['350 credits = ~116 renders', 'No watermark', 'All styles', 'Credits never expire', '40% savings'] },
-    yearly:    lang === 'it' ? { name: 'Annuale',   period: 'abbonamento', features: ['1000 crediti = ~333 render', 'Nessun watermark', 'Tutti gli stili', 'I crediti non scadono', 'Risparmio del 60%'] } : { name: 'Annual',   period: 'subscription', features: ['1000 credits = ~333 renders', 'No watermark', 'All styles', 'Credits never expire', '60% savings'] },
+    starter:   lang === 'it' ? { name: 'Starter',   period: 'acquisto unico',    features: ['12 crediti = 4 render', 'Nessun watermark', 'Tutti gli stili', 'I crediti non scadono'] } : { name: 'Starter',  period: 'one-time purchase', features: ['12 credits = 4 renders', 'No watermark', 'All styles', 'Credits never expire'] },
+    monthly:   lang === 'it' ? { name: 'Mese',      period: 'abbonamento',       features: ['50 crediti = ~16 render', 'Nessun watermark', 'Tutti gli stili', 'I crediti non scadono'] } : { name: 'Month',    period: 'subscription',      features: ['50 credits = ~16 renders', 'No watermark', 'All styles', 'Credits never expire'] },
+    semestral: lang === 'it' ? { name: 'Semestre',  period: 'abbonamento',       features: ['350 crediti = ~116 render', 'Nessun watermark', 'Tutti gli stili', 'I crediti non scadono', 'Risparmio del 40%'] } : { name: 'Semester', period: 'subscription',      features: ['350 credits = ~116 renders', 'No watermark', 'All styles', 'Credits never expire', '40% savings'] },
+    yearly:    lang === 'it' ? { name: 'Annuale',   period: 'abbonamento',       features: ['1000 crediti = ~333 render', 'Nessun watermark', 'Tutti gli stili', 'I crediti non scadono', 'Risparmio del 60%'] } : { name: 'Annual',   period: 'subscription',      features: ['1000 credits = ~333 renders', 'No watermark', 'All styles', 'Credits never expire', '60% savings'] },
   };
 
   return (
@@ -151,7 +151,7 @@ export default function Pricing() {
                 className="relative bg-amber-50 border-2 border-amber-300 rounded-2xl p-6 sm:p-8"
               >
                 <div className="absolute -top-3.5 left-6 bg-amber-500 text-white text-xs font-bold px-4 py-1 rounded-full">
-                  🎁 {lang === 'it' ? 'INIZIA QUI — ABBONAMENTO' : 'START HERE — ONE-TIME PURCHASE'}
+                  🎁 {lang === 'it' ? 'INIZIA QUI — ACQUISTO UNICO' : 'START HERE — ONE-TIME PURCHASE'}
                 </div>
                 <div className="flex flex-col sm:flex-row sm:items-center gap-6">
                   <div className="flex-1">
@@ -166,7 +166,7 @@ export default function Pricing() {
                     </div>
                     <div className="flex items-baseline gap-2 mb-1">
                       <span className="text-4xl font-bold">{pack.price}</span>
-                      <span className="text-sm text-muted-foreground font-medium">{lang === 'it' ? 'abbonamento' : 'subscription'}</span>
+                      <span className="text-sm text-muted-foreground font-medium">{lang === 'it' ? 'acquisto unico' : 'one-time purchase'}</span>
                     </div>
                     <div className="text-sm text-accent font-semibold mb-4">{pack.credits} crediti · {getCostPerRender(pack.credits)}</div>
                     <ul className="flex flex-wrap gap-x-4 gap-y-1">
