@@ -15,6 +15,7 @@ import PromoDialog from '@/components/PromoDialog';
 import PullToRefresh from '@/components/PullToRefresh';
 import InstructionsPopup from '@/components/InstructionsPopup';
 import ResultView from '@/components/result/ResultView';
+import GeneratingDisclaimer from '@/components/GeneratingDisclaimer';
 import GeneratingOverlay from '@/components/result/GeneratingOverlay';
 
 const DEFAULT_SETTINGS = {
@@ -228,6 +229,7 @@ export default function Home() {
   const [resultUrl, setResultUrl] = useState(null);
   const [genPhase, setGenPhase] = useState(null);
   const [hasWatermark, setHasWatermark] = useState(false);
+  const [showDisclaimer, setShowDisclaimer] = useState(false);
 
   const [promoRendersUsed, setPromoRendersUsed] = useState(() =>
     parseInt(localStorage.getItem('promo_renders_used') || '0', 10)
@@ -301,13 +303,16 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
         throw new Error('limit_reached');
       }
       toast.info(t('generatingToast'), { duration: 4000 });
+      setShowDisclaimer(true);
     },
     onSuccess: (url) => {
       setResultUrl(url);
       setGenPhase(null);
+      setShowDisclaimer(false);
     },
     onError: (err) => {
       setGenPhase(null);
+      setShowDisclaimer(false);
       if (err.message !== 'limit_reached') toast.error(err.message);
     },
   });
@@ -333,6 +338,7 @@ Be purely descriptive and factual. NO creative additions. Max 150 words.`,
 
   return (
     <ErrorBoundary>
+      <GeneratingDisclaimer visible={showDisclaimer} onClose={() => setShowDisclaimer(false)} />
       <div className="flex flex-col flex-1">
         <MobileHeader
           title="Sketchooz"

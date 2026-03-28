@@ -15,23 +15,24 @@ export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeV
   const { t } = useLang();
 
   const handleDownload = async () => {
-    // On iOS/mobile, use Web Share API if available
-    if (navigator.share) {
-      try {
-        const res = await fetch(resultUrl);
-        const blob = await res.blob();
-        const file = new File([blob], 'sketchooz-render.png', { type: 'image/png' });
-        await navigator.share({ files: [file], title: 'Sketchooz render' });
-        return;
-      } catch {
-        // If share fails or cancelled, fall through to open in tab
-      }
-    }
-    // Desktop: fetch + blob download
     try {
       const res = await fetch(resultUrl, { mode: 'cors' });
       const blob = await res.blob();
       const objectUrl = URL.createObjectURL(blob);
+
+      // Try Web Share API with files (iOS Safari 15.1+ saves to Photos)
+      if (navigator.canShare && navigator.canShare({ files: [new File([blob], 'sketchooz-render.png', { type: 'image/png' })] })) {
+        const file = new File([blob], 'sketchooz-render.png', { type: 'image/png' });
+        try {
+          await navigator.share({ files: [file], title: 'Sketchooz render' });
+          URL.revokeObjectURL(objectUrl);
+          return;
+        } catch {
+          // cancelled or failed, fall through
+        }
+      }
+
+      // Desktop / Android: blob download
       const link = document.createElement('a');
       link.href = objectUrl;
       link.download = 'sketchooz-render.png';
