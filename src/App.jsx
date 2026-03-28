@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
-import { BrowserRouter as Router, Route, Routes, useLocation, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import AppLayout from './components/AppLayout';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
@@ -23,9 +23,6 @@ const AuthenticatedApp = () => {
   const location = useLocation();
   const isAppRoute = location.pathname.startsWith('/app');
 
-  // Show loading spinner while checking app public settings or auth
-
-
   if (isLoadingPublicSettings || isLoadingAuth) {
     return (
       <div className="fixed inset-0 flex items-center justify-center">
@@ -34,12 +31,10 @@ const AuthenticatedApp = () => {
     );
   }
 
-  // Handle authentication errors
   if (authError) {
     if (authError.type === 'user_not_registered') {
       return <UserNotRegisteredError />;
     } else if (authError.type === 'auth_required') {
-      // Allow public routes even when not logged in
       const publicPaths = ['/', '/privacy', '/terms'];
       const isPublic = publicPaths.includes(location.pathname);
       if (!isPublic) {
@@ -49,11 +44,10 @@ const AuthenticatedApp = () => {
     }
   }
 
-  // Render the main app
   return (
     <>
       {showSplash && isAppRoute && <SplashScreen onDone={() => setShowSplash(false)} />}
-        <Routes location={location}>
+      <Routes location={location}>
         <Route path="/" element={<LandingPage />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<TermsOfService />} />
@@ -68,9 +62,7 @@ const AuthenticatedApp = () => {
   );
 };
 
-
 function App() {
-
   return (
     <ErrorBoundary>
       <ThemeProvider>
@@ -86,7 +78,7 @@ function App() {
         </LangProvider>
       </ThemeProvider>
     </ErrorBoundary>
-  )
+  );
 }
 
 export default App
