@@ -22,7 +22,7 @@ export default function GeneratingDisclaimer({ visible, onClose }) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 24 }}
           transition={{ duration: 0.3 }}
-          className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-sm px-4 pointer-events-none"
+          className="fixed top-6 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none"
         >
           <div className="flex items-start gap-3 bg-foreground text-background rounded-2xl px-4 py-3 shadow-lg pointer-events-auto">
             <span className="text-lg mt-0.5">⏳</span>
