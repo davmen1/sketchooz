@@ -8,7 +8,7 @@ import Home from '../pages/Home';
 import Pricing from '../pages/Pricing';
 import Settings from '../pages/Settings';
 
-const TAB_PATHS = ['/', '/pricing', '/settings'];
+const TAB_PATHS = ['/app', '/app/pricing', '/app/settings'];
 const TAB_COMPONENTS = { '/': Home, '/pricing': Pricing, '/settings': Settings };
 
 export default function AppLayout() {
