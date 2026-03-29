@@ -19,11 +19,11 @@ import Home from './pages/Home';
 import Pricing from './pages/Pricing';
 import Settings from './pages/Settings';
 
+// Only handles authenticated /app/* routes
 const AuthenticatedApp = () => {
   const [showSplash, setShowSplash] = useState(true);
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
   const location = useLocation();
-  const isAppRoute = location.pathname.startsWith('/app');
 
   if (isLoadingPublicSettings || isLoadingAuth) {
     return (
@@ -37,22 +37,15 @@ const AuthenticatedApp = () => {
     if (authError.type === 'user_not_registered') {
       return <UserNotRegisteredError />;
     } else if (authError.type === 'auth_required') {
-      const publicPaths = ['/', '/privacy', '/terms'];
-      const isPublic = publicPaths.includes(location.pathname);
-      if (!isPublic) {
-        navigateToLogin();
-        return null;
-      }
+      navigateToLogin();
+      return null;
     }
   }
 
   return (
     <>
-      {showSplash && isAppRoute && <SplashScreen onDone={() => setShowSplash(false)} />}
+      {showSplash && <SplashScreen onDone={() => setShowSplash(false)} />}
       <Routes location={location}>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/privacy" element={<PrivacyPolicy />} />
-        <Route path="/terms" element={<TermsOfService />} />
         <Route path="/app" element={<AppLayout />}>
           <Route index element={<Home />} />
           <Route path="pricing" element={<Pricing />} />
@@ -69,14 +62,23 @@ function App() {
     <ErrorBoundary>
       <ThemeProvider>
         <LangProvider>
-          <AuthProvider>
-            <QueryClientProvider client={queryClientInstance}>
-              <Router>
-                <AuthenticatedApp />
-              </Router>
-              <Toaster />
-            </QueryClientProvider>
-          </AuthProvider>
+          <QueryClientProvider client={queryClientInstance}>
+            <Router>
+              <Routes>
+                {/* Public routes — no auth required */}
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="/terms" element={<TermsOfService />} />
+                {/* Authenticated routes */}
+                <Route path="/*" element={
+                  <AuthProvider>
+                    <AuthenticatedApp />
+                  </AuthProvider>
+                } />
+              </Routes>
+            </Router>
+            <Toaster />
+          </QueryClientProvider>
         </LangProvider>
       </ThemeProvider>
     </ErrorBoundary>
