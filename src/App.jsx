@@ -46,7 +46,7 @@ const AuthenticatedApp = () => {
     <>
       {showSplash && <SplashScreen onDone={() => setShowSplash(false)} />}
       <Routes location={location}>
-        <Route path="/app" element={<AppLayout />}>
+        <Route path="/" element={<AppLayout />}>
           <Route index element={<Home />} />
           <Route path="pricing" element={<Pricing />} />
           <Route path="settings" element={<Settings />} />
