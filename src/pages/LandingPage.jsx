@@ -102,8 +102,8 @@ export default function LandingPage() {
       <footer className="border-t border-border px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
         <span>© 2025 Treddi Studio — sketchooz.com</span>
         <div className="flex gap-4">
-          <Link to="/privacy" className="hover:text-foreground underline underline-offset-2 transition-colors">Privacy Policy</Link>
-          <Link to="/terms" className="hover:text-foreground underline underline-offset-2 transition-colors">Termini e Condizioni</Link>
+          <a href="/privacy" className="hover:text-foreground underline underline-offset-2 transition-colors">Privacy Policy</a>
+          <a href="/terms" className="hover:text-foreground underline underline-offset-2 transition-colors">Termini e Condizioni</a>
         </div>
       </footer>
     </div>);
