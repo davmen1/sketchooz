@@ -148,7 +148,7 @@ export default function Pricing() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="relative bg-amber-50 border-2 border-amber-300 rounded-2xl p-6 sm:p-8"
+                className="relative bg-amber-50 border-2 border-amber-300 rounded-2xl p-6 sm:p-8 text-gray-900"
               >
                 <div className="absolute -top-3.5 left-6 bg-amber-500 text-white text-xs font-bold px-4 py-1 rounded-full">
                   🎁 {lang === 'it' ? 'INIZIA QUI — ACQUISTO UNICO' : 'START HERE — ONE-TIME PURCHASE'}

@@ -32,7 +32,7 @@ export default function CreditCounter() {
 
   return (
     <button
-      onClick={() => navigate('/pricing')}
+      onClick={() => navigate('/app/pricing')}
       className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border bg-card text-xs font-semibold transition-colors hover:bg-muted"
     >
       <Zap className="w-3 h-3 text-accent" />

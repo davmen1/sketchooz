@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useLang } from '@/lib/LangContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 
 export default function GeneratingDisclaimer({ visible, onClose }) {
+  const { lang } = useLang();
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
@@ -27,7 +29,10 @@ export default function GeneratingDisclaimer({ visible, onClose }) {
           <div className="flex items-start gap-3 bg-foreground text-background rounded-2xl px-4 py-3 shadow-lg">
             <span className="text-lg mt-0.5">⏳</span>
             <p className="text-sm leading-snug flex-1">
-              La generazione può richiedere fino a <strong>60–90 secondi</strong>. Rimani sulla pagina, il risultato apparirà automaticamente.
+              {lang === 'it'
+                ? <>La generazione può richiedere fino a <strong>60–90 secondi</strong>. Rimani sulla pagina, il risultato apparirà automaticamente.</>
+                : <>Generation can take up to <strong>60–90 seconds</strong>. Stay on the page, the result will appear automatically.</>
+              }
             </p>
             <button className="mt-0.5 opacity-60 hover:opacity-100" onClick={handleClose}>
               <X className="w-4 h-4" />
