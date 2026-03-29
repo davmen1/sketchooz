@@ -70,11 +70,12 @@ function App() {
                 <Route path="/privacy" element={<PrivacyPolicy />} />
                 <Route path="/terms" element={<TermsOfService />} />
                 {/* Authenticated routes */}
-                <Route path="/*" element={
+                <Route path="/app/*" element={
                   <AuthProvider>
                     <AuthenticatedApp />
                   </AuthProvider>
                 } />
+                <Route path="*" element={<PageNotFound />} />
               </Routes>
             </Router>
             <Toaster />
