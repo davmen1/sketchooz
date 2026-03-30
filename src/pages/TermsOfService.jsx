@@ -49,7 +49,7 @@ export default function TermsOfService() {
             <li>{it ? '❌ I piani Trial, Starter e Pro NON includono la licenza commerciale.' : '❌ Trial, Starter and Pro plans do NOT include a commercial license.'}</li>
             <li>{it ? 'È vietato utilizzare gli output generati per clienti, agenzie, attività monetizzate, rivendita o qualsiasi scopo che generi reddito diretto o indiretto.' : 'It is forbidden to use generated outputs for clients, agencies, monetized activities, resale, or any purpose that generates direct or indirect income.'}</li>
             <li>{it ? '✅ Solo il piano Enterprise include la licenza commerciale completa, con diritto di sfruttamento economico degli output generati.' : '✅ Only the Enterprise plan includes a full commercial license, with the right to commercially exploit generated outputs.'}</li>
-            <li>{it ? "L'uso commerciale senza licenza Enterprise costituisce una violazione contrattuale e può comportare la sospensione immediata dell'account." : 'Commercial use without an Enterprise license constitutes a contractual breach and may result in immediate account suspension.'}</li> Enterprise costituisce una violazione contrattuale e può comportare la sospensione immediata dell'account.' : 'Commercial use without an Enterprise license constitutes a contractual breach and may result in immediate account suspension.'}</li>
+            <li>{it ? "L'uso commerciale senza licenza Enterprise costituisce una violazione contrattuale e può comportare la sospensione immediata dell'account." : 'Commercial use without an Enterprise license constitutes a contractual breach and may result in immediate account suspension.'}</li>
           </ul>
         </section>
 
