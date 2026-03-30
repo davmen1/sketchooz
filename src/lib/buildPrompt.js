@@ -121,7 +121,10 @@ Aesthetic: Professional industrial design marker sketch on white paper with dram
   if (settings.outputMode === 'study_sheet') {
     const sheetLabel = STUDY_SHEET_LABELS[settings.studySheet];
     const strictRules = settings.creative ? '' : `STRICT RENDERING RULES:\n- Preserve the EXACT silhouette, shape and proportions described above\n- Do NOT simplify, stylize or redesign the product — only apply the rendering style on the faithful form\n- The output must be recognizable as the same product as the input image\n`;
-    return `Create a professional industrial design study sheet. ${subjectAnchor}\n\n${strictRules}Layout: ${sheetLabel}.\nRendering style: ${styleLabel}. Surface material: ${surfaceLabel}.\n${detailLabel} line quality. ${colorPart}\n${texturePart}\n${cleanPart}\n${bgPart}\nNo watermarks, professional industrial design presentation quality.`;
+    const crossSectionColorNote = (settings.studySheet === 'cross_section' && !settings.creative)
+      ? `\nCROSS-SECTION COLOR RULE: Even in sectional views, ALL specified colors MUST be faithfully applied to each surface/component exactly as they would appear in a normal view. Do NOT default to gray or generic tones. The cut surfaces use hatching, but all other surfaces retain their exact specified colors. This is mandatory.`
+      : '';
+    return `Create a professional industrial design study sheet. ${subjectAnchor}\n\n${strictRules}Layout: ${sheetLabel}.\nRendering style: ${styleLabel}. Surface material: ${surfaceLabel}.\n${detailLabel} line quality. ${colorPart}${crossSectionColorNote}\n${texturePart}\n${cleanPart}\n${bgPart}\nNo watermarks, professional industrial design presentation quality.`;
   }
 
   const perspLabel = PERSPECTIVE_LABELS[settings.perspective];

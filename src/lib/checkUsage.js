@@ -28,5 +28,16 @@ export async function checkAndIncrementUsage(setPromoRendersUsed) {
     await base44.entities.RenderPack.update(pack.id, { credits_remaining: pack.credits_remaining - 3 });
     return { allowed: true, watermark: !!pack.watermark_only };
   }
+  // No pack found — give 15 free trial credits with watermark
+  if (packs.length === 0) {
+    const freePack = await base44.entities.RenderPack.create({
+      user_email: user.email,
+      credits_remaining: 15 - 3,
+      pack_type: 'free_trial',
+      watermark_only: true,
+    });
+    console.log('Created free trial pack for', user.email);
+    return { allowed: true, watermark: true };
+  }
   return { allowed: false };
 }

@@ -7,7 +7,7 @@ export default function TermsOfService() {
   const it = lang === 'it';
 
   return (
-    <div className="flex flex-col flex-1">
+    <div className="flex flex-col flex-1 bg-background text-foreground">
       <MobileHeader title={it ? 'Termini e Condizioni' : 'Terms of Service'} />
       <main className="max-w-2xl mx-auto px-4 sm:px-6 py-8 space-y-6 text-sm text-foreground">
         <p className="text-xs text-muted-foreground">{it ? 'Ultimo aggiornamento: marzo 2025' : 'Last updated: March 2025'}</p>

@@ -42,7 +42,7 @@ export default function WatermarkCanvas({ imageUrl, onReady }) {
       ctx.restore();
 
       // --- Layer 2: diagonal repeating text lines ---
-      const texts = ['SKETCHFORGE', '© SKETCHFORGE', '⬡ SF'];
+      const texts = ['SKETCHOOZ', '© SKETCHOOZ', '⬡ SKZ', 'PREVIEW ONLY', 'NOT FOR COMMERCIAL USE'];
       ctx.save();
       ctx.font = `bold ${unit * 0.38}px Arial, sans-serif`;
       ctx.textAlign = 'center';

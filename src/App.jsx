@@ -16,7 +16,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import SplashScreen from './components/SplashScreen';
 import Home from './pages/Home';
-import Pricing from './pages/Pricing';
+import Pricing from './pages/Pricing.jsx';
 import Settings from './pages/Settings';
 
 // Only handles authenticated /app/* routes
