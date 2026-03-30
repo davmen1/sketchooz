@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function SplashScreen({ onDone }) {
-  const isDark = document.documentElement.classList.contains('dark');
   const [visible, setVisible] = useState(true);
   const [showContent, setShowContent] = useState(false);
 
@@ -24,7 +23,7 @@ export default function SplashScreen({ onDone }) {
           transition={{ duration: 0.8, ease: 'easeInOut' }}
           style={{
             position: 'fixed', inset: 0, zIndex: 9999,
-            backgroundColor: isDark ? '#0d0d0d' : '#f7f6f2',
+            backgroundColor: '#f7f6f2',
             display: 'flex', alignItems: 'center', justifyContent: 'center'
           }}
         >
@@ -45,7 +44,7 @@ export default function SplashScreen({ onDone }) {
                   fontFamily: "'Arial', 'Helvetica Neue', Helvetica, sans-serif",
                   letterSpacing: '0.22em',
                   fontSize: '1.3rem',
-                  color: isDark ? '#f7f6f2' : '#1a1a1a',
+                  color: '#1a1a1a',
                   fontWeight: 300,
                   textTransform: 'uppercase'
                 }}>
