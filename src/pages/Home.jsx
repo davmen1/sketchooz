@@ -67,8 +67,9 @@ Describe in this exact order:
 6. SURFACE TOPOLOGY: Flat faces, curved surfaces, indentations, protrusions
 7. HARDWARE & DETAILS: Buttons, zippers, straps, buckles, stitching, logos — exact positions
 8. MATERIAL & TEXTURE: Visible surface character
+9. COLORS: List ALL distinct colors present on the product. Be specific (e.g. “light gray body, dark charcoal trim, soft pink panel”). Do NOT omit any color, even minor ones.
 
-Be purely descriptive and factual. NO creative additions. Max 150 words.`,
+Be purely descriptive and factual. NO creative additions. Max 180 words.`,
         file_urls: [imageUrl],
       });
       setGenPhase('generating');

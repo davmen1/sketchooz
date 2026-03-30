@@ -40,13 +40,17 @@ export const SURFACE_LABELS = {
 };
 
 export function buildPrompt(settings, productDescription) {
+  const preciseModeColorWarning = !settings.creative
+    ? `\nCRITICAL — PRECISE COLOR MODE ACTIVE: Every single color specified must appear visibly in the final output. Do NOT drop, merge, or replace any color. If multiple colors are listed, ALL of them must be clearly visible on the product. Color accuracy is the top priority.`
+    : '';
+
   const colorPart = settings.style === 'bw_lines'
     ? 'CRITICAL: This is a pure BLACK AND WHITE LINE DRAWING. Use ONLY black lines on a white background. No color, no gray fills, no shading, no tints. Pure line art only.'
     : settings.bwForRaster
     ? 'CRITICAL: Render in pure black and white ONLY — no color, no tints, no grays other than pure black lines on white background. This is a coloring book / line art style output.'
     : settings.pantoneColors.length > 0
-    ? `CRITICAL COLOR RULE — NO EXCEPTIONS: You MUST use EXCLUSIVELY these exact Pantone colors and NO other colors: ${settings.pantoneColors.map(c => `PANTONE ${c}`).join(', ')}. Do NOT substitute, approximate, or replace these colors with any other hue. If a Pantone color is orange, render it as orange — not red, not brown, not yellow. Reproduce the exact hue faithfully.`
-    : 'Render in monochromatic black, white, and cool grays only.';
+    ? `CRITICAL COLOR RULE — NO EXCEPTIONS: You MUST use EXCLUSIVELY these exact Pantone colors and NO other colors: ${settings.pantoneColors.map(c => `PANTONE ${c}`).join(', ')}. Do NOT substitute, approximate, or replace these colors with any other hue. If a Pantone color is orange, render it as orange — not red, not brown, not yellow. Reproduce the exact hue faithfully. EVERY color in this list MUST be clearly visible in the final image — do NOT omit any of them.${preciseModeColorWarning}`
+    : `Render in monochromatic black, white, and cool grays only.${preciseModeColorWarning}`;
 
   const detailLabel = settings.creative
     ? 'loose, gestural and expressive — feel free to reinterpret shapes, proportions and details creatively'
