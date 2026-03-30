@@ -38,13 +38,6 @@ const DEFAULT_SETTINGS = {
 
 export default function Home() {
   const { t } = useLang();
-  const [imageUrl, setImageUrl] = useState(null);
-  const [settings, setSettings] = useState(DEFAULT_SETTINGS);
-  const [resultUrl, setResultUrl] = useState(null);
-  const [genPhase, setGenPhase] = useState(null);
-  const [hasWatermark, setHasWatermark] = useState(false);
-  const [showDisclaimer, setShowDisclaimer] = useState(false);
-
   const [promoRendersUsed, setPromoRendersUsed] = useState(() =>
     parseInt(localStorage.getItem('promo_renders_used') || '0', 10)
   );
@@ -280,14 +273,15 @@ Be purely descriptive and factual. NO creative additions. Max 180 words.`,
                     {resultUrl && !isGenerating && (
                       <>
                             <ResultView
-                          key="result"
-                          originalUrl={imageUrl}
-                          resultUrl={resultUrl}
-                          hasWatermark={hasWatermark}
-                          freeVector={hasPromo()}
-                          showRasterDownload={settings.bwForRaster}
-                          onRegenerate={handleRegenerate}
-                        />
+                            key="result"
+                            originalUrl={imageUrl}
+                            resultUrl={resultUrl}
+                            hasWatermark={hasWatermark}
+                            freeVector={hasPromo()}
+                            showRasterDownload={settings.bwForRaster}
+                            isEnterprise={isEnterprise}
+                            onRegenerate={handleRegenerate}
+                            />
                       </>
                     )}
                   </AnimatePresence>

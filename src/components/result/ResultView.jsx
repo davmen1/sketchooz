@@ -1,12 +1,12 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeftRight, Maximize2, Download, RefreshCw } from 'lucide-react';
+import { ArrowLeftRight, Maximize2, Download, RefreshCw, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 import { useLang } from '@/lib/LangContext';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 
-export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeVector, showRasterDownload, onRegenerate }) {
+export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeVector, showRasterDownload, onRegenerate, isEnterprise }) {
   const [comparePosition, setComparePosition] = useState(50);
   const [viewMode, setViewMode] = useState('result'); // 'result' | 'compare'
   const containerRef = useRef(null);
@@ -58,6 +58,24 @@ export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeV
     }
   };
 
+  const handleDownloadLicense = async () => {
+    try {
+      const response = await base44.functions.invoke('generateLicensePDF', { imageUrl: resultUrl });
+      // response.data is the PDF as arraybuffer via axios
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'sketchooz-license.pdf';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      alert('Errore nel download della licenza.');
+    }
+  };
+
   const handleApplyCorrection = () => {
     if (!correction.trim()) return;
     onRegenerate(correction.trim());
@@ -104,6 +122,12 @@ export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeV
             <Download className="w-3.5 h-3.5 mr-1.5" />
             {t('download')}
           </Button>
+          {isEnterprise && (
+            <Button size="sm" variant="outline" onClick={handleDownloadLicense}>
+              <FileText className="w-3.5 h-3.5 mr-1.5" />
+              Licenza PDF
+            </Button>
+          )}
         </div>
       </div>
 
