@@ -38,11 +38,24 @@ const DEFAULT_SETTINGS = {
 
 export default function Home() {
   const { t } = useLang();
+  const [imageUrl, setImageUrl] = useState(null);
+  const [settings, setSettings] = useState(DEFAULT_SETTINGS);
+  const [resultUrl, setResultUrl] = useState(null);
+  const [genPhase, setGenPhase] = useState(null);
+  const [hasWatermark, setHasWatermark] = useState(false);
+  const [showDisclaimer, setShowDisclaimer] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
   const [promoRendersUsed, setPromoRendersUsed] = useState(() =>
     parseInt(localStorage.getItem('promo_renders_used') || '0', 10)
   );
   const [promoDialogOpen, setPromoDialogOpen] = useState(false);
   const [tipsRead, setTipsRead] = useState(() => !!localStorage.getItem('sketchooz_tips_read'));
+
+  const isEnterprise = currentUser?.role === 'enterprise' || currentUser?.role === 'admin';
+
+  React.useEffect(() => {
+    base44.auth.me().then(u => setCurrentUser(u)).catch(() => {});
+  }, []);
 
 
   const generateMutation = useMutation({
