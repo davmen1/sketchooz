@@ -7,32 +7,40 @@ function isNightTime() {
   return h >= 21 || h < 7;
 }
 
+function getInitialDark() {
+  const stored = localStorage.getItem('userTheme');
+  if (stored === 'dark') return true;
+  if (stored === 'light') return false;
+  return isNightTime();
+}
+
 export function ThemeProvider({ children }) {
-  const [forceDark, setForceDark] = useState(() => localStorage.getItem('forceDark') === 'true');
-  const [isDark, setIsDark] = useState(() => localStorage.getItem('forceDark') === 'true' ? true : isNightTime());
+  const [isDark, setIsDark] = useState(getInitialDark);
 
-  const setForceOverride = (val) => {
-    setForceDark(val);
-    localStorage.setItem('forceDark', val ? 'true' : 'false');
-    setIsDark(val ? true : isNightTime());
+  const toggleTheme = () => {
+    setIsDark(prev => {
+      const next = !prev;
+      localStorage.setItem('userTheme', next ? 'dark' : 'light');
+      return next;
+    });
   };
-
-  const toggleTheme = () => setIsDark(prev => !prev);
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', isDark);
   }, [isDark]);
 
+  // Auto-update only if user hasn't manually set a preference
   useEffect(() => {
-    if (forceDark) return;
+    const stored = localStorage.getItem('userTheme');
+    if (stored) return;
     const interval = setInterval(() => {
       setIsDark(isNightTime());
     }, 60 * 1000);
     return () => clearInterval(interval);
-  }, [forceDark]);
+  }, []);
 
   return (
-    <ThemeContext.Provider value={{ isDark, toggleTheme, forceDark, setForceOverride }}>
+    <ThemeContext.Provider value={{ isDark, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   );

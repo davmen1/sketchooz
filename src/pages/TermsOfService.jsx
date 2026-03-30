@@ -44,21 +44,31 @@ export default function TermsOfService() {
         </section>
 
         <section className="space-y-2">
-          <h2 className="font-bold text-base">{it ? '5. Limitazione di responsabilità' : '5. Limitation of Liability'}</h2>
+          <h2 className="font-bold text-base">{it ? '5. Licenza commerciale' : '5. Commercial License'}</h2>
+          <ul className="list-disc ml-5 space-y-1">
+            <li>{it ? '❌ I piani Trial, Starter e Pro NON includono la licenza commerciale.' : '❌ Trial, Starter and Pro plans do NOT include a commercial license.'}</li>
+            <li>{it ? 'È vietato utilizzare gli output generati per clienti, agenzie, attività monetizzate, rivendita o qualsiasi scopo che generi reddito diretto o indiretto.' : 'It is forbidden to use generated outputs for clients, agencies, monetized activities, resale, or any purpose that generates direct or indirect income.'}</li>
+            <li>{it ? '✅ Solo il piano Enterprise include la licenza commerciale completa, con diritto di sfruttamento economico degli output generati.' : '✅ Only the Enterprise plan includes a full commercial license, with the right to commercially exploit generated outputs.'}</li>
+            <li>{it ? "L'uso commerciale senza licenza Enterprise costituisce una violazione contrattuale e può comportare la sospensione immediata dell'account." : 'Commercial use without an Enterprise license constitutes a contractual breach and may result in immediate account suspension.'}</li> Enterprise costituisce una violazione contrattuale e può comportare la sospensione immediata dell'account.' : 'Commercial use without an Enterprise license constitutes a contractual breach and may result in immediate account suspension.'}</li>
+          </ul>
+        </section>
+
+        <section className="space-y-2">
+          <h2 className="font-bold text-base">{it ? '6. Limitazione di responsabilità' : '5. Limitation of Liability'}</h2>
           <p>{it
             ? 'Sketchooz è fornito "così com\'è". Treddi Studio non garantisce risultati specifici e non è responsabile per usi impropri delle immagini generate. Il servizio può essere interrotto per manutenzione senza preavviso.'
             : 'Sketchooz is provided "as is". Treddi Studio does not guarantee specific results and is not responsible for improper use of generated images. The service may be interrupted for maintenance without notice.'}</p>
         </section>
 
         <section className="space-y-2">
-          <h2 className="font-bold text-base">{it ? '6. Legge applicabile' : '6. Governing Law'}</h2>
+          <h2 className="font-bold text-base">{it ? '7. Legge applicabile' : '6. Governing Law'}</h2>
           <p>{it
             ? 'Questi termini sono regolati dalla legge italiana. Per qualsiasi controversia è competente il Foro di Milano.'
             : 'These terms are governed by Italian law. The Court of Milan has jurisdiction over any disputes.'}</p>
         </section>
 
         <section className="space-y-2">
-          <h2 className="font-bold text-base">{it ? '7. Contatti' : '7. Contact'}</h2>
+          <h2 className="font-bold text-base">{it ? '8. Contatti' : '7. Contact'}</h2>
           <p>Treddi Studio — treddistudio@gmail.com</p>
           <p>www.sketchooz.com</p>
         </section>

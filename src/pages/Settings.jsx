@@ -29,7 +29,7 @@ function DangerRow({ icon: Icon, label, description, actionLabel, variant = 'out
 export default function Settings() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { forceDark, setForceOverride } = useTheme();
+  const { isDark, toggleTheme } = useTheme();
   const [deleteStep, setDeleteStep] = useState('idle'); // idle | confirm | instructions
 
   const handleLogout = () => {
@@ -62,15 +62,15 @@ export default function Settings() {
                 <Moon className="w-4 h-4 text-muted-foreground" />
               </div>
               <div>
-                <p className="text-sm font-medium">{forceDark ? 'Modalità scura' : 'Modalità chiara'}</p>
-                <p className="text-xs text-muted-foreground">{forceDark ? 'Tema scuro attivo' : 'Tema chiaro attivo'}</p>
+                <p className="text-sm font-medium">{isDark ? 'Modalità scura' : 'Modalità chiara'}</p>
+                <p className="text-xs text-muted-foreground">{isDark ? 'Tema scuro attivo' : 'Tema chiaro attivo'}</p>
               </div>
             </div>
             <button
-              onClick={() => setForceOverride(!forceDark)}
-              className={`relative w-12 h-6 rounded-full transition-colors ${forceDark ? 'bg-accent' : 'bg-muted'}`}
+              onClick={toggleTheme}
+              className={`relative w-12 h-6 rounded-full transition-colors ${isDark ? 'bg-accent' : 'bg-muted'}`}
             >
-              <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${forceDark ? 'translate-x-6' : ''}`} />
+              <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${isDark ? 'translate-x-6' : ''}`} />
             </button>
           </div>
         </section>
