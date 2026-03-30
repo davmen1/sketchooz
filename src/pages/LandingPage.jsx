@@ -104,6 +104,8 @@ export default function LandingPage() {
         <div className="flex gap-4">
           <a href="/privacy" className="hover:text-foreground underline underline-offset-2 transition-colors">Privacy Policy</a>
           <a href="/terms" className="hover:text-foreground underline underline-offset-2 transition-colors">Termini e Condizioni</a>
+          <a href="/support" className="hover:text-foreground underline underline-offset-2 transition-colors">Supporto</a>
+          <a href="/marketing" className="hover:text-foreground underline underline-offset-2 transition-colors">Media Kit</a>
         </div>
       </footer>
     </div>);

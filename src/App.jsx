@@ -18,6 +18,8 @@ import SplashScreen from './components/SplashScreen';
 import Home from './pages/Home';
 import Pricing from './pages/Pricing.jsx';
 import Settings from './pages/Settings';
+import Support from './pages/Support';
+import Marketing from './pages/Marketing';
 
 // Only handles authenticated /app/* routes
 const AuthenticatedApp = () => {
@@ -69,6 +71,8 @@ function App() {
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/privacy" element={<PrivacyPolicy />} />
                 <Route path="/terms" element={<TermsOfService />} />
+                <Route path="/support" element={<Support />} />
+                <Route path="/marketing" element={<Marketing />} />
                 {/* Authenticated routes */}
                 <Route path="/app/*" element={
                   <AuthProvider>

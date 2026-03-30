@@ -98,7 +98,7 @@ export default function SupportAgent() {
               {/* Header */}
               <div className="flex items-center justify-between px-4 py-3 border-b border-border shrink-0">
                 <div>
-                  <p className="text-sm font-semibold">Supporto SketchForge</p>
+                  <p className="text-sm font-semibold">Supporto Sketchooz</p>
                   <p className="text-xs text-muted-foreground">Contestazioni · Rimborsi · GDPR</p>
                 </div>
                 <button
