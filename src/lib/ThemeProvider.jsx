@@ -19,6 +19,18 @@ export function ThemeProvider({ children }) {
 
   const toggleTheme = () => setIsDark(prev => !prev);
 
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', isDark);
+  }, [isDark]);
+
+  useEffect(() => {
+    if (forceDark) return;
+    const interval = setInterval(() => {
+      setIsDark(isNightTime());
+    }, 60 * 1000);
+    return () => clearInterval(interval);
+  }, [forceDark]);
+
   return (
     <ThemeContext.Provider value={{ isDark, toggleTheme, forceDark, setForceOverride }}>
       {children}

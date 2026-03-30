@@ -1,15 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeftRight, Maximize2, Download, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 import { useLang } from '@/lib/LangContext';
-import { Slider } from '@/components/ui/slider';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 
 export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeVector, showRasterDownload, onRegenerate }) {
   const [comparePosition, setComparePosition] = useState(50);
   const [viewMode, setViewMode] = useState('result'); // 'result' | 'compare'
+  const containerRef = useRef(null);
+  const isDragging = useRef(false);
+
+  const updatePosition = useCallback((clientX) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = Math.max(5, Math.min(95, ((clientX - rect.left) / rect.width) * 100));
+    setComparePosition(x);
+  }, []);
+
+  const handleMouseDown = (e) => { isDragging.current = true; updatePosition(e.clientX); };
+  const handleMouseMove = (e) => { if (isDragging.current) updatePosition(e.clientX); };
+  const handleMouseUp = () => { isDragging.current = false; };
+  const handleTouchMove = (e) => { e.preventDefault(); updatePosition(e.touches[0].clientX); };
   const [correction, setCorrection] = useState('');
 
   const { t } = useLang();
@@ -110,12 +123,19 @@ export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeV
           ) : (
             <motion.div
               key="compare"
+              ref={containerRef}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="relative"
+              className="relative select-none cursor-col-resize"
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+              onTouchStart={(e) => updatePosition(e.touches[0].clientX)}
+              onTouchMove={handleTouchMove}
             >
-              <img src={resultUrl} alt="Result" className="w-full h-auto" />
+              <img src={resultUrl} alt="Result" className="w-full h-auto pointer-events-none" />
               <div
                 className="absolute inset-0 overflow-hidden"
                 style={{ width: `${comparePosition}%` }}
@@ -123,7 +143,7 @@ export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeV
                 <img
                   src={originalUrl}
                   alt="Original"
-                  className="w-full h-auto"
+                  className="w-full h-auto pointer-events-none"
                   style={{ width: `${10000 / comparePosition}%`, maxWidth: 'none' }}
                 />
               </div>
@@ -140,21 +160,7 @@ export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeV
         </AnimatePresence>
       </div>
 
-      {viewMode === 'compare' && (
-        <div className="px-4">
-          <Slider
-            value={[comparePosition]}
-            onValueChange={([v]) => setComparePosition(v)}
-            min={5}
-            max={95}
-            step={1}
-          />
-          <div className="flex justify-between mt-1">
-            <span className="text-xs text-muted-foreground">{t('original')}</span>
-            <span className="text-xs text-muted-foreground">{t('sketch')}</span>
-          </div>
-        </div>
-      )}
+
 
       {/* Correction box */}
       {onRegenerate && (
