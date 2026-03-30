@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Trash2, LogOut, AlertTriangle } from 'lucide-react';
+import { Trash2, LogOut, AlertTriangle, Moon } from 'lucide-react';
+import { useTheme } from '@/lib/ThemeProvider';
 import { Button } from '@/components/ui/button';
 import MobileHeader from '@/components/MobileHeader';
 import { base44 } from '@/api/base44Client';
@@ -28,6 +29,7 @@ function DangerRow({ icon: Icon, label, description, actionLabel, variant = 'out
 export default function Settings() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { forceDark, setForceOverride } = useTheme();
   const [deleteStep, setDeleteStep] = useState('idle'); // idle | confirm | instructions
 
   const handleLogout = () => {
@@ -49,6 +51,28 @@ export default function Settings() {
           <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Account</p>
           <p className="text-sm font-medium mt-2">{user?.full_name || '—'}</p>
           <p className="text-xs text-muted-foreground">{user?.email || '—'}</p>
+        </section>
+
+        {/* Appearance */}
+        <section className="bg-card rounded-2xl border border-border p-4">
+          <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-3">Aspetto</p>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-muted flex items-center justify-center shrink-0">
+                <Moon className="w-4 h-4 text-muted-foreground" />
+              </div>
+              <div>
+                <p className="text-sm font-medium">Modalità scura</p>
+                <p className="text-xs text-muted-foreground">Forza sempre il tema scuro</p>
+              </div>
+            </div>
+            <button
+              onClick={() => setForceOverride(!forceDark)}
+              className={`relative w-12 h-6 rounded-full transition-colors ${forceDark ? 'bg-accent' : 'bg-muted'}`}
+            >
+              <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${forceDark ? 'translate-x-6' : ''}`} />
+            </button>
+          </div>
         </section>
 
         {/* Actions */}

@@ -8,23 +8,19 @@ function isNightTime() {
 }
 
 export function ThemeProvider({ children }) {
-  const [isDark, setIsDark] = useState(isNightTime);
+  const [forceDark, setForceDark] = useState(() => localStorage.getItem('forceDark') === 'true');
+  const [isDark, setIsDark] = useState(() => localStorage.getItem('forceDark') === 'true' ? true : isNightTime());
 
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', isDark);
-  }, [isDark]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIsDark(isNightTime());
-    }, 60 * 1000);
-    return () => clearInterval(interval);
-  }, []);
+  const setForceOverride = (val) => {
+    setForceDark(val);
+    localStorage.setItem('forceDark', val ? 'true' : 'false');
+    setIsDark(val ? true : isNightTime());
+  };
 
   const toggleTheme = () => setIsDark(prev => !prev);
 
   return (
-    <ThemeContext.Provider value={{ isDark, toggleTheme }}>
+    <ThemeContext.Provider value={{ isDark, toggleTheme, forceDark, setForceOverride }}>
       {children}
     </ThemeContext.Provider>
   );

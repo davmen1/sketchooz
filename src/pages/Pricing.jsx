@@ -57,7 +57,6 @@ const PLANS = [
       { ok: true,  text: 'Salvataggio contenuti' },
       { ok: false, text: 'Uso commerciale NON consentito' },
       { ok: false, text: 'Vietato per clienti o attività monetizzate' },
-      { ok: false, text: 'Nessuna priorità' },
     ],
     featuresEn: [
       { ok: true,  text: 'Standard usage' },
@@ -65,7 +64,6 @@ const PLANS = [
       { ok: true,  text: 'Content saving' },
       { ok: false, text: 'Commercial use NOT allowed' },
       { ok: false, text: 'Forbidden for clients or monetized activities' },
-      { ok: false, text: 'No priority' },
     ],
     noteIt: 'Pensato per uso personale continuativo',
     noteEn: 'Designed for continuous personal use',
