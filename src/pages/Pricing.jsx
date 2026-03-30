@@ -353,15 +353,6 @@ export default function Pricing() {
             })}
           </div>
 
-          {/* Commercial use clause */}
-          <div className="p-4 bg-amber-50 dark:bg-amber-950/20 border border-amber-300 dark:border-amber-700 rounded-xl text-sm text-foreground">
-            <p className="font-bold mb-1">⚖️ {it ? 'Clausola sull\'uso commerciale' : 'Commercial Use Clause'}</p>
-            <p className="text-xs text-muted-foreground">
-              {it
-                ? "L'utilizzo commerciale degli output è consentito esclusivamente con piano Enterprise attivo. Qualsiasi utilizzo a fini di lucro effettuato con piani inferiori costituisce violazione dei termini di servizio."
-                : "Commercial use of outputs is permitted exclusively with an active Enterprise plan. Any use for profit made with lower plans constitutes a violation of the terms of service."}
-            </p>
-          </div>
 
           {/* Disclaimer */}
           <div className="rounded-xl border border-border bg-muted/50 p-4 space-y-2 text-xs text-muted-foreground">
