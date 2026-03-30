@@ -62,8 +62,8 @@ export default function Settings() {
                 <Moon className="w-4 h-4 text-muted-foreground" />
               </div>
               <div>
-                <p className="text-sm font-medium">Modalità scura</p>
-                <p className="text-xs text-muted-foreground">Forza sempre il tema scuro</p>
+                <p className="text-sm font-medium">{forceDark ? 'Modalità scura' : 'Modalità chiara'}</p>
+                <p className="text-xs text-muted-foreground">{forceDark ? 'Tema scuro attivo' : 'Tema chiaro attivo'}</p>
               </div>
             </div>
             <button
