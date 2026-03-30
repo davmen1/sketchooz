@@ -232,9 +232,73 @@ export default function Pricing() {
             🎨 {it ? 'Ogni render consuma 3 crediti. I crediti non scadono mai.' : 'Each render costs 3 credits. Credits never expire.'}
           </div>
 
-          {/* Plans grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {PLANS.map((plan, i) => {
+          {/* TRIAL — Hero Card full width */}
+          {(() => {
+            const plan = PLANS[0];
+            const features = it ? plan.featuresIt : plan.featuresEn;
+            const name = it ? plan.nameIt : plan.nameEn;
+            const price = it ? plan.priceIt : plan.priceEn;
+            const period = it ? plan.periodIt : plan.periodEn;
+            const note = it ? plan.noteIt : plan.noteEn;
+            return (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0 }}
+                className="relative rounded-2xl border-2 border-amber-400 bg-amber-50 dark:bg-amber-950/30 p-6 w-full shadow-xl"
+              >
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <span className="text-3xl">{plan.emoji}</span>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-bold text-xl text-foreground">{name}</h3>
+                        <span className="bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">🎯 {it ? 'PROVA SUBITO' : 'TRY NOW'}</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">{plan.credits} {it ? 'crediti' : 'credits'} · {period}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <span className="text-3xl font-bold text-foreground">{price}</span>
+                    <Button
+                      onClick={() => handleCheckout(plan.id)}
+                      disabled={!!loading}
+                      className="bg-amber-500 hover:bg-amber-600 text-white text-sm px-6"
+                    >
+                      {loading === plan.id ? (
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      ) : (it ? 'Inizia ora' : 'Start now')}
+                    </Button>
+                  </div>
+                </div>
+                <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {features.map((f, fi) => (
+                    <li key={fi} className="flex items-start gap-1.5 text-xs text-foreground list-none">
+                      {f.ok
+                        ? <Check className="w-3.5 h-3.5 text-green-500 mt-0.5 shrink-0" />
+                        : <X className="w-3.5 h-3.5 text-red-400 mt-0.5 shrink-0" />}
+                      {f.text}
+                    </li>
+                  ))}
+                </div>
+                <p className="text-[10px] text-muted-foreground italic mt-3">👉 {note}</p>
+              </motion.div>
+            );
+          })()}
+
+          {/* Commercial use banner */}
+          <div className="p-4 bg-red-50 dark:bg-red-950/30 border-2 border-red-400 rounded-2xl text-sm">
+            <p className="font-bold text-red-700 dark:text-red-400 text-base mb-1">⚖️ {it ? 'USO COMMERCIALE' : 'COMMERCIAL USE'}</p>
+            <p className="text-xs text-red-700 dark:text-red-300 font-medium">
+              {it
+                ? '🚫 Trial, Starter e Pro NON autorizzano l\'uso commerciale. Per clienti, agenzie o contenuti monetizzati è obbligatorio il piano Enterprise.'
+                : '🚫 Trial, Starter and Pro do NOT authorize commercial use. For clients, agencies or monetized content, the Enterprise plan is required.'}
+            </p>
+          </div>
+
+          {/* Other 3 plans grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {PLANS.slice(1).map((plan, i) => {
               const features = it ? plan.featuresIt : plan.featuresEn;
               const name = it ? plan.nameIt : plan.nameEn;
               const price = it ? plan.priceIt : plan.priceEn;
@@ -245,7 +309,7 @@ export default function Pricing() {
                   key={plan.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.06 }}
+                  transition={{ delay: (i + 1) * 0.06 }}
                   className={`relative rounded-2xl border-2 ${plan.color} ${plan.bg} p-5 flex flex-col ${plan.highlight ? 'shadow-lg' : ''}`}
                 >
                   {plan.badge && (
@@ -253,7 +317,6 @@ export default function Pricing() {
                       {plan.badge}
                     </div>
                   )}
-
                   <div className="flex items-center gap-2 mb-3 mt-1">
                     <span className="text-xl">{plan.emoji}</span>
                     <div>
@@ -264,21 +327,17 @@ export default function Pricing() {
                       <span className="text-xl font-bold text-foreground">{price}</span>
                     </div>
                   </div>
-
                   <ul className="space-y-1.5 flex-1 mb-4">
                     {features.map((f, fi) => (
                       <li key={fi} className="flex items-start gap-1.5 text-xs text-foreground">
                         {f.ok
                           ? <Check className="w-3.5 h-3.5 text-green-500 mt-0.5 shrink-0" />
-                          : <X className="w-3.5 h-3.5 text-red-400 mt-0.5 shrink-0" />
-                        }
+                          : <X className="w-3.5 h-3.5 text-red-400 mt-0.5 shrink-0" />}
                         {f.text}
                       </li>
                     ))}
                   </ul>
-
                   <p className="text-[10px] text-muted-foreground italic mb-3">👉 {note}</p>
-
                   <Button
                     onClick={() => handleCheckout(plan.id)}
                     disabled={!!loading}
