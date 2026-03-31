@@ -1,5 +1,9 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
+const PROMO_CODES = ['WANNATRY1', 'PROVA2026'];
+const PROMO_LIMITS = { 'WANNATRY1': 55, 'PROVA2026': 2 };
+const PROMO_EXPIRY = new Date('2026-04-23T23:59:59Z');
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -9,6 +13,17 @@ Deno.serve(async (req) => {
     }
 
     if (user.role === 'admin') {
+      return Response.json({ allowed: true, watermark: false });
+    }
+
+    const body = await req.json().catch(() => ({}));
+    const promoCode = body.promo_code || null;
+
+    // Check if promo code is valid
+    const isValidPromo = promoCode && PROMO_CODES.includes(promoCode) && new Date() < PROMO_EXPIRY;
+
+    if (isValidPromo) {
+      console.log(`Valid promo code used: ${promoCode} by ${user.email}`);
       return Response.json({ allowed: true, watermark: false });
     }
 
@@ -25,7 +40,6 @@ Deno.serve(async (req) => {
       credits_remaining: pack.credits_remaining - 3,
     });
 
-    // Watermark is determined solely by the pack's watermark_only field — no frontend bypass possible
     const watermark = pack.watermark_only === true;
     console.log(`Credit consumed for ${user.email}: remaining=${pack.credits_remaining - 3}, watermark=${watermark}`);
     return Response.json({ allowed: true, watermark });
