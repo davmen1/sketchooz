@@ -1,5 +1,5 @@
 export const STYLE_LABELS = {
-  marker_render: 'marker render with bold strokes and smooth gradients',
+  marker_render: 'hand-drawn industrial design marker sketch — pencil underdrawing with confident construction lines visible, then filled with Copic/Pantone alcohol markers using smooth flat tones, bold gradient transitions, sharp specular white highlights on edges, and a thick black fineliner outline around the silhouette. Style: professional ID sketchbook, Copic marker on white paper',  
   bw_lines: 'clean black and white line drawing with precise confident strokes, no color fills, no shading, only black lines on white paper',
   pencil_sketch: 'detailed graphite pencil sketch with fine hatching',
   ballpoint_pen: 'ballpoint pen sketch with confident line work',
@@ -124,10 +124,26 @@ Aesthetic: Professional industrial design marker sketch on white paper with dram
     const crossSectionColorNote = (settings.studySheet === 'cross_section' && !settings.creative)
       ? `\nCROSS-SECTION COLOR RULE: Even in sectional views, ALL specified colors MUST be faithfully applied to each surface/component exactly as they would appear in a normal view. Do NOT default to gray or generic tones. The cut surfaces use hatching, but all other surfaces retain their exact specified colors. This is mandatory.`
       : '';
-    return `Create a professional industrial design study sheet. ${subjectAnchor}\n\n${strictRules}Layout: ${sheetLabel}.\nRendering style: ${styleLabel}. Surface material: ${surfaceLabel}.\n${detailLabel} line quality. ${colorPart}${crossSectionColorNote}\n${texturePart}\n${cleanPart}\n${bgPart}\nNo watermarks, professional industrial design presentation quality.`;
+    const markerStyleNoteSheet = settings.style === 'marker_render'
+      ? `GLOBAL STYLE DIRECTIVE: This image MUST look like a real hand-drawn industrial design sketch made with Copic/alcohol markers on white paper. Key characteristics to enforce:
+- Visible pencil construction lines underneath the color fills
+- Flat marker color applied in bold, slightly streaky strokes (not digital gradients)
+- Strong white highlight lines/dots on top edges and convex surfaces
+- Thick confident black fineliner outline on the silhouette
+- Overall aesthetic: professional designer sketchbook, NOT a 3D render or photorealistic image\n`
+      : '';
+    return `Create a professional industrial design study sheet. ${subjectAnchor}\n\n${markerStyleNoteSheet}${strictRules}Layout: ${sheetLabel}.\nRendering style: ${styleLabel}. Surface material: ${surfaceLabel}.\n${detailLabel} line quality. ${colorPart}${crossSectionColorNote}\n${texturePart}\n${cleanPart}\n${bgPart}\nNo watermarks, professional industrial design presentation quality.`;
   }
 
   const perspLabel = PERSPECTIVE_LABELS[settings.perspective];
   const strictRules = settings.creative ? '' : `STRICT RENDERING RULES:\n- Preserve the EXACT silhouette, shape and proportions described above\n- Do NOT simplify, stylize or redesign the product — only apply the rendering style on the faithful form\n- The output must be recognizable as the same product as the input image\n`;
-  return `Create a professional industrial design sketch. ${subjectAnchor}\n\n${strictRules}Render it as a ${styleLabel}, ${perspLabel}, with ${surfaceLabel}.\n${detailLabel} line quality. ${colorPart}\n${texturePart}\n${cleanPart}\n${bgPart}\nNo watermarks, professional presentation quality.`;
+  const markerStyleNote = settings.style === 'marker_render'
+    ? `GLOBAL STYLE DIRECTIVE: This image MUST look like a real hand-drawn industrial design sketch made with Copic/alcohol markers on white paper. Key characteristics to enforce:
+- Visible pencil construction lines underneath the color fills
+- Flat marker color applied in bold, slightly streaky strokes (not digital gradients)
+- Strong white highlight lines/dots on top edges and convex surfaces
+- Thick confident black fineliner outline on the silhouette
+- Overall aesthetic: professional designer sketchbook, NOT a 3D render or photorealistic image\n`
+    : '';
+  return `Create a professional industrial design sketch. ${subjectAnchor}\n\n${markerStyleNote}${strictRules}Render it as a ${styleLabel}, ${perspLabel}, with ${surfaceLabel}.\n${detailLabel} line quality. ${colorPart}\n${texturePart}\n${cleanPart}\n${bgPart}\nNo watermarks, professional presentation quality.`;
 }

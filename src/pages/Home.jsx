@@ -82,10 +82,11 @@ Be purely descriptive and factual. NO creative additions. Max 180 words.`,
         ? `${basePrompt}\n\nUSER CORRECTION (apply this to the new render): ${correctionNote}`
         : basePrompt;
       const STYLE_REFS = [
-        'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/754d87524_Screenshot2026-03-25alle002643.png',
-        'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/ccd36380c_b4db17f7a_generated_image1.png',
         'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/63d94a161_d40ba72e-1709-4adf-9609-5ce4c6df16dd.jpg',
         'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/4e3840955_1743086351196.jpg',
+        'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/ccd36380c_b4db17f7a_generated_image1.png',
+        'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/e9bb99d21_images.jpg',
+        'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/12833b668_images.jpeg',
       ];
       const refImages = correctionNote && resultUrl
         ? [imageUrl, resultUrl, ...STYLE_REFS]
