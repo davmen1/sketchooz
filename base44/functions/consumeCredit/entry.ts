@@ -1,9 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
-const PROMO_CODES = ['WANNATRY1'];
-const PROMO_CREDITS = { 'WANNATRY1': 12 };
-const PROMO_EXPIRY = new Date('2026-04-23T23:59:59Z');
-
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -14,29 +10,6 @@ Deno.serve(async (req) => {
 
     if (user.role === 'admin') {
       return Response.json({ allowed: true, watermark: false });
-    }
-
-    const body = await req.json().catch(() => ({}));
-    const promoCode = body.promo_code || null;
-
-    // Check if promo code is valid
-    const isValidPromo = promoCode && PROMO_CODES.includes(promoCode) && new Date() < PROMO_EXPIRY;
-
-    if (isValidPromo) {
-      // Check if user already has a promo pack; if not, create it
-      const existingPromoPacks = await base44.asServiceRole.entities.RenderPack.filter({
-        user_email: user.email,
-        pack_type: `promo_${promoCode}`,
-      });
-      if (existingPromoPacks.length === 0) {
-        await base44.asServiceRole.entities.RenderPack.create({
-          user_email: user.email,
-          credits_remaining: PROMO_CREDITS[promoCode],
-          pack_type: `promo_${promoCode}`,
-          watermark_only: false,
-        });
-        console.log(`Promo pack created for ${user.email}: ${PROMO_CREDITS[promoCode]} credits`);
-      }
     }
 
     const packs = await base44.asServiceRole.entities.RenderPack.filter({ user_email: user.email });

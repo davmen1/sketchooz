@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -18,7 +18,6 @@ import ResultView from '@/components/result/ResultView';
 import GeneratingDisclaimer from '@/components/GeneratingDisclaimer';
 import GeneratingOverlay from '@/components/result/GeneratingOverlay';
 import { buildPrompt } from '@/lib/buildPrompt';
-import { hasPromo } from '@/lib/checkUsage';
 
 const DEFAULT_SETTINGS = {
   style: 'marker_render',
@@ -45,22 +44,17 @@ export default function Home() {
   const [hasWatermark, setHasWatermark] = useState(false);
   const [showDisclaimer, setShowDisclaimer] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
-  const [promoCreditsUsed, setPromoCreditsUsed] = useState(() =>
-    parseInt(localStorage.getItem('promo_credits_used') || '0', 10)
-  );
   const [promoDialogOpen, setPromoDialogOpen] = useState(false);
   const [tipsRead, setTipsRead] = useState(() => !!localStorage.getItem('sketchooz_tips_read'));
 
   const isEnterprise = currentUser?.role === 'enterprise' || currentUser?.role === 'admin';
 
-  React.useEffect(() => {
+  useEffect(() => {
     base44.auth.me().then(u => {
       setCurrentUser(u);
-      // Ensure free trial pack exists for new users
       base44.functions.invoke('initFreeTrial', {}).catch(() => {});
     }).catch(() => {});
   }, []);
-
 
   const generateMutation = useMutation({
     mutationFn: async (correctionNote) => {
@@ -77,7 +71,7 @@ Describe in this exact order:
 6. SURFACE TOPOLOGY: Flat faces, curved surfaces, indentations, protrusions
 7. HARDWARE & DETAILS: Buttons, zippers, straps, buckles, stitching, logos — exact positions
 8. MATERIAL & TEXTURE: Visible surface character
-9. COLORS: List ALL distinct colors present on the product. Be specific (e.g. “light gray body, dark charcoal trim, soft pink panel”). Do NOT omit any color, even minor ones.
+9. COLORS: List ALL distinct colors present on the product. Be specific (e.g. "light gray body, dark charcoal trim, soft pink panel"). Do NOT omit any color, even minor ones.
 
 Be purely descriptive and factual. NO creative additions. Max 180 words.`,
         file_urls: [imageUrl],
@@ -95,10 +89,9 @@ Be purely descriptive and factual. NO creative additions. Max 180 words.`,
       return url;
     },
     onMutate: async () => {
-      const promoCode = localStorage.getItem('promo_code');
       let allowed, watermark;
       try {
-        const res = await base44.functions.invoke('consumeCredit', { promo_code: promoCode });
+        const res = await base44.functions.invoke('consumeCredit', {});
         allowed = res.data.allowed;
         watermark = res.data.watermark;
       } catch (e) {
@@ -107,7 +100,7 @@ Be purely descriptive and factual. NO creative additions. Max 180 words.`,
       }
       setHasWatermark(watermark || false);
       if (!allowed) {
-        toast.error(hasPromo() ? t('promoExhausted') : t('freeLimit'));
+        toast.error(t('freeLimit'));
         throw new Error('limit_reached');
       }
       toast.info(t('generatingToast'), { duration: 4000 });
@@ -144,6 +137,20 @@ Be purely descriptive and factual. NO creative additions. Max 180 words.`,
     setHasWatermark(false);
   };
 
+  const handleApplyPromo = async (code) => {
+    try {
+      const res = await base44.functions.invoke('applyPromoCode', { promo_code: code });
+      if (res.data.success) {
+        toast.success(t('promoApplied'));
+      } else {
+        toast.error(res.data.error || t('promoInvalid'));
+      }
+    } catch {
+      toast.error(t('promoInvalid'));
+    }
+    setPromoDialogOpen(false);
+  };
+
   return (
     <ErrorBoundary>
       <div className="flex flex-col flex-1">
@@ -160,10 +167,9 @@ Be purely descriptive and factual. NO creative additions. Max 180 words.`,
           }
         />
 
-        <PullToRefresh onRefresh={() => { /* refresh handler */ }}>
+        <PullToRefresh onRefresh={() => {}}>
           <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full">
           {!imageUrl && !resultUrl ? (
-            /* Hero + Upload */
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -187,27 +193,18 @@ Be purely descriptive and factual. NO creative additions. Max 180 words.`,
                 />
               </div>
               <div className="text-center">
-                  <button
-                    className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
-                    onClick={() => setPromoDialogOpen(true)}
-                  >
-                    {t('promoLink')}
-                  </button>
-                </div>
+                <button
+                  className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
+                  onClick={() => setPromoDialogOpen(true)}
+                >
+                  {t('promoLink')}
+                </button>
+              </div>
               <PromoDialog
                 open={promoDialogOpen}
                 onOpenChange={setPromoDialogOpen}
-                onApply={(code) => {
-                  if (['WANNATRY1', 'PROVA2026'].includes(code)) {
-                    localStorage.setItem('promo_code', code);
-                    setPromoCreditsUsed(parseInt(localStorage.getItem('promo_credits_used') || '0', 10));
-                    toast.success(t('promoApplied'));
-                  } else {
-                    toast.error(t('promoInvalid'));
-                  }
-                }}
+                onApply={handleApplyPromo}
               />
-              {/* Footer links */}
               <div className="flex items-center justify-center gap-4 pt-2">
                 <Link to="/privacy" className="text-xs text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2">Privacy Policy</Link>
                 <span className="text-muted-foreground/40 text-xs">·</span>
@@ -216,7 +213,6 @@ Be purely descriptive and factual. NO creative additions. Max 180 words.`,
             </motion.div>
           ) : (
             <>
-              {/* Image preview always at top */}
               {imageUrl && (
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
@@ -231,9 +227,7 @@ Be purely descriptive and factual. NO creative additions. Max 180 words.`,
                 </motion.div>
               )}
 
-              {/* Editor Grid */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                {/* Settings Panel */}
                 <motion.aside
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -264,24 +258,8 @@ Be purely descriptive and factual. NO creative additions. Max 180 words.`,
                       </div>
                     )}
                   </Button>
-
-                  {hasPromo() && (
-                    <div className="rounded-xl border border-border bg-muted/50 px-4 py-3 text-xs space-y-1">
-                      <div className="flex items-center justify-between">
-                        <span className="font-semibold text-foreground">🎟️ {t('promoActive')}</span>
-                        <span className="text-muted-foreground">{t('promoExpiry')}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        {Array.from({ length: 12 }).map((_, i) => (
-                          <div key={i} className={`h-2 flex-1 rounded-full ${i < promoCreditsUsed ? 'bg-muted-foreground/40' : 'bg-accent'}`} />
-                        ))}
-                      </div>
-                      <p className="text-muted-foreground">{Math.max(0, 12 - promoCreditsUsed)} crediti rimasti</p>
-                    </div>
-                  )}
                 </motion.aside>
 
-                {/* Result Area */}
                 <div className="lg:col-span-9 space-y-4">
                   {showDisclaimer && isGenerating && (
                     <GeneratingDisclaimer visible={showDisclaimer} onClose={() => setShowDisclaimer(false)} />
@@ -289,18 +267,16 @@ Be purely descriptive and factual. NO creative additions. Max 180 words.`,
                   <AnimatePresence mode="wait">
                     {isGenerating && <GeneratingOverlay key="gen" phase={genPhase} />}
                     {resultUrl && !isGenerating && (
-                      <>
-                            <ResultView
-                            key="result"
-                            originalUrl={imageUrl}
-                            resultUrl={resultUrl}
-                            hasWatermark={hasWatermark}
-                            freeVector={hasPromo()}
-                            showRasterDownload={settings.bwForRaster}
-                            isEnterprise={isEnterprise}
-                            onRegenerate={handleRegenerate}
-                            />
-                      </>
+                      <ResultView
+                        key="result"
+                        originalUrl={imageUrl}
+                        resultUrl={resultUrl}
+                        hasWatermark={hasWatermark}
+                        freeVector={false}
+                        showRasterDownload={settings.bwForRaster}
+                        isEnterprise={isEnterprise}
+                        onRegenerate={handleRegenerate}
+                      />
                     )}
                   </AnimatePresence>
                 </div>
