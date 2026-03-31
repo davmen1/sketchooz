@@ -66,7 +66,7 @@ export function buildPrompt(settings, productDescription) {
   const subjectAnchor = productDescription
     ? settings.creative
       ? `INSPIRATION SUBJECT (use freely as a starting point, you may reinterpret proportions and details):\n${productDescription}`
-      : `SUBJECT — reproduce this product faithfully, preserving its overall silhouette and main proportions (≈90%). You may refine edges, tighten details, improve surface articulation, and enhance the rendering quality — but do NOT reinvent or substantially alter the product shape:\n${productDescription}\nThe sketch must be clearly recognizable as the same product. Minor professional refinements to details are welcome, major redesigns are not.`
+      : `DESIGN BRIEF — Reproduce this product with perfect proportions and hand-drawn marker sketch aesthetic. Preserve the overall silhouette, concept and intent of the original design. However, where the original sketch shows rudimentary, flat, or poorly defined areas (e.g., flat belts, unclear surfaces, weak details), interpret these professionally and refine them as a skilled designer would — translating 2D flat elements into coherent 3D forms with proper volume, shading and articulation. The final render must remain clearly recognizable as the same product, with a polished but authentically hand-drawn quality (marker, colored pencils, confident strokes). Perfect proportions, refined craftsmanship, but always hand-drawn character.\n${productDescription}`
     : '';
 
   const textures = settings.textures || [];
@@ -136,7 +136,7 @@ Aesthetic: Professional industrial design marker sketch on white paper with dram
   }
 
   const perspLabel = PERSPECTIVE_LABELS[settings.perspective];
-  const strictRules = settings.creative ? '' : `RENDERING RULES:\n- Maintain the overall silhouette and proportions (≈90% fidelity)\n- You may subtly refine surfaces, edges, and construction details for a more professional result\n- Do NOT redesign the product concept — keep the same typology, components and general form\n- The output must be clearly recognizable as the same product\n`;
+  const strictRules = settings.creative ? '' : `RENDERING GUIDELINES:\n- Preserve the overall silhouette, proportions, and design intent (≈90% fidelity to original concept)\n- Translate any flat, underdeveloped, or poorly sketched areas into proper 3D forms with volume and coherence (e.g., a flat belt becomes dimensional, undefined surfaces gain clarity)\n- Apply confident marker and colored pencil strokes, with proper shading, highlights, and material definition\n- Maintain hand-drawn authenticity: this must look like a skilled designer's sketch, not a digital render\n- Do NOT alter the core product typology, major components, or overall concept\n- The result must be clearly recognizable as the same product with refined craftsmanship\n`;
   const markerStyleNote = settings.style === 'marker_render'
     ? `GLOBAL STYLE DIRECTIVE: This image MUST look like a real hand-drawn industrial design sketch made with Copic/alcohol markers on white paper. Key characteristics to enforce:
 - Visible pencil construction lines underneath the color fills
