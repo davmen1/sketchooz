@@ -2,19 +2,20 @@ import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 
+// Industrial design marker sketches
 const GALLERY = [
   'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/f8eba66d2_Gemini_Generated_Image_vvcje0vvcje0vvcj.jpg',
   'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/5e4300c0f_Gemini_Generated_Image_p24ieqp24ieqp24i1.jpg',
-  'https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?w=600&q=80',
-  'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80',
-  'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&q=80',
-  'https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=600&q=80',
-  'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80',
-  'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=600&q=80',
-  'https://images.unsplash.com/photo-1503602642458-232111445657?w=600&q=80',
+  'https://images.unsplash.com/photo-1594818379496-da1e345b0ded?w=600&q=80',
+  'https://images.unsplash.com/photo-1613909207039-6b173b755cc1?w=600&q=80',
+  'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=600&q=80',
+  'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=600&q=80',
+  'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=600&q=80',
+  'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=600&q=80',
   'https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=600&q=80',
-  'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&q=80',
-  'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&q=80',
+  'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&q=80',
+  'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80',
+  'https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=600&q=80',
 ];
 
 export default function CTAGallery({ onLogin }) {
@@ -37,42 +38,38 @@ export default function CTAGallery({ onLogin }) {
   const prev = () => { setCurrent(p => (p - 1 + n) % n); resetTimer(); };
   const next = () => { setCurrent(p => (p + 1) % n); resetTimer(); };
 
-  // Show 5 thumbnails: indices current-2, -1, 0, +1, +2
   const getSlots = () => [-2, -1, 0, 1, 2].map(offset => ({
     index: (current + offset + n) % n,
     offset,
   }));
 
   return (
-    <section className="bg-black border-t border-border py-16 text-center px-6">
-      {/* Title */}
-      <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">Pronto a provarlo?</h2>
-      <p className="text-white/60 text-sm mb-10">Registrati gratuitamente e genera il tuo primo sketch.</p>
+    <section className="bg-black border-t border-white/10 py-12 text-center px-6">
+      <h2 className="text-2xl font-bold text-white mb-2">Pronto a provarlo?</h2>
+      <p className="text-white/50 text-sm mb-8">Registrati gratuitamente e genera il tuo primo sketch.</p>
 
       {/* Gallery strip */}
-      <div className="relative flex items-center justify-center gap-0 mb-10 select-none">
-        {/* Left arrow */}
+      <div className="relative flex items-center justify-center mb-8 select-none max-w-2xl mx-auto">
         <button
           onClick={prev}
-          className="absolute left-0 z-10 w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 transition flex items-center justify-center text-white"
+          className="absolute left-0 z-10 w-8 h-8 rounded-full bg-white/10 hover:bg-white/25 transition flex items-center justify-center text-white"
         >
-          <ChevronLeft className="w-5 h-5" />
+          <ChevronLeft className="w-4 h-4" />
         </button>
 
-        {/* Thumbnails */}
-        <div className="flex items-center justify-center gap-3 overflow-hidden w-full max-w-2xl px-12">
+        <div className="flex items-center justify-center gap-2 w-full px-10">
           {getSlots().map(({ index, offset }) => {
             const isCenter = offset === 0;
+            const isNear = Math.abs(offset) === 1;
             return (
               <div
                 key={`${index}-${offset}`}
                 onClick={() => { setCurrent(index); resetTimer(); }}
-                className="cursor-pointer rounded-lg overflow-hidden shrink-0 transition-all duration-500"
+                className="cursor-pointer rounded-md overflow-hidden shrink-0 transition-all duration-500"
                 style={{
-                  width: isCenter ? 200 : Math.abs(offset) === 1 ? 130 : 90,
-                  height: isCenter ? 140 : Math.abs(offset) === 1 ? 90 : 65,
-                  opacity: isCenter ? 1 : Math.abs(offset) === 1 ? 0.65 : 0.3,
-                  transform: isCenter ? 'scale(1)' : 'scale(0.95)',
+                  width: isCenter ? 180 : isNear ? 120 : 80,
+                  height: isCenter ? 120 : isNear ? 80 : 55,
+                  opacity: isCenter ? 1 : isNear ? 0.55 : 0.25,
                   boxShadow: isCenter ? '0 0 0 2px hsl(130 63% 57%)' : 'none',
                 }}
               >
@@ -87,12 +84,11 @@ export default function CTAGallery({ onLogin }) {
           })}
         </div>
 
-        {/* Right arrow */}
         <button
           onClick={next}
-          className="absolute right-0 z-10 w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 transition flex items-center justify-center text-white"
+          className="absolute right-0 z-10 w-8 h-8 rounded-full bg-white/10 hover:bg-white/25 transition flex items-center justify-center text-white"
         >
-          <ChevronRight className="w-5 h-5" />
+          <ChevronRight className="w-4 h-4" />
         </button>
       </div>
 
