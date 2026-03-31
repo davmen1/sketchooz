@@ -82,11 +82,20 @@ Be purely descriptive and factual. NO creative additions. Max 180 words.`,
         ? `${basePrompt}\n\nUSER CORRECTION (apply this to the new render): ${correctionNote}`
         : basePrompt;
       const STYLE_REFS = [
-        'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/63d94a161_d40ba72e-1709-4adf-9609-5ce4c6df16dd.jpg',
-        'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/4e3840955_1743086351196.jpg',
-        'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/ccd36380c_b4db17f7a_generated_image1.png',
-        'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/e9bb99d21_images.jpg',
-        'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/12833b668_images.jpeg',
+        'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/d613b5828_Screenshot2026-04-01alle001412.png',
+        'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/701523fda_Screenshot2026-04-01alle001508.png',
+        'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/82dfde4f9_Screenshot2026-04-01alle001630.png',
+        'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/0cd850583_Screenshot2026-04-01alle001655.png',
+        'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/48d573480_Screenshot2026-04-01alle001715.png',
+        'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/4f978fde3_Screenshot2026-04-01alle001756.png',
+        'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/d241a9d2e_Screenshot2026-04-01alle001820.png',
+        'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/904cd2fea_Screenshot2026-04-01alle001901.png',
+        'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/a49131936_Screenshot2026-04-01alle001930.png',
+        'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/b80b1cbbf_Screenshot2026-04-01alle001946.png',
+        'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/62f362c8a_Screenshot2026-04-01alle002008.png',
+        'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/ed03ce1ab_Screenshot2026-04-01alle002053.png',
+        'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/8a6a67a51_Screenshot2026-04-01alle002111.png',
+        'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/73fc6b238_Screenshot2026-04-01alle002200.png',
       ];
       const refImages = correctionNote && resultUrl
         ? [imageUrl, resultUrl, ...STYLE_REFS]
