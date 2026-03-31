@@ -185,9 +185,6 @@ Be purely descriptive and factual. NO creative additions. Max 180 words.`,
                   uploadedUrl={imageUrl}
                   onClear={() => setImageUrl(null)}
                 />
-                {!tipsRead && (
-                  <p className="text-center text-xs text-muted-foreground mt-2">Read the tips above first ↑</p>
-                )}
               </div>
               {!hasPromo() && (
                 <div className="text-center">
@@ -199,7 +196,6 @@ Be purely descriptive and factual. NO creative additions. Max 180 words.`,
                   </button>
                 </div>
               )}
-              {tipsRead && <InstructionsPopup onRead={() => setTipsRead(true)} />}
               <PromoDialog
                 open={promoDialogOpen}
                 onOpenChange={setPromoDialogOpen}
