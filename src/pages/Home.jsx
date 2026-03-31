@@ -191,7 +191,7 @@ Be purely descriptive and factual. NO creative additions. Max 180 words.`,
                 open={promoDialogOpen}
                 onOpenChange={setPromoDialogOpen}
                 onApply={(code) => {
-                  if (['WANNATRY1'].includes(code)) {
+                  if (['WANNATRY1', 'PROVA2026'].includes(code)) {
                     localStorage.setItem('promo_code', code);
                     setPromoRendersUsed(parseInt(localStorage.getItem('promo_renders_used') || '0', 10));
                     toast.success(t('promoApplied'));

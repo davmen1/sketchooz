@@ -27,7 +27,7 @@ export default function PromoDialog({ open, onOpenChange, onApply }) {
           <Input
             value={code}
             onChange={(e) => setCode(e.target.value)}
-            placeholder={it ? 'Es. WANNATRY1' : 'E.g. WANNATRY1'}
+            placeholder={it ? 'Es. PROVA2026' : 'E.g. PROVA2026'}
             autoFocus
             autoComplete="off"
             autoCorrect="off"
