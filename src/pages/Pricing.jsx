@@ -253,7 +253,7 @@ export default function Pricing() {
                         <h3 className="font-bold text-xl text-foreground">{name}</h3>
                         <span className="bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">🎯 {it ? 'PROVA SUBITO' : 'TRY NOW'}</span>
                       </div>
-                      <p className="text-xs text-muted-foreground">{plan.credits} {it ? 'crediti' : 'credits'} · {period}</p>
+                      <p className="text-xs text-muted-foreground">{plan.credits} {it ? 'crediti' : 'credits'} · <strong>{Math.floor(plan.credits / 3)} render</strong> · {period}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-4">
@@ -319,7 +319,7 @@ export default function Pricing() {
                     <span className="text-xl">{plan.emoji}</span>
                     <div>
                       <h3 className="font-bold text-base text-foreground">{name}</h3>
-                      <p className="text-[10px] text-muted-foreground">{plan.credits} {it ? 'crediti' : 'credits'} · {period}</p>
+                      <p className="text-[10px] text-muted-foreground">{plan.credits} {it ? 'crediti' : 'credits'} · <strong>{Math.floor(plan.credits / 3)} render</strong> · {period}</p>
                     </div>
                     <div className="ml-auto text-right">
                       <span className="text-xl font-bold text-foreground">{price}</span>

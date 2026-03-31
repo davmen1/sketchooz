@@ -32,15 +32,15 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Find a pack with credits
-    const pack = packs.find(p => (p.credits_remaining || 0) > 0);
+    // Find a pack with at least 3 credits
+    const pack = packs.find(p => (p.credits_remaining || 0) >= 3);
     if (!pack) {
       return Response.json({ allowed: false, watermark: true });
     }
 
-    // Decrement credits
+    // Decrement 3 credits per render
     await base44.asServiceRole.entities.RenderPack.update(pack.id, {
-      credits_remaining: pack.credits_remaining - 1,
+      credits_remaining: pack.credits_remaining - 3,
     });
 
     const watermark = isPremium ? false : (pack.watermark_only === true);
