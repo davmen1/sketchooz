@@ -28,7 +28,7 @@ const DEFAULT_SETTINGS = {
   outputMode: 'single',
   studySheet: 'four_views_eu',
   cleanDesign: false,
-  backgroundType: 'colorful',
+  backgroundType: 'none',
   markerBg: false,
   textures: [],
   bgColor: { type: 'preset', value: 'white' },
