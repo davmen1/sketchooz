@@ -30,6 +30,7 @@ export default function LandingPage() {
       {/* Header */}
       <header className="sticky top-0 z-10 bg-background/80 backdrop-blur border-b border-border px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
+          <img src="https://media.base44.com/images/public/69c0940be94e736c4d6366a0/0c4fb1e10_Gemini_Generated_Image_p24ieqp24ieqp24i1.jpg" alt="Sketchooz" className="h-8 w-8 rounded-md object-cover" />
           <span className="font-semibold tracking-widest text-sm uppercase">Industrial Sketches</span>
         </div>
         <Button onClick={handleLogin} size="sm" className="gap-2">
