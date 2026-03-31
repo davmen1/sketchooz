@@ -18,7 +18,7 @@ import ResultView from '@/components/result/ResultView';
 import GeneratingDisclaimer from '@/components/GeneratingDisclaimer';
 import GeneratingOverlay from '@/components/result/GeneratingOverlay';
 import { buildPrompt } from '@/lib/buildPrompt';
-import { hasPromo, checkAndIncrementUsage } from '@/lib/checkUsage';
+import { hasPromo } from '@/lib/checkUsage';
 
 const DEFAULT_SETTINGS = {
   style: 'marker_render',
@@ -95,7 +95,16 @@ Be purely descriptive and factual. NO creative additions. Max 180 words.`,
       return url;
     },
     onMutate: async () => {
-      const { allowed, watermark } = await checkAndIncrementUsage(setPromoRendersUsed);
+      const promoCode = localStorage.getItem('promo_code');
+      let allowed, watermark;
+      try {
+        const res = await base44.functions.invoke('consumeCredit', { promo_code: promoCode });
+        allowed = res.data.allowed;
+        watermark = res.data.watermark;
+      } catch (e) {
+        toast.error('Errore nel controllo crediti. Riprova.');
+        throw new Error('credit_check_failed');
+      }
       setHasWatermark(watermark || false);
       if (!allowed) {
         toast.error(hasPromo() ? t('promoExhausted') : t('freeLimit'));
@@ -112,7 +121,7 @@ Be purely descriptive and factual. NO creative additions. Max 180 words.`,
     onError: (err) => {
       setGenPhase(null);
       setShowDisclaimer(false);
-      if (err.message !== 'limit_reached') toast.error(err.message);
+      if (err.message !== 'limit_reached' && err.message !== 'credit_check_failed') toast.error(err.message);
     },
   });
 
