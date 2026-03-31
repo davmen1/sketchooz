@@ -6,7 +6,7 @@ const GALLERY = [
   'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/3248bc783_WhatsAppImage2026-03-31at121054.jpeg',
   'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/cc05b30b8_b4db17f7a_generated_image.png',
   'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/b80210e0f_WhatsAppImage2026-03-31at120211.jpeg',
-  'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/5e4300c0f_Gemini_Generated_Image_p24ieqp24ieqp24i1.jpg',
+  'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/97ddb0016_9366211f5_generated_image.png',
 ];
 
 export default function CTAGallery({ onLogin }) {
