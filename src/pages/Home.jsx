@@ -49,7 +49,6 @@ export default function Home() {
     parseInt(localStorage.getItem('promo_renders_used') || '0', 10)
   );
   const [promoDialogOpen, setPromoDialogOpen] = useState(false);
-  const [promoActive, setPromoActive] = useState(() => hasPromo());
   const [tipsRead, setTipsRead] = useState(() => !!localStorage.getItem('sketchooz_tips_read'));
 
   const isEnterprise = currentUser?.role === 'enterprise' || currentUser?.role === 'admin';
@@ -187,8 +186,7 @@ Be purely descriptive and factual. NO creative additions. Max 180 words.`,
                   onClear={() => setImageUrl(null)}
                 />
               </div>
-              {!promoActive && (
-                <div className="text-center">
+              <div className="text-center">
                   <button
                     className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
                     onClick={() => setPromoDialogOpen(true)}
@@ -196,7 +194,6 @@ Be purely descriptive and factual. NO creative additions. Max 180 words.`,
                     {t('promoLink')}
                   </button>
                 </div>
-              )}
               <PromoDialog
                 open={promoDialogOpen}
                 onOpenChange={setPromoDialogOpen}
@@ -204,7 +201,6 @@ Be purely descriptive and factual. NO creative additions. Max 180 words.`,
                   if (['WANNATRY1', 'PROVA2026'].includes(code)) {
                     localStorage.setItem('promo_code', code);
                     setPromoRendersUsed(parseInt(localStorage.getItem('promo_renders_used') || '0', 10));
-                    setPromoActive(true);
                     toast.success(t('promoApplied'));
                   } else {
                     toast.error(t('promoInvalid'));
