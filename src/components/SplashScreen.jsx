@@ -22,7 +22,7 @@ export default function SplashScreen({ onDone }) {
           transition={{ duration: 0.8, ease: 'easeInOut' }}
           style={{
             position: 'fixed', inset: 0, zIndex: 9999,
-            backgroundColor: isDark ? '#0d0d0d' : '#f7f6f2',
+            backgroundColor: isDark ? '#111317' : '#f7f6f2',
             display: 'flex', alignItems: 'center', justifyContent: 'center'
           }}
         >
