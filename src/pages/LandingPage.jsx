@@ -1,8 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Sparkles, Layers, Palette, Download, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import CTAGallery from '@/components/CTAGallery';
 import { base44 } from '@/api/base44Client';
 
 const features = [
@@ -89,13 +90,7 @@ export default function LandingPage() {
         </section>
 
         {/* CTA bottom */}
-        <section className="bg-card border-t border-border py-14 text-center px-6">
-          <h2 className="text-2xl font-bold mb-3">Pronto a provarlo?</h2>
-          <p className="text-muted-foreground text-sm mb-6">Registrati gratuitamente e genera il tuo primo sketch.</p>
-          <Button onClick={handleLogin} size="lg" className="gap-2 font-semibold rounded-xl px-8">
-            <ArrowRight className="w-4 h-4" /> Accedi con Google
-          </Button>
-        </section>
+        <CTAGallery onLogin={handleLogin} />
       </main>
 
       {/* Footer */}
