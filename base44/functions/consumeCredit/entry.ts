@@ -14,19 +14,6 @@ Deno.serve(async (req) => {
 
     const packs = await base44.asServiceRole.entities.RenderPack.filter({ user_email: user.email });
 
-    const hasPaidPack = packs.some(p => p.watermark_only === false);
-
-    // Check promo from request body
-    const body = await req.json().catch(() => ({}));
-    const promoCode = body.promo_code || null;
-    const PROMO_CODES = ['WANNATRY1', 'PROVA2026'];
-    const PROMO_EXPIRY = new Date('2026-04-23T23:59:59Z');
-    const hasValidPromo = promoCode && PROMO_CODES.includes(promoCode) && new Date() < PROMO_EXPIRY;
-
-    const isPremium = hasPaidPack || hasValidPromo;
-
-    // NOTE: do NOT permanently upgrade free_trial packs — watermark_only is determined per-render
-
     // Find a pack with at least 3 credits
     const pack = packs.find(p => (p.credits_remaining || 0) >= 3);
     if (!pack) {
@@ -38,13 +25,13 @@ Deno.serve(async (req) => {
       credits_remaining: pack.credits_remaining - 3,
     });
 
-    const watermark = !isPremium; // watermark removed for paid packs OR valid promo code
-    console.log(`Credit consumed for ${user.email}: remaining=${pack.credits_remaining - 1}, watermark=${watermark}`);
+    // Watermark is determined solely by the pack's watermark_only field — no frontend bypass possible
+    const watermark = pack.watermark_only === true;
+    console.log(`Credit consumed for ${user.email}: remaining=${pack.credits_remaining - 3}, watermark=${watermark}`);
     return Response.json({ allowed: true, watermark });
 
   } catch (error) {
     console.error('consumeCredit error:', error.message);
-    // Fail safe: block the render rather than allow free unlimited renders
     return Response.json({ error: error.message }, { status: 500 });
   }
 });
