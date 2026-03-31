@@ -2,6 +2,7 @@ import React, { useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeftRight, Maximize2, Download, RefreshCw, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import WatermarkCanvas from '@/components/result/WatermarkCanvas';
 import { base44 } from '@/api/base44Client';
 import { useLang } from '@/lib/LangContext';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
@@ -9,6 +10,7 @@ import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeVector, showRasterDownload, onRegenerate, isEnterprise }) {
   const [comparePosition, setComparePosition] = useState(50);
   const [viewMode, setViewMode] = useState('result'); // 'result' | 'compare'
+  const [watermarkedUrl, setWatermarkedUrl] = useState(null);
   const containerRef = useRef(null);
   const isDragging = useRef(false);
 
@@ -27,9 +29,12 @@ export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeV
 
   const { t } = useLang();
 
+  // The URL to display/download: watermarked if applicable
+  const displayUrl = hasWatermark ? (watermarkedUrl || resultUrl) : resultUrl;
+
   const handleDownload = async () => {
     try {
-      const res = await fetch(resultUrl, { mode: 'cors' });
+      const res = await fetch(displayUrl, { mode: 'cors' });
       const blob = await res.blob();
       const objectUrl = URL.createObjectURL(blob);
 
@@ -48,7 +53,7 @@ export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeV
       // Desktop / Android: blob download
       const link = document.createElement('a');
       link.href = objectUrl;
-      link.download = 'sketchooz-render.png';
+      link.download = hasWatermark ? 'sketchooz-preview.png' : 'sketchooz-render.png';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -91,6 +96,9 @@ export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeV
       className="space-y-4"
     >
       {hasWatermark && (
+      <WatermarkCanvas imageUrl={resultUrl} onReady={setWatermarkedUrl} />
+    )}
+    {hasWatermark && (
         <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-xs">
           <span>⚠️</span>
           <span>{t('watermarkBanner')}</span>
@@ -140,7 +148,7 @@ export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeV
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              src={resultUrl}
+              src={displayUrl}
               alt="Industrial design sketch"
               className="w-full h-auto"
             />
@@ -159,7 +167,7 @@ export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeV
               onTouchStart={(e) => updatePosition(e.touches[0].clientX)}
               onTouchMove={handleTouchMove}
             >
-              <img src={resultUrl} alt="Result" className="w-full h-auto pointer-events-none" />
+              <img src={displayUrl} alt="Result" className="w-full h-auto pointer-events-none" />
               <div
                 className="absolute inset-0 overflow-hidden"
                 style={{ width: `${comparePosition}%` }}
