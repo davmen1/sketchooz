@@ -81,7 +81,15 @@ Be purely descriptive and factual. NO creative additions. Max 180 words.`,
       const prompt = correctionNote
         ? `${basePrompt}\n\nUSER CORRECTION (apply this to the new render): ${correctionNote}`
         : basePrompt;
-      const refImages = correctionNote && resultUrl ? [imageUrl, resultUrl] : [imageUrl];
+      const STYLE_REFS = [
+        'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/754d87524_Screenshot2026-03-25alle002643.png',
+        'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/ccd36380c_b4db17f7a_generated_image1.png',
+        'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/63d94a161_d40ba72e-1709-4adf-9609-5ce4c6df16dd.jpg',
+        'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/4e3840955_1743086351196.jpg',
+      ];
+      const refImages = correctionNote && resultUrl
+        ? [imageUrl, resultUrl, ...STYLE_REFS]
+        : [imageUrl, ...STYLE_REFS];
       const { url } = await base44.integrations.Core.GenerateImage({
         prompt,
         existing_image_urls: refImages,
