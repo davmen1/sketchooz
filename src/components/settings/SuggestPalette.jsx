@@ -15,18 +15,13 @@ export default function SuggestPalette({ imageUrl, onSuggest }) {
     setSuccess(false);
     try {
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are a creative industrial design color consultant. Look at this product and generate a CREATIVE, HARMONIOUS color palette for a professional sketch render — not just the product's existing colors, but a curated combination that would look stunning as a rendered design.
+        prompt: `You are an industrial design color consultant. Analyze this product and suggest a curated palette of exactly 3 or 4 Pantone Solid Coated colors that:
+1. Are coherent with the product's style, category and aesthetic (e.g. techy products get cool grays/blues, organic products get warm earthy tones, luxury items get metallics/deep tones)
+2. Harmonize well together as a color scheme
+3. Include at least one neutral (gray, black, white-ish) and one accent color
+4. Would look great in a professional industrial design marker render
 
-Your task:
-1. Identify the product TYPE and its aesthetic character (sleek/techy, organic/soft, rugged, luxury, etc.).
-2. Create a FRESH, visually striking palette of 4-5 Pantone Solid Coated colors that:
-   - Harmonize beautifully together (use color theory: analogous, complementary, or triadic schemes)
-   - Suit the product's aesthetic perfectly
-   - Include a range from light to dark to give depth to the render
-   - Feel modern and design-forward
-3. You are NOT constrained to the product's current colors — be creative and suggest what would look GREAT.
-4. Return ONLY exact Pantone Solid Coated names (e.g. "485 C", "Cool Gray 11C", "200 C", "3005 C").
-5. Return ONLY the Pantone color names as a JSON array of strings, nothing else.`,
+Return ONLY exact Pantone Solid Coated color names (e.g. "485 C", "Cool Gray 11C", "3005 C") as a JSON array of 3 or 4 strings. Nothing else.`,
         file_urls: [imageUrl],
         add_context_from_internet: false,
         response_json_schema: {
