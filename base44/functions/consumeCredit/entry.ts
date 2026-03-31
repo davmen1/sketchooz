@@ -1,7 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
-const PROMO_CODES = ['WANNATRY1', 'PROVA2026'];
-const PROMO_LIMITS = { 'WANNATRY1': 55, 'PROVA2026': 2 };
+const PROMO_CODES = ['WANNATRY1'];
+const PROMO_CREDITS = { 'WANNATRY1': 12 };
 const PROMO_EXPIRY = new Date('2026-04-23T23:59:59Z');
 
 Deno.serve(async (req) => {

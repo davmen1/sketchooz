@@ -45,8 +45,8 @@ export default function Home() {
   const [hasWatermark, setHasWatermark] = useState(false);
   const [showDisclaimer, setShowDisclaimer] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
-  const [promoRendersUsed, setPromoRendersUsed] = useState(() =>
-    parseInt(localStorage.getItem('promo_renders_used') || '0', 10)
+  const [promoCreditsUsed, setPromoCreditsUsed] = useState(() =>
+    parseInt(localStorage.getItem('promo_credits_used') || '0', 10)
   );
   const [promoDialogOpen, setPromoDialogOpen] = useState(false);
   const [tipsRead, setTipsRead] = useState(() => !!localStorage.getItem('sketchooz_tips_read'));
@@ -200,7 +200,7 @@ Be purely descriptive and factual. NO creative additions. Max 180 words.`,
                 onApply={(code) => {
                   if (['WANNATRY1', 'PROVA2026'].includes(code)) {
                     localStorage.setItem('promo_code', code);
-                    setPromoRendersUsed(parseInt(localStorage.getItem('promo_renders_used') || '0', 10));
+                    setPromoCreditsUsed(parseInt(localStorage.getItem('promo_credits_used') || '0', 10));
                     toast.success(t('promoApplied'));
                   } else {
                     toast.error(t('promoInvalid'));
@@ -271,14 +271,12 @@ Be purely descriptive and factual. NO creative additions. Max 180 words.`,
                         <span className="font-semibold text-foreground">🎟️ {t('promoActive')}</span>
                         <span className="text-muted-foreground">{t('promoExpiry')}</span>
                       </div>
-                      <div className="flex items-center gap-1.5">
-                        {[0, 1].map(i => (
-                          <div key={i} className={`h-2 flex-1 rounded-full ${
-                            i < promoRendersUsed ? 'bg-muted-foreground/40' : 'bg-accent'
-                          }`} />
+                      <div className="flex items-center gap-1">
+                        {Array.from({ length: 12 }).map((_, i) => (
+                          <div key={i} className={`h-2 flex-1 rounded-full ${i < promoCreditsUsed ? 'bg-muted-foreground/40' : 'bg-accent'}`} />
                         ))}
                       </div>
-                      <p className="text-muted-foreground">{Math.max(0, 2 - promoRendersUsed)} {t('promoRendersLeft')}</p>
+                      <p className="text-muted-foreground">{Math.max(0, 12 - promoCreditsUsed)} crediti rimasti</p>
                     </div>
                   )}
                 </motion.aside>
