@@ -25,12 +25,7 @@ Deno.serve(async (req) => {
 
     const isPremium = hasPaidPack || hasValidPromo;
 
-    // Upgrade watermark packs if premium
-    if (isPremium) {
-      for (const p of packs.filter(p => p.watermark_only)) {
-        await base44.asServiceRole.entities.RenderPack.update(p.id, { watermark_only: false });
-      }
-    }
+    // NOTE: do NOT permanently upgrade free_trial packs — watermark_only is determined per-render
 
     // Find a pack with at least 3 credits
     const pack = packs.find(p => (p.credits_remaining || 0) >= 3);
