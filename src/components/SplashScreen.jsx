@@ -7,9 +7,7 @@ export default function SplashScreen({ onDone }) {
   const isDark = document.documentElement.classList.contains('dark');
 
   useEffect(() => {
-    // Mostra il contenuto dopo un breve delay (il fondo è già visibile dal CSS)
     const t1 = setTimeout(() => setShowContent(true), 400);
-    // Poi dissolve tutto
     const t2 = setTimeout(() => setVisible(false), 2800);
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, []);
@@ -37,7 +35,9 @@ export default function SplashScreen({ onDone }) {
                 style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}
               >
                 <img
-                  src={isDark ? "https://media.base44.com/images/public/69c0940be94e736c4d6366a0/0e908ebe8_Gemini_Generated_Image_p24ieqp24ieqp24i11.png" : "https://media.base44.com/images/public/69c0940be94e736c4d6366a0/0c4fb1e10_Gemini_Generated_Image_p24ieqp24ieqp24i1.jpg"}
+                  src={isDark
+                    ? "https://media.base44.com/images/public/69c0940be94e736c4d6366a0/2dd06ec0a_Gemini_Generated_Image_p24ieqp24ieqp24i111.png"
+                    : "https://media.base44.com/images/public/69c0940be94e736c4d6366a0/0c4fb1e10_Gemini_Generated_Image_p24ieqp24ieqp24i1.jpg"}
                   alt="Sketchooz"
                   style={{ width: '140px', height: '140px', objectFit: 'contain' }}
                 />
