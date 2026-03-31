@@ -54,7 +54,11 @@ export default function Home() {
   const isEnterprise = currentUser?.role === 'enterprise' || currentUser?.role === 'admin';
 
   React.useEffect(() => {
-    base44.auth.me().then(u => setCurrentUser(u)).catch(() => {});
+    base44.auth.me().then(u => {
+      setCurrentUser(u);
+      // Ensure free trial pack exists for new users
+      base44.functions.invoke('initFreeTrial', {}).catch(() => {});
+    }).catch(() => {});
   }, []);
 
 

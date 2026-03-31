@@ -28,21 +28,10 @@ export async function checkAndIncrementUsage(setPromoRendersUsed) {
   const packs = await base44.entities.RenderPack.filter({ user_email: user.email });
   // Prefer non-watermark packs first so paid credits are used before free trial
   const sorted = [...packs].sort((a, b) => (a.watermark_only ? 1 : 0) - (b.watermark_only ? 1 : 0));
-  const pack = sorted.find(p => (p.credits_remaining || 0) >= 3);
+  const pack = sorted.find(p => (p.credits_remaining || 0) > 0);
   if (pack) {
-    await base44.entities.RenderPack.update(pack.id, { credits_remaining: pack.credits_remaining - 3 });
+    await base44.entities.RenderPack.update(pack.id, { credits_remaining: pack.credits_remaining - 1 });
     return { allowed: true, watermark: !!pack.watermark_only };
-  }
-  // No pack found — give 15 free trial credits with watermark
-  if (packs.length === 0) {
-    const freePack = await base44.entities.RenderPack.create({
-      user_email: user.email,
-      credits_remaining: 15 - 3,
-      pack_type: 'free_trial',
-      watermark_only: true,
-    });
-    console.log('Created free trial pack for', user.email);
-    return { allowed: true, watermark: true };
   }
   return { allowed: false };
 }
