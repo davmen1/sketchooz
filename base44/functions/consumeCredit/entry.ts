@@ -23,24 +23,20 @@ Deno.serve(async (req) => {
     const isValidPromo = promoCode && PROMO_CODES.includes(promoCode) && new Date() < PROMO_EXPIRY;
 
     if (isValidPromo) {
-      // Check if user already used this promo code
-      const existingPromoUse = await base44.asServiceRole.entities.RenderPack.filter({
+      // Check if user already has a promo pack; if not, create it
+      const existingPromoPacks = await base44.asServiceRole.entities.RenderPack.filter({
         user_email: user.email,
         pack_type: `promo_${promoCode}`,
       });
-      if (existingPromoUse.length > 0) {
-        console.log(`Promo code ${promoCode} already used by ${user.email}`);
-        return Response.json({ allowed: false, watermark: true, reason: 'promo_already_used' });
+      if (existingPromoPacks.length === 0) {
+        await base44.asServiceRole.entities.RenderPack.create({
+          user_email: user.email,
+          credits_remaining: PROMO_CREDITS[promoCode],
+          pack_type: `promo_${promoCode}`,
+          watermark_only: false,
+        });
+        console.log(`Promo pack created for ${user.email}: ${PROMO_CREDITS[promoCode]} credits`);
       }
-      // Record promo usage
-      await base44.asServiceRole.entities.RenderPack.create({
-        user_email: user.email,
-        credits_remaining: 0,
-        pack_type: `promo_${promoCode}`,
-        watermark_only: false,
-      });
-      console.log(`Valid promo code used: ${promoCode} by ${user.email}`);
-      return Response.json({ allowed: true, watermark: false });
     }
 
     const packs = await base44.asServiceRole.entities.RenderPack.filter({ user_email: user.email });
