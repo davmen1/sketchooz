@@ -2,20 +2,15 @@ import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 
-// Industrial design marker sketches
 const GALLERY = [
+  'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/dcaea4c73_c224ab77c_generated_image.png',
+  'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/88e7654db_sketchforge-render2.png',
+  'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/d8d5e77e9_sketchooz-render.png',
+  'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/2a83889ca_sketchforge-render1.png',
+  'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/cc05b30b8_b4db17f7a_generated_image.png',
+  'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/b80210e0f_WhatsAppImage2026-03-31at120211.jpeg',
   'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/f8eba66d2_Gemini_Generated_Image_vvcje0vvcje0vvcj.jpg',
   'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/5e4300c0f_Gemini_Generated_Image_p24ieqp24ieqp24i1.jpg',
-  'https://images.unsplash.com/photo-1594818379496-da1e345b0ded?w=600&q=80',
-  'https://images.unsplash.com/photo-1613909207039-6b173b755cc1?w=600&q=80',
-  'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=600&q=80',
-  'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=600&q=80',
-  'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=600&q=80',
-  'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=600&q=80',
-  'https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=600&q=80',
-  'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&q=80',
-  'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80',
-  'https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=600&q=80',
 ];
 
 export default function CTAGallery({ onLogin }) {
@@ -44,15 +39,15 @@ export default function CTAGallery({ onLogin }) {
   }));
 
   return (
-    <section className="bg-black border-t border-white/10 py-12 text-center px-6">
-      <h2 className="text-2xl font-bold text-white mb-2">Pronto a provarlo?</h2>
-      <p className="text-white/50 text-sm mb-8">Registrati gratuitamente e genera il tuo primo sketch.</p>
+    <section className="bg-card border-t border-border py-12 text-center px-6">
+      <h2 className="text-2xl font-bold mb-2">Pronto a provarlo?</h2>
+      <p className="text-muted-foreground text-sm mb-8">Registrati gratuitamente e genera il tuo primo sketch.</p>
 
       {/* Gallery strip */}
       <div className="relative flex items-center justify-center mb-8 select-none max-w-2xl mx-auto">
         <button
           onClick={prev}
-          className="absolute left-0 z-10 w-8 h-8 rounded-full bg-white/10 hover:bg-white/25 transition flex items-center justify-center text-white"
+          className="absolute left-0 z-10 w-8 h-8 rounded-full bg-secondary hover:bg-secondary/80 transition flex items-center justify-center text-foreground"
         >
           <ChevronLeft className="w-4 h-4" />
         </button>
@@ -86,7 +81,7 @@ export default function CTAGallery({ onLogin }) {
 
         <button
           onClick={next}
-          className="absolute right-0 z-10 w-8 h-8 rounded-full bg-white/10 hover:bg-white/25 transition flex items-center justify-center text-white"
+          className="absolute right-0 z-10 w-8 h-8 rounded-full bg-secondary hover:bg-secondary/80 transition flex items-center justify-center text-foreground"
         >
           <ChevronRight className="w-4 h-4" />
         </button>
