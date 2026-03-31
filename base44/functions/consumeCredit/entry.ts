@@ -38,7 +38,7 @@ Deno.serve(async (req) => {
       credits_remaining: pack.credits_remaining - 3,
     });
 
-    const watermark = isPremium ? false : (pack.watermark_only === true);
+    const watermark = !hasPaidPack; // watermark removed only for paid packs, not promo
     console.log(`Credit consumed for ${user.email}: remaining=${pack.credits_remaining - 1}, watermark=${watermark}`);
     return Response.json({ allowed: true, watermark });
 
