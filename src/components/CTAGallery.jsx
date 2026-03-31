@@ -3,8 +3,8 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const GALLERY = [
-  'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/dcaea4c73_c224ab77c_generated_image.png',
-  'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/88e7654db_sketchforge-render2.png',
+  'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/3248bc783_WhatsAppImage2026-03-31at121054.jpeg',
+  'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/ae7ccd57d_154513d86_generated_image.png',
   'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/d8d5e77e9_sketchooz-render.png',
   'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/2a83889ca_sketchforge-render1.png',
   'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/cc05b30b8_b4db17f7a_generated_image.png',
