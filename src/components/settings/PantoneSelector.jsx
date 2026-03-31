@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Label } from '@/components/ui/label';
-import { Check, ChevronDown } from 'lucide-react';
+import { Check, ChevronDown, Plus } from 'lucide-react';
 
 export const PANTONE_PALETTES = [
   {
@@ -141,6 +141,7 @@ export const PANTONE_PALETTES = [
 
 export default function PantoneSelector({ selected, onChange }) {
   const [openPalette, setOpenPalette] = useState(null);
+  const [customInput, setCustomInput] = useState('');
 
   const toggle = (colorName) => {
     if (selected.includes(colorName)) {
@@ -151,6 +152,15 @@ export default function PantoneSelector({ selected, onChange }) {
   };
 
   const clearAll = () => onChange([]);
+
+  const addCustomCode = () => {
+    const code = customInput.trim().toUpperCase();
+    if (!code) return;
+    if (!selected.includes(code)) {
+      onChange([...selected, code]);
+    }
+    setCustomInput('');
+  };
 
   return (
     <div className="space-y-3">
@@ -184,6 +194,24 @@ export default function PantoneSelector({ selected, onChange }) {
           })}
         </div>
       )}
+
+      {/* Manual Pantone code input */}
+      <div className="flex gap-1.5">
+        <input
+          type="text"
+          value={customInput}
+          onChange={(e) => setCustomInput(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && addCustomCode()}
+          placeholder="es. 485 C, Cool Gray 11C…"
+          className="flex-1 text-xs px-2.5 py-1.5 rounded-lg border border-border bg-card text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-ring"
+        />
+        <button
+          onClick={addCustomCode}
+          className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-border bg-secondary text-xs font-medium hover:bg-muted transition-colors"
+        >
+          <Plus className="w-3 h-3" /> Add
+        </button>
+      </div>
 
       <div className="space-y-0.5">
         {PANTONE_PALETTES.map((palette) => {

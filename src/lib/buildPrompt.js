@@ -66,7 +66,7 @@ export function buildPrompt(settings, productDescription) {
   const subjectAnchor = productDescription
     ? settings.creative
       ? `INSPIRATION SUBJECT (use freely as a starting point, you may reinterpret proportions and details):\n${productDescription}`
-      : `CRITICAL SUBJECT — reproduce with absolute fidelity, do NOT alter shape or proportions:\n${productDescription}\nThe sketch must show the EXACT SAME product: same silhouette, same proportions, same components. Do not invent, add, remove or reshape any part.`
+      : `SUBJECT — reproduce this product faithfully, preserving its overall silhouette and main proportions (≈90%). You may refine edges, tighten details, improve surface articulation, and enhance the rendering quality — but do NOT reinvent or substantially alter the product shape:\n${productDescription}\nThe sketch must be clearly recognizable as the same product. Minor professional refinements to details are welcome, major redesigns are not.`
     : '';
 
   const textures = settings.textures || [];
@@ -120,7 +120,7 @@ Aesthetic: Professional industrial design marker sketch on white paper with dram
 
   if (settings.outputMode === 'study_sheet') {
     const sheetLabel = STUDY_SHEET_LABELS[settings.studySheet];
-    const strictRules = settings.creative ? '' : `STRICT RENDERING RULES:\n- Preserve the EXACT silhouette, shape and proportions described above\n- Do NOT simplify, stylize or redesign the product — only apply the rendering style on the faithful form\n- The output must be recognizable as the same product as the input image\n`;
+    const strictRules = settings.creative ? '' : `RENDERING RULES:\n- Maintain the overall silhouette and proportions (≈90% fidelity)\n- You may subtly refine surfaces, edges, and construction details for a more professional result\n- Do NOT redesign the product concept — keep the same typology, components and general form\n- The output must be clearly recognizable as the same product\n`;
     const crossSectionColorNote = (settings.studySheet === 'cross_section' && !settings.creative)
       ? `\nCROSS-SECTION COLOR RULE: Even in sectional views, ALL specified colors MUST be faithfully applied to each surface/component exactly as they would appear in a normal view. Do NOT default to gray or generic tones. The cut surfaces use hatching, but all other surfaces retain their exact specified colors. This is mandatory.`
       : '';
@@ -136,7 +136,7 @@ Aesthetic: Professional industrial design marker sketch on white paper with dram
   }
 
   const perspLabel = PERSPECTIVE_LABELS[settings.perspective];
-  const strictRules = settings.creative ? '' : `STRICT RENDERING RULES:\n- Preserve the EXACT silhouette, shape and proportions described above\n- Do NOT simplify, stylize or redesign the product — only apply the rendering style on the faithful form\n- The output must be recognizable as the same product as the input image\n`;
+  const strictRules = settings.creative ? '' : `RENDERING RULES:\n- Maintain the overall silhouette and proportions (≈90% fidelity)\n- You may subtly refine surfaces, edges, and construction details for a more professional result\n- Do NOT redesign the product concept — keep the same typology, components and general form\n- The output must be clearly recognizable as the same product\n`;
   const markerStyleNote = settings.style === 'marker_render'
     ? `GLOBAL STYLE DIRECTIVE: This image MUST look like a real hand-drawn industrial design sketch made with Copic/alcohol markers on white paper. Key characteristics to enforce:
 - Visible pencil construction lines underneath the color fills
