@@ -4,7 +4,6 @@ import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const GALLERY = [
   'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/3248bc783_WhatsAppImage2026-03-31at121054.jpeg',
-  'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/ae7ccd57d_154513d86_generated_image.png',
   'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/2a83889ca_sketchforge-render1.png',
   'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/cc05b30b8_b4db17f7a_generated_image.png',
   'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/b80210e0f_WhatsAppImage2026-03-31at120211.jpeg',
