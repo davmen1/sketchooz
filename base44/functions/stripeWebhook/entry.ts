@@ -53,27 +53,30 @@ Deno.serve(async (req) => {
     
     try {
       if (userPacks.length > 0) {
-        // Update existing pack with latest data
         const existingPack = userPacks[0];
         const creditsToAdd = parseInt(credits) + bonusCredits;
         const newTotal = (existingPack.credits_remaining || 0) + creditsToAdd;
-        
+
+        // Non-starter purchase → upgrade ALL existing packs to non-watermark
+        if (!isStarterPack) {
+          for (const p of userPacks) {
+            if (p.watermark_only) {
+              await base44.asServiceRole.entities.RenderPack.update(p.id, { watermark_only: false });
+            }
+          }
+        }
+
         const updateData = {
           credits_remaining: newTotal,
           stripe_session_id: stripeSessionId,
           pack_type: pack,
+          watermark_only: isStarterPack ? (existingPack.watermark_only !== false) : false,
         };
-        
-        if (isStarterPack && existingPack.watermark_only !== false) {
-          updateData.watermark_only = true;
-        } else if (!isStarterPack) {
-          updateData.watermark_only = false;
-        }
-        
+
         await base44.asServiceRole.entities.RenderPack.update(existingPack.id, updateData);
         console.log(`✓ Added ${creditsToAdd} credits (incl. ${bonusCredits} bonus) to ${user_email}, total: ${newTotal}`);
       } else {
-        // Create new pack with unique stripe_session_id
+        // Create new pack
         const newPack = await base44.asServiceRole.entities.RenderPack.create({
           user_email,
           credits_remaining: parseInt(credits) + bonusCredits,
