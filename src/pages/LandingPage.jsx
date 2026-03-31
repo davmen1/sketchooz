@@ -28,7 +28,7 @@ export default function LandingPage() {
       {/* SEO hidden heading */}
       <h1 className="sr-only">Sketchooz - Industrial Design Sketches. <a href="/privacy">Privacy Policy</a> and <a href="/terms">Terms</a> available here.</h1>
       {/* Header */}
-      <header className="sticky top-0 z-10 bg-background/80 backdrop-blur border-b border-border px-6 py-4 flex items-center justify-between">
+      <header className="sticky top-0 z-10 bg-background/80 backdrop-blur border-b border-border px-6 py-4 flex items-center justify-between" style={{ paddingTop: 'calc(1rem + env(safe-area-inset-top))' }}>
         <div className="flex items-center gap-3">
           <img src="https://media.base44.com/images/public/69c0940be94e736c4d6366a0/0c4fb1e10_Gemini_Generated_Image_p24ieqp24ieqp24i1.jpg" alt="Sketchooz" className="h-8 w-8 rounded-md object-cover" />
           <div className="flex flex-col leading-tight">
