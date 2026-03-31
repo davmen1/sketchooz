@@ -28,7 +28,11 @@ export default function BottomTabBar() {
   return (
     <nav
       className="fixed bottom-0 left-0 right-0 z-40 bg-card/95 backdrop-blur-md border-t border-border flex"
-      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+      style={{
+        paddingBottom: 'env(safe-area-inset-bottom)',
+        paddingLeft: 'env(safe-area-inset-left)',
+        paddingRight: 'env(safe-area-inset-right)',
+      }}
     >
       {TABS.map(({ path, labelKey, icon: Icon }) => {
         const label = t(labelKey);
