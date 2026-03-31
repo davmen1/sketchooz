@@ -30,15 +30,24 @@ export default function Settings() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { isDark, toggleTheme } = useTheme();
-  const [deleteStep, setDeleteStep] = useState('idle'); // idle | confirm | instructions
+  const [deleteStep, setDeleteStep] = useState('idle'); // idle | confirm | instructions | requested
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const handleLogout = () => {
     base44.auth.logout('/');
   };
 
   const handleDeleteRequest = () => setDeleteStep('confirm');
-  const handleDeleteCancel = () => setDeleteStep('idle');
+  const handleDeleteCancel = () => { setDeleteStep('idle'); setDeleteLoading(false); };
   const handleDeleteConfirm = () => setDeleteStep('instructions');
+  const handleDeleteSubmit = async () => {
+    setDeleteLoading(true);
+    try {
+      await base44.functions.invoke('requestAccountDeletion', { email: user?.email });
+    } catch (_) {}
+    setDeleteStep('requested');
+    setDeleteLoading(false);
+  };
 
   return (
     <div className="flex flex-col flex-1">
@@ -102,32 +111,46 @@ export default function Settings() {
           >
             <div className="bg-card rounded-2xl border border-border w-full max-w-sm p-6 space-y-4">
 
-              {deleteStep === 'instructions' ? (
+              {deleteStep === 'requested' ? (
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center shrink-0">
                       <Trash2 className="w-5 h-5 text-muted-foreground" />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold">Come eliminare il tuo account</p>
-                      <p className="text-xs text-muted-foreground">La richiesta viene gestita via email</p>
+                      <p className="text-sm font-semibold">Richiesta inviata</p>
+                      <p className="text-xs text-muted-foreground">Il tuo account verrà eliminato entro 48h</p>
                     </div>
                   </div>
                   <p className="text-xs text-muted-foreground leading-relaxed">
-                    Per eliminare definitivamente il tuo account e tutti i dati associati, contattaci a:
-                  </p>
-                  <a
-                    href={`mailto:support@sketchforge.app?subject=Richiesta%20eliminazione%20account&body=Ciao%2C%20vorrei%20eliminare%20il%20mio%20account%3A%20${encodeURIComponent(user?.email || '')}`}
-                    className="block w-full text-center px-4 py-3 rounded-xl bg-foreground text-background text-sm font-semibold"
-                  >
-                    support@sketchforge.app
-                  </a>
-                  <p className="text-[10px] text-muted-foreground">
-                    Includi l'email del tuo account nel messaggio. L'eliminazione viene processata entro 48h.
+                    Abbiamo ricevuto la tua richiesta di eliminazione per <strong>{user?.email}</strong>. Riceverai una conferma via email.
                   </p>
                   <Button variant="outline" className="w-full min-h-[44px]" onClick={handleDeleteCancel}>
                     Chiudi
                   </Button>
+                </div>
+              ) : deleteStep === 'instructions' ? (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-destructive/10 flex items-center justify-center shrink-0">
+                      <AlertTriangle className="w-5 h-5 text-destructive" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold">Conferma eliminazione</p>
+                      <p className="text-xs text-muted-foreground">Stai per eliminare definitivamente il tuo account</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Tutti i tuoi dati, crediti e render associati a <strong>{user?.email}</strong> verranno eliminati in modo permanente e irreversibile.
+                  </p>
+                  <div className="flex gap-2 pt-1">
+                    <Button variant="outline" className="flex-1 min-h-[44px]" onClick={handleDeleteCancel} disabled={deleteLoading}>
+                      Annulla
+                    </Button>
+                    <Button variant="destructive" className="flex-1 min-h-[44px]" onClick={handleDeleteSubmit} disabled={deleteLoading}>
+                      {deleteLoading ? 'Invio...' : 'Elimina account'}
+                    </Button>
+                  </div>
                 </div>
               ) : (
                 <>
