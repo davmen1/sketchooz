@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 export default function SplashScreen({ onDone }) {
   const [visible, setVisible] = useState(true);
   const [showContent, setShowContent] = useState(false);
+  const isDark = document.documentElement.classList.contains('dark');
 
   useEffect(() => {
     // Mostra il contenuto dopo un breve delay (il fondo è già visibile dal CSS)
@@ -23,7 +24,7 @@ export default function SplashScreen({ onDone }) {
           transition={{ duration: 0.8, ease: 'easeInOut' }}
           style={{
             position: 'fixed', inset: 0, zIndex: 9999,
-            backgroundColor: '#f7f6f2',
+            backgroundColor: isDark ? '#0d0d0d' : '#f7f6f2',
             display: 'flex', alignItems: 'center', justifyContent: 'center'
           }}
         >
@@ -36,7 +37,7 @@ export default function SplashScreen({ onDone }) {
                 style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}
               >
                 <img
-                  src="https://media.base44.com/images/public/69c0940be94e736c4d6366a0/5e4300c0f_Gemini_Generated_Image_p24ieqp24ieqp24i1.jpg"
+                  src={isDark ? "https://media.base44.com/images/public/69c0940be94e736c4d6366a0/0e908ebe8_Gemini_Generated_Image_p24ieqp24ieqp24i11.png" : "https://media.base44.com/images/public/69c0940be94e736c4d6366a0/0c4fb1e10_Gemini_Generated_Image_p24ieqp24ieqp24i1.jpg"}
                   alt="Sketchooz"
                   style={{ width: '140px', height: '140px', objectFit: 'contain' }}
                 />
@@ -44,7 +45,7 @@ export default function SplashScreen({ onDone }) {
                   fontFamily: "'Arial', 'Helvetica Neue', Helvetica, sans-serif",
                   letterSpacing: '0.22em',
                   fontSize: '1.3rem',
-                  color: '#1a1a1a',
+                  color: isDark ? '#f0f0f0' : '#1a1a1a',
                   fontWeight: 300,
                   textTransform: 'uppercase'
                 }}>
