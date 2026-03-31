@@ -41,7 +41,7 @@ export const SURFACE_LABELS = {
 
 export function buildPrompt(settings, productDescription) {
   const preciseModeColorWarning = !settings.creative
-    ? `\nCRITICAL — PRECISE COLOR MODE ACTIVE: Every single color specified must appear visibly in the final output. Do NOT drop, merge, or replace any color. If multiple colors are listed, ALL of them must be clearly visible on the product. Color accuracy is the top priority.`
+    ? `\nCRITICAL — PRECISE COLOR MODE ACTIVE: You MUST use the specified palette colors to cover AT LEAST 80% of the product's colored surfaces. These colors are dominant and mandatory — they must fill the majority of the product's body, panels and details. Do NOT drop, merge, or replace any color. ALL specified colors must be clearly visible. Color fidelity is the top priority.`
     : '';
 
   const colorPart = settings.style === 'bw_lines'

@@ -15,17 +15,18 @@ export default function SuggestPalette({ imageUrl, onSuggest }) {
     setSuccess(false);
     try {
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are an industrial design color expert creating a MANDATORY color palette for product rendering.
-Task: Analyze this product image and extract a strict, non-negotiable color palette that MUST be applied to the sketch design and background.
+        prompt: `You are a creative industrial design color consultant. Look at this product and generate a CREATIVE, HARMONIOUS color palette for a professional sketch render — not just the product's existing colors, but a curated combination that would look stunning as a rendered design.
 
-Rules (STRICT - NO EXCEPTIONS):
-1. Identify EVERY distinct visible color hue in the product (reds, oranges, yellows, greens, blues, purples, blacks, whites, metallics).
-2. Map EACH identified color to an exact Pantone Solid Coated name.
-3. Do NOT omit any major color. If red is visible, red MUST be in the palette. If blue is visible, blue MUST be included.
-4. Return exactly 4-5 Pantone colors that comprehensively cover all hues present in the product.
-5. These colors are BINDING requirements for both sketch rendering AND background color selection.
-6. Use ONLY exact Pantone names (e.g. "485 C", "Cool Gray 11C", "200 C", "3005 C").
-7. Return ONLY the Pantone color names as a JSON array of strings, nothing else.`,
+Your task:
+1. Identify the product TYPE and its aesthetic character (sleek/techy, organic/soft, rugged, luxury, etc.).
+2. Create a FRESH, visually striking palette of 4-5 Pantone Solid Coated colors that:
+   - Harmonize beautifully together (use color theory: analogous, complementary, or triadic schemes)
+   - Suit the product's aesthetic perfectly
+   - Include a range from light to dark to give depth to the render
+   - Feel modern and design-forward
+3. You are NOT constrained to the product's current colors — be creative and suggest what would look GREAT.
+4. Return ONLY exact Pantone Solid Coated names (e.g. "485 C", "Cool Gray 11C", "200 C", "3005 C").
+5. Return ONLY the Pantone color names as a JSON array of strings, nothing else.`,
         file_urls: [imageUrl],
         add_context_from_internet: false,
         response_json_schema: {
