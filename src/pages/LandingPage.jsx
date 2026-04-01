@@ -16,7 +16,7 @@ const features = [
 
 export default function LandingPage() {
   const navigate = useNavigate();
-  const { lang, setLang } = useLang();
+  const { lang, toggle } = useLang();
 
   const handleLogin = () => {
     base44.auth.isAuthenticated().then((auth) => {
@@ -41,7 +41,7 @@ export default function LandingPage() {
           </div>
         </div>
         <button
-          onClick={() => setLang(lang === 'it' ? 'en' : 'it')}
+          onClick={toggle}
           className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-border bg-secondary text-secondary-foreground hover:bg-muted transition-colors min-h-[44px]"
         >
           {lang === 'it' ? '🇬🇧 EN' : '🇮🇹 IT'}
