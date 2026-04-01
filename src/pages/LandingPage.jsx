@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Sparkles, Layers, Palette, Download, ArrowRight } from 'lucide-react';
+import { useLang } from '@/lib/LangContext';
 import { Button } from '@/components/ui/button';
 import CTAGallery from '@/components/CTAGallery';
 import { base44 } from '@/api/base44Client';
@@ -15,6 +16,7 @@ const features = [
 
 export default function LandingPage() {
   const navigate = useNavigate();
+  const { lang, setLang } = useLang();
 
   const handleLogin = () => {
     base44.auth.isAuthenticated().then((auth) => {
@@ -38,6 +40,12 @@ export default function LandingPage() {
             <span className="text-muted-foreground tracking-widest text-xs uppercase">Industrial Sketches</span>
           </div>
         </div>
+        <button
+          onClick={() => setLang(lang === 'it' ? 'en' : 'it')}
+          className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-border bg-secondary text-secondary-foreground hover:bg-muted transition-colors min-h-[44px]"
+        >
+          {lang === 'it' ? '🇬🇧 EN' : '🇮🇹 IT'}
+        </button>
         <Button onClick={handleLogin} size="sm" className="gap-2">
           Accedi <ArrowRight className="w-3.5 h-3.5" />
         </Button>
