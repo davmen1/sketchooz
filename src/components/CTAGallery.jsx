@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useLang } from '@/lib/LangContext';
 
 const GALLERY = [
   'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/3248bc783_WhatsAppImage2026-03-31at121054.jpeg',
@@ -10,6 +11,7 @@ const GALLERY = [
 ];
 
 export default function CTAGallery({ onLogin }) {
+  const { lang } = useLang();
   const [current, setCurrent] = useState(0);
   const timerRef = useRef(null);
   const n = GALLERY.length;
@@ -36,8 +38,8 @@ export default function CTAGallery({ onLogin }) {
 
   return (
     <section className="bg-card border-t border-border py-12 text-center px-6">
-      <h2 className="text-2xl font-bold mb-2">Pronto a provarlo?</h2>
-      <p className="text-muted-foreground text-sm mb-8">Registrati gratuitamente e genera il tuo primo sketch.</p>
+      <h2 className="text-2xl font-bold mb-2">{lang === 'it' ? 'Pronto a provarlo?' : 'Ready to try it?'}</h2>
+      <p className="text-muted-foreground text-sm mb-8">{lang === 'it' ? 'Registrati gratuitamente e genera il tuo primo sketch.' : 'Sign up for free and generate your first sketch.'}</p>
 
       {/* Gallery strip */}
       <div className="relative flex items-center justify-center mb-8 select-none max-w-2xl mx-auto">
@@ -84,7 +86,7 @@ export default function CTAGallery({ onLogin }) {
       </div>
 
       <Button onClick={onLogin} size="lg" className="gap-2 font-semibold rounded-xl px-8 bg-accent hover:bg-accent/90 text-accent-foreground">
-        <ArrowRight className="w-4 h-4" /> Accedi con Google
+        <ArrowRight className="w-4 h-4" /> {lang === 'it' ? 'Accedi con Google' : 'Sign in with Google'}
       </Button>
     </section>
   );
