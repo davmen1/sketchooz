@@ -40,12 +40,21 @@ export default function LandingPage() {
             <span className="text-muted-foreground tracking-widest text-xs uppercase">Industrial Sketches</span>
           </div>
         </div>
-        <button
-          onClick={toggle}
-          className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-border bg-secondary text-secondary-foreground hover:bg-muted transition-colors min-h-[44px]"
-        >
-          {lang === 'it' ? '🇬🇧 EN' : '🇮🇹 IT'}
-        </button>
+        <div className="flex items-center rounded-lg border border-border bg-muted p-0.5 gap-0.5">
+          {['it', 'en'].map((l) => (
+            <button
+              key={l}
+              onClick={() => l !== lang && toggle()}
+              className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all select-none ${
+                lang === l
+                  ? 'bg-card text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              {l === 'it' ? '🇮🇹 IT' : '🇬🇧 EN'}
+            </button>
+          ))}
+        </div>
         <Button onClick={handleLogin} size="sm" className="gap-2">
           Accedi <ArrowRight className="w-3.5 h-3.5" />
         </Button>
