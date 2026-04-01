@@ -102,6 +102,7 @@ export default function LandingPage() {
           <a href="/terms" className="hover:text-foreground underline underline-offset-2 transition-colors">Termini e Condizioni</a>
           <a href="/support" className="hover:text-foreground underline underline-offset-2 transition-colors">Supporto</a>
           <a href="/marketing" className="hover:text-foreground underline underline-offset-2 transition-colors">Media Kit</a>
+          <a href="/age-rating" className="hover:text-foreground underline underline-offset-2 transition-colors">Adeguatezza dell'età</a>
         </div>
       </footer>
     </div>);

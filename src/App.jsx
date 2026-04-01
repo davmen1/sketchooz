@@ -21,6 +21,7 @@ import Settings from './pages/Settings';
 import Support from './pages/Support';
 import Marketing from './pages/Marketing';
 import Gallery from './pages/Gallery';
+import AgeRating from './pages/AgeRating';
 
 // Only handles authenticated /app/* routes
 const AuthenticatedApp = () => {
@@ -75,6 +76,7 @@ function App() {
                 <Route path="/terms" element={<TermsOfService />} />
                 <Route path="/support" element={<Support />} />
                 <Route path="/marketing" element={<Marketing />} />
+                <Route path="/age-rating" element={<AgeRating />} />
                 {/* Authenticated routes */}
                 <Route path="/app/*" element={
                   <AuthProvider>
