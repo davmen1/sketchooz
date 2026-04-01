@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { useLang } from '@/lib/LangContext';
-import { Upload, Image as ImageIcon, X } from 'lucide-react';
+import { Upload, Image as ImageIcon, X, Camera } from 'lucide-react';
+import { vibrate } from '@/lib/nativeUtils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 
@@ -78,6 +79,14 @@ export default function ImageUploader({ onImageUploaded, uploadedUrl, onClear })
         className="hidden"
         onChange={(e) => handleFile(e.target.files[0])}
       />
+      <input
+        id="camera-input"
+        type="file"
+        accept="image/*"
+        capture="environment"
+        className="hidden"
+        onChange={(e) => handleFile(e.target.files[0])}
+      />
       
       <AnimatePresence mode="wait">
         {isUploading ? (
@@ -99,12 +108,23 @@ export default function ImageUploader({ onImageUploaded, uploadedUrl, onClear })
             exit={{ opacity: 0 }}
             className="flex flex-col items-center gap-4"
           >
-            <div className="w-14 h-14 rounded-2xl bg-muted flex items-center justify-center">
-              {isDragging ? (
-                <ImageIcon className="w-6 h-6 text-accent" />
-              ) : (
-                <Upload className="w-6 h-6 text-muted-foreground" />
-              )}
+            <div className="flex gap-3">
+              <div
+                className="w-14 h-14 rounded-2xl bg-muted flex items-center justify-center cursor-pointer hover:bg-muted/70 transition-colors"
+                onClick={(e) => { e.stopPropagation(); vibrate(10); document.getElementById('file-input').click(); }}
+              >
+                {isDragging ? (
+                  <ImageIcon className="w-6 h-6 text-accent" />
+                ) : (
+                  <Upload className="w-6 h-6 text-muted-foreground" />
+                )}
+              </div>
+              <div
+                className="w-14 h-14 rounded-2xl bg-muted flex items-center justify-center cursor-pointer hover:bg-muted/70 transition-colors"
+                onClick={(e) => { e.stopPropagation(); vibrate(10); document.getElementById('camera-input').click(); }}
+              >
+                <Camera className="w-6 h-6 text-muted-foreground" />
+              </div>
             </div>
             <div className="text-center">
               <p className="text-sm font-medium text-foreground">

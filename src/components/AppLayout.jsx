@@ -7,9 +7,10 @@ import SupportAgent from './SupportAgent';
 import Home from '../pages/Home';
 import Pricing from '../pages/Pricing';
 import Settings from '../pages/Settings';
+import Gallery from '../pages/Gallery';
 
-const TAB_PATHS = ['/app', '/app/pricing', '/app/settings'];
-const TAB_COMPONENTS = { '/app': Home, '/app/pricing': Pricing, '/app/settings': Settings };
+const TAB_PATHS = ['/app', '/app/pricing', '/app/gallery', '/app/settings'];
+const TAB_COMPONENTS = { '/app': Home, '/app/pricing': Pricing, '/app/gallery': Gallery, '/app/settings': Settings };
 
 export default function AppLayout() {
   const { pathname } = useLocation();

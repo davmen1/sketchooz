@@ -1,6 +1,7 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Home, Settings, CreditCard } from 'lucide-react';
+import { Home, Settings, CreditCard, Images } from 'lucide-react';
+import { vibrate } from '@/lib/nativeUtils';
 import { useLang } from '@/lib/LangContext';
 
 export default function BottomTabBar() {
@@ -9,18 +10,18 @@ export default function BottomTabBar() {
   const TABS = [
     { path: '/app', labelKey: 'tabHome', icon: Home },
     { path: '/app/pricing', labelKey: 'tabPlans', icon: CreditCard },
+    { path: '/app/gallery', label: 'Gallery', icon: Images },
     { path: '/app/settings', labelKey: 'tabSettings', icon: Settings },
   ];
 
   const navigate = useNavigate();
 
   const handleTabClick = (path) => {
+    vibrate(8);
     const isActive = location.pathname === path || (path !== '/' && location.pathname.startsWith(path));
     if (isActive) {
-      // If already on this tab, reset to root (double-tap to top)
       navigate(path);
     } else {
-      // Navigate without replace to preserve stack
       navigate(path);
     }
   };
@@ -34,8 +35,7 @@ export default function BottomTabBar() {
         paddingRight: 'env(safe-area-inset-right)',
       }}
     >
-      {TABS.map(({ path, labelKey, icon: Icon }) => {
-        const label = t(labelKey);
+      {TABS.map(({ path, label, labelKey, icon: Icon }) => {
         const active = path === '/app'
           ? location.pathname === '/app'
           : location.pathname === path || location.pathname.startsWith(path + '/');
@@ -51,7 +51,7 @@ export default function BottomTabBar() {
             <span
               className={`text-[10px] font-medium transition-colors ${active ? 'text-accent' : 'text-muted-foreground'}`}
             >
-              {label}
+              {label || t(labelKey)}
             </span>
           </button>
         );

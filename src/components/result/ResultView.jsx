@@ -1,6 +1,7 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeftRight, Maximize2, Download, RefreshCw, FileText } from 'lucide-react';
+import { vibrate, saveToGallery } from '@/lib/nativeUtils';
 import { Button } from '@/components/ui/button';
 import WatermarkCanvas from '@/components/result/WatermarkCanvas';
 import { base44 } from '@/api/base44Client';
@@ -32,25 +33,27 @@ export default function ResultView({ originalUrl, resultUrl, hasWatermark, freeV
   // The URL to display/download: watermarked if applicable
   const displayUrl = hasWatermark ? (watermarkedUrl || resultUrl) : resultUrl;
 
+  // Auto-save to offline gallery when result arrives
+  useEffect(() => {
+    if (resultUrl) saveToGallery(resultUrl);
+  }, [resultUrl]);
+
   const handleDownload = async () => {
+    vibrate(15);
     try {
       const res = await fetch(displayUrl, { mode: 'cors' });
       const blob = await res.blob();
       const objectUrl = URL.createObjectURL(blob);
 
-      // Try Web Share API with files (iOS Safari 15.1+ saves to Photos)
       if (navigator.canShare && navigator.canShare({ files: [new File([blob], 'sketchooz-render.png', { type: 'image/png' })] })) {
         const file = new File([blob], 'sketchooz-render.png', { type: 'image/png' });
         try {
           await navigator.share({ files: [file], title: 'Sketchooz render' });
           URL.revokeObjectURL(objectUrl);
           return;
-        } catch {
-          // cancelled or failed, fall through
-        }
+        } catch {}
       }
 
-      // Desktop / Android: blob download
       const link = document.createElement('a');
       link.href = objectUrl;
       link.download = hasWatermark ? 'sketchooz-preview.png' : 'sketchooz-render.png';

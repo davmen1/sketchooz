@@ -20,6 +20,7 @@ import Pricing from './pages/Pricing.jsx';
 import Settings from './pages/Settings';
 import Support from './pages/Support';
 import Marketing from './pages/Marketing';
+import Gallery from './pages/Gallery';
 
 // Only handles authenticated /app/* routes
 const AuthenticatedApp = () => {
@@ -52,6 +53,7 @@ const AuthenticatedApp = () => {
           <Route index element={<Home />} />
           <Route path="pricing" element={<Pricing />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="gallery" element={<Gallery />} />
         </Route>
         <Route path="*" element={<PageNotFound />} />
       </Routes>
