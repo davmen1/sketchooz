@@ -1,6 +1,14 @@
 // Haptic feedback
 export function vibrate(pattern = 10) {
-  try { navigator.vibrate?.(pattern); } catch {}
+  try {
+    // iOS WebView - usa il bridge nativo WebKit
+    if (window.webkit?.messageHandlers?.haptic) {
+      window.webkit.messageHandlers.haptic.postMessage({ type: 'impact', style: 'light' });
+      return;
+    }
+    // Android / altri
+    navigator.vibrate?.(pattern);
+  } catch {}
 }
 
 // Offline gallery (last 10 renders)
