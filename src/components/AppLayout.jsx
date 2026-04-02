@@ -6,11 +6,15 @@ import BottomTabBar from './BottomTabBar';
 import SupportAgent from './SupportAgent';
 import Home from '../pages/Home';
 import Pricing from '../pages/Pricing';
+import BusinessFeatures from '../pages/BusinessFeatures';
 import Settings from '../pages/Settings';
 import Gallery from '../pages/Gallery';
+import { isIOSWebView } from '../utils/isIOSWebView';
+
+const PricingOrBusiness = isIOSWebView() ? BusinessFeatures : Pricing;
 
 const TAB_PATHS = ['/app', '/app/pricing', '/app/gallery', '/app/settings'];
-const TAB_COMPONENTS = { '/app': Home, '/app/pricing': Pricing, '/app/gallery': Gallery, '/app/settings': Settings };
+const TAB_COMPONENTS = { '/app': Home, '/app/pricing': PricingOrBusiness, '/app/gallery': Gallery, '/app/settings': Settings };
 
 export default function AppLayout() {
   const { pathname } = useLocation();
