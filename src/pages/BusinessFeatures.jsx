@@ -140,7 +140,7 @@ export default function BusinessFeatures() {
           </p>
           <Button
             className="gap-2 bg-accent hover:bg-accent/90 text-accent-foreground font-semibold rounded-xl w-full"
-            onClick={() => window.open('https://www.sketchooz.com/pricing', '_blank')}
+            onClick={() => { window.location.href = 'https://www.sketchooz.com/pricing'; }}
           >
             {it ? 'Scopri di più su sketchooz.com' : 'Learn more at sketchooz.com'}
             <ArrowUpRight className="w-4 h-4" />
