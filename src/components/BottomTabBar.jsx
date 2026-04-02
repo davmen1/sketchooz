@@ -1,15 +1,17 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Home, Settings, CreditCard, Images } from 'lucide-react';
+import { Home, Settings, CreditCard, Images, Info } from 'lucide-react';
+import { isIOSWebView } from '@/utils/isIOSWebView';
 import { vibrate } from '@/lib/nativeUtils';
 import { useLang } from '@/lib/LangContext';
 
 export default function BottomTabBar() {
   const location = useLocation();
   const { t } = useLang();
+  const PricingIcon = isIOSWebView() ? Info : CreditCard;
   const TABS = [
     { path: '/app', labelKey: 'tabHome', icon: Home },
-    { path: '/app/pricing', labelKey: 'tabPlans', icon: CreditCard },
+    { path: '/app/pricing', labelKey: 'tabPlans', icon: PricingIcon },
     { path: '/app/gallery', label: 'Gallery', icon: Images },
     { path: '/app/settings', labelKey: 'tabSettings', icon: Settings },
   ];
