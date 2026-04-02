@@ -147,12 +147,6 @@ export default function BusinessFeatures() {
           </Button>
         </motion.div>
 
-        {/* Note */}
-        <p className="text-center text-xs text-muted-foreground pb-4">
-          {it
-            ? 'Le funzionalità avanzate sono accessibili tramite il sito web sketchooz.com'
-            : 'Advanced features are accessible through the sketchooz.com website'}
-        </p>
 
       </main>
     </div>
