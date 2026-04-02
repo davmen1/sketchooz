@@ -123,30 +123,6 @@ export default function BusinessFeatures() {
           ))}
         </div>
 
-        {/* CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.35 }}
-          className="rounded-2xl border border-border bg-card p-6 text-center space-y-4"
-        >
-          <p className="font-semibold text-foreground">
-            {it ? 'Vuoi saperne di più?' : 'Want to learn more?'}
-          </p>
-          <p className="text-xs text-muted-foreground leading-relaxed">
-            {it
-              ? 'Tutte le informazioni sulle soluzioni avanzate, i piani disponibili e le condizioni d\'uso sono disponibili sul nostro sito web.'
-              : 'All information about advanced solutions, available plans and usage terms is available on our website.'}
-          </p>
-          <Button
-            className="gap-2 bg-accent hover:bg-accent/90 text-accent-foreground font-semibold rounded-xl w-full"
-            onClick={() => { window.location.href = 'https://www.sketchooz.com/pricing'; }}
-          >
-            {it ? 'Scopri di più su sketchooz.com' : 'Learn more at sketchooz.com'}
-            <ArrowUpRight className="w-4 h-4" />
-          </Button>
-        </motion.div>
-
 
       </main>
     </div>

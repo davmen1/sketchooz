@@ -20,7 +20,7 @@ Deno.serve(async (req) => {
     // Create free trial pack with 12 watermark credits
     await base44.asServiceRole.entities.RenderPack.create({
       user_email: user.email,
-      credits_remaining: 12,
+      credits_remaining: 21,
       pack_type: 'free_trial',
       watermark_only: true,
     });

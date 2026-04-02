@@ -209,15 +209,7 @@ export default function Pricing() {
       <PullToRefresh onRefresh={() => {}}>
         <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8 w-full space-y-6">
 
-          {iosWebView && (
-            <div className="p-4 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-xl text-sm text-blue-800 dark:text-blue-200 text-center space-y-2">
-              <p className="font-semibold">🛒 {it ? 'Acquista su sketchooz.com' : 'Purchase at sketchooz.com'}</p>
-              <p className="text-xs">{it ? 'Per acquistare i pack, visita il nostro sito dal browser.' : 'To purchase packs, visit our website from your browser.'}</p>
-              <button onClick={() => window.open('https://www.sketchooz.com/pricing', '_blank')} className="mt-1 inline-block bg-blue-600 text-white text-xs font-semibold px-4 py-2 rounded-lg">
-                {it ? 'Vai al sito →' : 'Open website →'}
-              </button>
-            </div>
-          )}
+          {/* iOS: no external purchase links */}
 
           {creditsRemaining !== null && creditsRemaining > 0 && (
             <div className="p-4 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-xl text-sm text-green-800 dark:text-green-200 text-center">
