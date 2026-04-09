@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Trash2, LogOut, AlertTriangle, Moon } from 'lucide-react';
+import { Trash2, LogOut, AlertTriangle, Moon, Globe, ExternalLink } from 'lucide-react';
 import { useTheme } from '@/lib/ThemeProvider';
 import { Button } from '@/components/ui/button';
 import MobileHeader from '@/components/MobileHeader';
@@ -82,6 +82,45 @@ export default function Settings() {
               <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${isDark ? 'translate-x-6' : ''}`} />
             </button>
           </div>
+        </section>
+
+        {/* Info & Website */}
+        <section className="bg-card rounded-2xl border border-border p-4 space-y-3">
+          <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Info</p>
+          <a
+            href="https://www.sketchooz.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-between py-2 group"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-muted flex items-center justify-center shrink-0">
+                <Globe className="w-4 h-4 text-muted-foreground" />
+              </div>
+              <div>
+                <p className="text-sm font-medium">sketchooz.com</p>
+                <p className="text-xs text-muted-foreground">Visita il sito ufficiale</p>
+              </div>
+            </div>
+            <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+          </a>
+          <a
+            href="https://www.sketchooz.com/app/pricing"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-between py-2 group border-t border-border"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-accent/10 flex items-center justify-center shrink-0">
+                <span className="text-base">✨</span>
+              </div>
+              <div>
+                <p className="text-sm font-medium">Acquista crediti</p>
+                <p className="text-xs text-muted-foreground">Piani e pacchetti su sketchooz.com</p>
+              </div>
+            </div>
+            <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+          </a>
         </section>
 
         {/* Actions */}
