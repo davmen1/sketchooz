@@ -1,5 +1,4 @@
 import React from 'react';
-import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Pen, Palette, Eye, Layout, FileText, Sparkles } from 'lucide-react';
@@ -7,10 +6,12 @@ import PantoneSelector from './PantoneSelector';
 import BackgroundSelector from './BackgroundSelector';
 import SuggestPalette from './SuggestPalette';
 import { useLang } from '@/lib/LangContext';
+import { motion, AnimatePresence } from 'framer-motion';
+import InstructionsPopup from '@/components/InstructionsPopup';
 
 const SKETCH_STYLES = [
-  { value: 'marker_render', label: 'Marker Render' },
-  { value: 'bw_lines', label: 'BW Lines' },
+  { value: 'marker_render', label: 'Marker Colors', desc: 'Rendering colorato a marker' },
+  { value: 'bw_lines', label: 'BW Lines', desc: 'Schizzo b/w per rasterizzazione' },
 ];
 
 // Single views
@@ -27,16 +28,20 @@ const SINGLE_VIEWS = [
   { value: 'bottom_eu', label: 'Bottom' },
 ];
 
-// Study sheet layouts
-const STUDY_SHEETS = [
-  { value: 'four_views_eu', label: '4-View EU (F/S/T/Back)' },
-  { value: 'four_views_us', label: '4-View US (F/R/T/P)' },
-  { value: 'six_views', label: '6-View Orthographic' },
-  { value: 'multi_angle', label: 'Multi-Angle Study' },
-  { value: 'cross_section', label: 'Cross Sections' },
-  { value: 'exploded', label: 'Exploded View' },
-  { value: 'detail_focus', label: 'Detail Focus' },
+// Study Board layouts (creative/multi-angle)
+const STUDY_BOARD_LAYOUTS = [
   { value: 'ideation_sheet', label: 'Ideation Sheet' },
+  { value: 'multi_angle', label: 'Multi-Angle Study' },
+  { value: 'detail_focus', label: 'Detail Focus' },
+  { value: 'exploded', label: 'Exploded View' },
+];
+
+// Technical Sheet layouts (orthographic/engineering)
+const TECH_SHEET_LAYOUTS = [
+  { value: 'four_views_eu', label: '4-View EU' },
+  { value: 'four_views_us', label: '4-View US' },
+  { value: 'six_views', label: '6-View Ortho' },
+  { value: 'cross_section', label: 'Cross Sections' },
 ];
 
 const SURFACES = [
@@ -90,11 +95,30 @@ function toggleTexture(textures, value) {
 }
 
 export default function SketchSettings({ settings, onChange, imageUrl }) {
-  const update = (key, value) => onChange({ ...settings, [key]: value });
-  const textures = settings.textures || [];
   const { t } = useLang();
+  const textures = settings.textures || [];
+  const isBW = settings.style === 'bw_lines';
+  const isTechSheet = settings.outputMode === 'tech_sheet';
+  const isStudyBoard = settings.outputMode === 'study_sheet';
 
-  const isStudySheet = settings.outputMode === 'study_sheet';
+  const update = (key, value) => onChange({ ...settings, [key]: value });
+
+  const handleOutputMode = (mode) => {
+    const patch = { outputMode: mode };
+    if (mode === 'tech_sheet') {
+      patch.creative = false;
+      patch.studySheet = 'four_views_eu';
+    } else if (mode === 'study_sheet') {
+      patch.studySheet = 'ideation_sheet';
+    }
+    onChange({ ...settings, ...patch });
+  };
+
+  const handleStyle = (style) => {
+    const patch = { style };
+    if (style === 'bw_lines') patch.markerBg = false;
+    onChange({ ...settings, ...patch });
+  };
 
   return (
     <div className="space-y-6">
@@ -102,58 +126,54 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
       {/* Output Mode */}
       <div className="space-y-2">
         <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-        <Layout className="w-3.5 h-3.5" />
-        {t('output')}
+          <Layout className="w-3.5 h-3.5" />
+          {t('output')}
         </Label>
-        <div className="flex gap-2">
-          <OptionButton
-            label={t('singleView')}
-            selected={settings.outputMode === 'single'}
-            onClick={() => update('outputMode', 'single')}
-          />
-          <OptionButton
-            label={t('studySheet')}
-            selected={settings.outputMode === 'study_sheet'}
-            onClick={() => update('outputMode', 'study_sheet')}
-          />
+        <div className="flex flex-wrap gap-1.5">
+          <OptionButton label="Single Sketch" selected={settings.outputMode === 'single'} onClick={() => handleOutputMode('single')} />
+          <OptionButton label="Study Board" selected={settings.outputMode === 'study_sheet'} onClick={() => handleOutputMode('study_sheet')} />
+          <OptionButton label="Technical Sheet" selected={settings.outputMode === 'tech_sheet'} onClick={() => handleOutputMode('tech_sheet')} />
         </div>
       </div>
 
       {/* View / Layout selector */}
-      {!isStudySheet ? (
+      {settings.outputMode === 'single' && (
         <div className="space-y-2">
           <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t('view')}</Label>
           <div className="flex flex-wrap gap-1.5">
             {SINGLE_VIEWS.map((v) => (
-              <OptionButton
-                key={v.value}
-                label={v.label}
-                selected={settings.perspective === v.value}
-                onClick={() => update('perspective', v.value)}
-              />
-            ))}
-          </div>
-        </div>
-      ) : (
-        <div className="space-y-2">
-          <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            <FileText className="w-3.5 h-3.5" />
-            {t('board')}
-          </Label>
-          <div className="flex flex-wrap gap-1.5">
-            {STUDY_SHEETS.map((s) => (
-              <OptionButton
-                key={s.value}
-                label={s.label}
-                selected={settings.studySheet === s.value}
-                onClick={() => update('studySheet', s.value)}
-              />
+              <OptionButton key={v.value} label={v.label} selected={settings.perspective === v.value} onClick={() => update('perspective', v.value)} />
             ))}
           </div>
         </div>
       )}
+      {isStudyBoard && (
+        <div className="space-y-2">
+          <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            <FileText className="w-3.5 h-3.5" /> Study Board Layout
+          </Label>
+          <div className="flex flex-wrap gap-1.5">
+            {STUDY_BOARD_LAYOUTS.map((s) => (
+              <OptionButton key={s.value} label={s.label} selected={settings.studySheet === s.value} onClick={() => update('studySheet', s.value)} />
+            ))}
+          </div>
+        </div>
+      )}
+      {isTechSheet && (
+        <div className="space-y-2">
+          <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            <FileText className="w-3.5 h-3.5" /> Technical Layout
+          </Label>
+          <div className="flex flex-wrap gap-1.5">
+            {TECH_SHEET_LAYOUTS.map((s) => (
+              <OptionButton key={s.value} label={s.label} selected={settings.studySheet === s.value} onClick={() => update('studySheet', s.value)} />
+            ))}
+          </div>
+          <p className="text-[10px] text-muted-foreground">Technical sheets always use Precise mode for maximum accuracy.</p>
+        </div>
+      )}
 
-      {/* Sketch Style — Marker Render only */}
+      {/* Sketch Style */}
       <div className="space-y-2">
         <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           <Pen className="w-3.5 h-3.5" />
@@ -161,12 +181,18 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
         </Label>
         <div className="flex flex-wrap gap-1.5">
           {SKETCH_STYLES.map((s) => (
-            <OptionButton
+            <button
               key={s.value}
-              label={s.label}
-              selected={settings.style === s.value}
-              onClick={() => update('style', s.value)}
-            />
+              onClick={() => handleStyle(s.value)}
+              className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all border text-left ${
+                settings.style === s.value
+                  ? 'bg-foreground text-background border-foreground'
+                  : 'bg-card text-muted-foreground border-border hover:border-muted-foreground/50 hover:text-foreground'
+              }`}
+            >
+              <div>{s.label}</div>
+              <div className={`text-[9px] mt-0.5 ${settings.style === s.value ? 'opacity-70' : 'opacity-50'}`}>{s.desc}</div>
+            </button>
           ))}
         </div>
       </div>
@@ -183,17 +209,14 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
         />
       </div>
 
-      {/* Marker BG toggle */}
-      {settings.style !== 'bw_lines' && (
+      {/* Marker BG toggle — hidden for BW and tech sheet */}
+      {!isBW && !isTechSheet && (
         <div className="flex items-center justify-between">
           <div>
             <Label className="text-xs font-semibold">{t('markerBg')}</Label>
             <p className="text-[10px] text-muted-foreground mt-0.5">{t('markerBgDesc')}</p>
           </div>
-          <Switch
-            checked={!!settings.markerBg}
-            onCheckedChange={(v) => update('markerBg', v)}
-          />
+          <Switch checked={!!settings.markerBg} onCheckedChange={(v) => update('markerBg', v)} />
         </div>
       )}
 
@@ -215,40 +238,36 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
         </div>
       </div>
 
-      {/* Creative / Precise Mode */}
-      <div className="space-y-2">
-        <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          <Eye className="w-3.5 h-3.5" />
-          {t('detail') || 'Modalità'}
-        </Label>
-        <div className="flex rounded-lg border border-border overflow-hidden">
-          <button
-            onClick={() => update('creative', false)}
-            className={`flex-1 py-2 text-xs font-semibold transition-all ${
-              !settings.creative
-                ? 'bg-foreground text-background'
-                : 'bg-card text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            🎯 {t('preciseMode') || 'Preciso'}
-          </button>
-          <button
-            onClick={() => update('creative', true)}
-            className={`flex-1 py-2 text-xs font-semibold transition-all ${
-              settings.creative
-                ? 'bg-accent text-accent-foreground'
-                : 'bg-card text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            ✨ {t('creativeMode') || 'Creativo'}
-          </button>
+      {/* Creative / Precise Mode — hidden for tech sheet */}
+      {!isTechSheet && (
+        <div className="space-y-2">
+          <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            <Eye className="w-3.5 h-3.5" />
+            {t('detail') || 'Modalità'}
+          </Label>
+          <div className="flex rounded-lg border border-border overflow-hidden">
+            <button
+              onClick={() => update('creative', false)}
+              className={`flex-1 py-2 text-xs font-semibold transition-all ${
+                !settings.creative ? 'bg-foreground text-background' : 'bg-card text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              🎯 {t('preciseMode') || 'Preciso'}
+            </button>
+            <button
+              onClick={() => update('creative', true)}
+              className={`flex-1 py-2 text-xs font-semibold transition-all ${
+                settings.creative ? 'bg-accent text-accent-foreground' : 'bg-card text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              ✨ {t('creativeMode') || 'Creativo'}
+            </button>
+          </div>
+          <p className="text-[10px] text-muted-foreground">
+            {settings.creative ? (t('creativeModeDesc') || 'Più libero e interpretativo') : (t('preciseModeDesc') || "Massima fedeltà all'originale")}
+          </p>
         </div>
-        <p className="text-[10px] text-muted-foreground">
-          {settings.creative
-            ? (t('creativeModeDesc') || 'Più libero e interpretativo')
-            : (t('preciseModeDesc') || 'Massima fedeltà all\'originale')}
-        </p>
-      </div>
+      )}
 
       {/* Texture (max 2 combo) */}
       <div className="space-y-2">
@@ -276,7 +295,7 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
       </div>
 
       {/* Pantone palette & suggestions — hidden for BW Lines */}
-      {settings.style !== 'bw_lines' && (
+      {!isBW && (
         <>
           <SuggestPalette
             imageUrl={imageUrl}
@@ -289,8 +308,8 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
         </>
       )}
 
-      {/* Background Type: Colorful, Splash, or None */}
-      {settings.style !== 'bw_lines' && (
+      {/* Background Type — hidden for BW */}
+      {!isBW && (
         <div className="space-y-2">
           <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             <Sparkles className="w-3.5 h-3.5" />
@@ -316,14 +335,19 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
         </div>
       )}
 
-      {/* Background Color Selector — shown when background type is colorful, splash, or markerBg is on */}
-      {(settings.backgroundType === 'colorful' || settings.backgroundType === 'splash' || settings.markerBg) && settings.style !== 'bw_lines' && (
+      {(settings.backgroundType === 'colorful' || settings.backgroundType === 'splash' || settings.markerBg) && !isBW && (
         <BackgroundSelector
           selected={settings.bgColor}
           onChange={(val) => update('bgColor', val)}
           pantoneColors={settings.pantoneColors}
         />
       )}
+
+      {/* Tips collapsible reference */}
+      <div className="pt-2 border-t border-border">
+        <InstructionsPopup compact />
+      </div>
+
       </div>
       );
       }

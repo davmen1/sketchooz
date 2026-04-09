@@ -8,6 +8,8 @@ const tips = [
   { emoji: '💡', text: 'Good lighting = better sketch — avoid heavy shadows or overexposure' },
   { emoji: '📐', text: 'Shoot at a slight 3/4 angle to show depth and form' },
   { emoji: '🔍', text: 'Include the whole product — avoid cropping key parts' },
+  { emoji: '🎯', text: 'Works best with one or more views of a single subject — no other objects in the frame that could confuse the AI' },
+  { emoji: '✏️', text: 'Short descriptive text labels with an arrow pointing to a part (e.g. "soft rubber grip →") help the AI understand details and materials better' },
   { emoji: '🚫', text: 'Avoid cluttered backgrounds or multiple objects in frame' },
   { emoji: '🎨', text: 'Choose Pantone colors that match your design intent' },
   { emoji: '⚙️', text: 'Higher detail level works best for products with many components' },
@@ -16,7 +18,7 @@ const tips = [
 
 const STORAGE_KEY = 'sketchooz_tips_read';
 
-export default function InstructionsPopup({ onRead }) {
+export default function InstructionsPopup({ onRead, compact = false }) {
   const alreadyRead = !!localStorage.getItem(STORAGE_KEY);
   const [expanded, setExpanded] = useState(!alreadyRead);
   const [read, setRead] = useState(alreadyRead);
@@ -47,7 +49,7 @@ export default function InstructionsPopup({ onRead }) {
           }
         </button>
 
-        {!read && (
+        {!read && !compact && (
           <div className="flex items-center gap-1.5 shrink-0">
             <span className="text-muted-foreground text-xs">Done</span>
             <Switch onCheckedChange={handleConfirm} />

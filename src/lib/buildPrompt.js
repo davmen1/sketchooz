@@ -118,9 +118,9 @@ Aesthetic: Professional industrial design marker sketch on white paper with dram
     }
   }
 
-  if (settings.outputMode === 'study_sheet') {
+  if (settings.outputMode === 'study_sheet' || settings.outputMode === 'tech_sheet') {
     const sheetLabel = STUDY_SHEET_LABELS[settings.studySheet];
-    const strictRules = settings.creative ? '' : `RENDERING RULES:\n- Maintain the overall silhouette and proportions (≈90% fidelity)\n- You may subtly refine surfaces, edges, and construction details for a more professional result\n- Do NOT redesign the product concept — keep the same typology, components and general form\n- The output must be clearly recognizable as the same product\n`;
+    const strictRules = `RENDERING RULES:\n- Maintain the overall silhouette and proportions (≈90% fidelity)\n- You may subtly refine surfaces, edges, and construction details for a more professional result\n- Do NOT redesign the product concept — keep the same typology, components and general form\n- The output must be clearly recognizable as the same product\n`;
     const crossSectionColorNote = (settings.studySheet === 'cross_section' && !settings.creative)
       ? `\nCROSS-SECTION COLOR RULE: Even in sectional views, ALL specified colors MUST be faithfully applied to each surface/component exactly as they would appear in a normal view. Do NOT default to gray or generic tones. The cut surfaces use hatching, but all other surfaces retain their exact specified colors. This is mandatory.`
       : '';
