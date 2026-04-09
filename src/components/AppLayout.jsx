@@ -9,7 +9,7 @@ import Pricing from '../pages/Pricing';
 import BusinessFeatures from '../pages/BusinessFeatures';
 import Settings from '../pages/Settings';
 import Gallery from '../pages/Gallery';
-import { isIOS } from '../utils/isIOSWebView';
+import { isMobileOrTabletApp } from '../utils/platformDetect';
 
 const TAB_PATHS = ['/app', '/app/pricing', '/app/gallery', '/app/settings'];
 
@@ -49,8 +49,8 @@ export default function AppLayout() {
   }, [currentIndex, navigate]);
 
   const activeIndex = Math.max(TAB_PATHS.indexOf(pathname), 0);
-  const ios = isIOS();
-  const TAB_COMPONENTS = { '/app': Home, '/app/pricing': ios ? BusinessFeatures : Pricing, '/app/gallery': Gallery, '/app/settings': Settings };
+  const isMobile = isMobileOrTabletApp();
+  const TAB_COMPONENTS = { '/app': Home, '/app/pricing': isMobile ? BusinessFeatures : Pricing, '/app/gallery': Gallery, '/app/settings': Settings };
 
   return (
     <div

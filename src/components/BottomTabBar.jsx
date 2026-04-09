@@ -1,17 +1,17 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Home, Settings, Coins, Images } from 'lucide-react';
-import { isIOS } from '@/utils/isIOSWebView';
+import { isMobileOrTabletApp } from '@/utils/platformDetect';
 import { vibrate } from '@/lib/nativeUtils';
 import { useLang } from '@/lib/LangContext';
 
 export default function BottomTabBar() {
   const location = useLocation();
   const { t } = useLang();
-  const ios = isIOS();
+  const isMobile = isMobileOrTabletApp();
   const TABS = [
     { path: '/app', labelKey: 'tabHome', icon: Home },
-    { path: '/app/pricing', label: ios ? 'Info' : 'Plans', icon: Coins },
+    { path: '/app/pricing', label: isMobile ? 'Info' : 'Plans', icon: Coins },
     { path: '/app/gallery', label: 'Gallery', icon: Images },
     { path: '/app/settings', labelKey: 'tabSettings', icon: Settings },
   ];
