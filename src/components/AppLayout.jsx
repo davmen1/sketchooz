@@ -11,10 +11,7 @@ import Settings from '../pages/Settings';
 import Gallery from '../pages/Gallery';
 import { isIOS } from '../utils/isIOSWebView';
 
-const PricingOrBusiness = isIOS() ? BusinessFeatures : Pricing;
-
 const TAB_PATHS = ['/app', '/app/pricing', '/app/gallery', '/app/settings'];
-const TAB_COMPONENTS = { '/app': Home, '/app/pricing': PricingOrBusiness, '/app/gallery': Gallery, '/app/settings': Settings };
 
 export default function AppLayout() {
   const { pathname } = useLocation();
@@ -52,6 +49,8 @@ export default function AppLayout() {
   }, [currentIndex, navigate]);
 
   const activeIndex = Math.max(TAB_PATHS.indexOf(pathname), 0);
+  const ios = isIOS();
+  const TAB_COMPONENTS = { '/app': Home, '/app/pricing': ios ? BusinessFeatures : Pricing, '/app/gallery': Gallery, '/app/settings': Settings };
 
   return (
     <div
