@@ -7,7 +7,13 @@ export default function SplashScreen({ onDone }) {
   const isDark = document.documentElement.classList.contains('dark');
 
   useEffect(() => {
-    const t1 = setTimeout(() => setShowContent(true), 400);
+    // Nascondi subito lo splash HTML statico
+    const htmlSplash = document.getElementById('initial-splash');
+    if (htmlSplash) {
+      htmlSplash.style.opacity = '0';
+      setTimeout(() => htmlSplash.remove(), 600);
+    }
+    const t1 = setTimeout(() => setShowContent(true), 100);
     const t2 = setTimeout(() => setVisible(false), 2800);
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, []);
