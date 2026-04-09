@@ -1,6 +1,11 @@
 export const isIOS = () => {
   const ua = navigator.userAgent || '';
-  return /iPhone|iPad|iPod/.test(ua);
+  // Standard iPhone/iPod/iPad detection
+  if (/iPhone|iPad|iPod/.test(ua)) return true;
+  // iPadOS 13+ with "Request Desktop Site" enabled reports as MacIntel
+  // but still has touch support
+  if (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) return true;
+  return false;
 };
 
 export const isIOSWebView = () => {
