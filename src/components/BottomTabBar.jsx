@@ -8,9 +8,10 @@ import { useLang } from '@/lib/LangContext';
 export default function BottomTabBar() {
   const location = useLocation();
   const { t } = useLang();
+  const iosWebView = isIOSWebView();
   const TABS = [
     { path: '/app', labelKey: 'tabHome', icon: Home },
-    { path: '/app/pricing', label: 'Info', icon: Coins },
+    { path: '/app/pricing', label: iosWebView ? 'Info' : 'Plans', icon: Coins },
     { path: '/app/gallery', label: 'Gallery', icon: Images },
     { path: '/app/settings', labelKey: 'tabSettings', icon: Settings },
   ];

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Zap, Shield, Award, Globe, ArrowUpRight, Layers, Star } from 'lucide-react';
+import { Zap, Shield, Award, Globe, Layers, Star, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import MobileHeader from '@/components/MobileHeader';
 import { useLang } from '@/lib/LangContext';
@@ -102,6 +102,19 @@ export default function BusinessFeatures() {
           </p>
         </motion.div>
 
+        {/* Link to website */}
+        <motion.a
+          href="https://www.sketchooz.com/app/pricing"
+          target="_blank"
+          rel="noopener noreferrer"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center justify-between bg-accent text-accent-foreground rounded-2xl p-4 font-semibold text-sm"
+        >
+          <span>{it ? '🌐 Acquista crediti su sketchooz.com' : '🌐 Buy credits at sketchooz.com'}</span>
+          <ExternalLink className="w-4 h-4 shrink-0" />
+        </motion.a>
+
         {/* Features grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {features.map(({ icon: Icon, title, desc }, i) => (
@@ -122,7 +135,6 @@ export default function BusinessFeatures() {
             </motion.div>
           ))}
         </div>
-
 
       </main>
     </div>
