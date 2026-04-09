@@ -9,9 +9,9 @@ import Pricing from '../pages/Pricing';
 import BusinessFeatures from '../pages/BusinessFeatures';
 import Settings from '../pages/Settings';
 import Gallery from '../pages/Gallery';
-import { isIOSWebView } from '../utils/isIOSWebView';
+import { isIOS } from '../utils/isIOSWebView';
 
-const PricingOrBusiness = isIOSWebView() ? BusinessFeatures : Pricing;
+const PricingOrBusiness = isIOS() ? BusinessFeatures : Pricing;
 
 const TAB_PATHS = ['/app', '/app/pricing', '/app/gallery', '/app/settings'];
 const TAB_COMPONENTS = { '/app': Home, '/app/pricing': PricingOrBusiness, '/app/gallery': Gallery, '/app/settings': Settings };

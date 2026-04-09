@@ -1,3 +1,8 @@
+export const isIOS = () => {
+  const ua = navigator.userAgent || '';
+  return /iPhone|iPad|iPod/.test(ua);
+};
+
 export const isIOSWebView = () => {
   const ua = navigator.userAgent || '';
   const isIOS = /iPhone|iPad|iPod/.test(ua);
