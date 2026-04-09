@@ -56,6 +56,7 @@ export default function AppLayout() {
   return (
     <div
       className="relative flex flex-col min-h-screen bg-background overflow-hidden"
+      style={{ paddingTop: 'env(safe-area-inset-top)' }}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
