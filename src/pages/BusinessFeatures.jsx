@@ -110,7 +110,7 @@ export default function BusinessFeatures() {
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center justify-between bg-accent text-accent-foreground rounded-2xl p-4 font-semibold text-sm"
         >
-          <span>{it ? '🌐 Acquista crediti su sketchooz.com' : '🌐 Buy credits at sketchooz.com'}</span>
+          <span>{it ? '🌐 Info & altro su sketchooz.com' : '🌐 Info & more at sketchooz.com'}</span>
           <ExternalLink className="w-4 h-4 shrink-0" />
         </motion.a>
 
