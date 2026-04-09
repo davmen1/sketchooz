@@ -220,23 +220,25 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
         </div>
       )}
 
-      {/* Surface */}
-      <div className="space-y-2">
-        <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          <Palette className="w-3.5 h-3.5" />
-          {t('surface')}
-        </Label>
-        <div className="flex flex-wrap gap-1.5">
-          {SURFACES.map((s) => (
-            <OptionButton
-              key={s.value}
-              label={s.label}
-              selected={settings.surface === s.value}
-              onClick={() => update('surface', s.value)}
-            />
-          ))}
+      {/* Surface — hidden for BW */}
+      {!isBW && (
+        <div className="space-y-2">
+          <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            <Palette className="w-3.5 h-3.5" />
+            {t('surface')}
+          </Label>
+          <div className="flex flex-wrap gap-1.5">
+            {SURFACES.map((s) => (
+              <OptionButton
+                key={s.value}
+                label={s.label}
+                selected={settings.surface === s.value}
+                onClick={() => update('surface', s.value)}
+              />
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Creative / Precise Mode — hidden for tech sheet */}
       {!isTechSheet && (
@@ -269,30 +271,32 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
         </div>
       )}
 
-      {/* Texture (max 2 combo) */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            {t('texture')}
-          </Label>
-          <span className="text-[10px] text-muted-foreground">{textures.length}/2 {t('selected')}</span>
+      {/* Texture — hidden for BW */}
+      {!isBW && (
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              {t('texture')}
+            </Label>
+            <span className="text-[10px] text-muted-foreground">{textures.length}/2 {t('selected')}</span>
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {TEXTURES.map((t) => (
+              <OptionButton
+                key={t.value}
+                label={t.label}
+                selected={textures.includes(t.value)}
+                onClick={() => update('textures', toggleTexture(textures, t.value))}
+              />
+            ))}
+          </div>
+          {textures.length === 2 && (
+            <p className="text-[10px] text-muted-foreground">
+              {t('textureComboNote').replace('{t1}', textures[0]).replace('{t2}', textures[1])}
+            </p>
+          )}
         </div>
-        <div className="flex flex-wrap gap-1.5">
-          {TEXTURES.map((t) => (
-            <OptionButton
-              key={t.value}
-              label={t.label}
-              selected={textures.includes(t.value)}
-              onClick={() => update('textures', toggleTexture(textures, t.value))}
-            />
-          ))}
-        </div>
-        {textures.length === 2 && (
-          <p className="text-[10px] text-muted-foreground">
-            {t('textureComboNote').replace('{t1}', textures[0]).replace('{t2}', textures[1])}
-          </p>
-        )}
-      </div>
+      )}
 
       {/* Pantone palette & suggestions — hidden for BW Lines */}
       {!isBW && (
