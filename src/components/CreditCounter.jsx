@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { useLang } from '@/lib/LangContext';
-import { Zap } from 'lucide-react';
+import { Coins } from 'lucide-react';
 
 export default function CreditCounter() {
   const [credits, setCredits] = useState(null);
@@ -35,7 +35,7 @@ export default function CreditCounter() {
       onClick={() => navigate('/app/pricing')}
       className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border bg-card text-xs font-semibold transition-colors hover:bg-muted"
     >
-      <Zap className="w-3 h-3 text-accent" />
+      <Coins className="w-3 h-3 text-accent" />
       <span className={!isAdmin && credits === 0 ? 'text-destructive' : 'text-foreground'}>
         {isAdmin ? '∞' : credits} {lang === 'it' ? 'crediti' : 'credits'}
       </span>
