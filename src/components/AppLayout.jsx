@@ -7,6 +7,9 @@ import SupportAgent from './SupportAgent';
 import Home from '../pages/Home';
 import Pricing from '../pages/Pricing';
 import BusinessFeatures from '../pages/BusinessFeatures';
+import Settings from '../pages/Settings';
+import Gallery from '../pages/Gallery';
+import { isMobileOrTabletApp } from '../utils/platformDetect';
 
 const MOBILE_TAB_PATHS = ['/app', '/app/pricing', '/app/gallery', '/app/settings'];
 const WEB_TAB_PATHS = ['/app', '/app/pricing', '/app/plans', '/app/gallery', '/app/settings'];
@@ -14,6 +17,8 @@ const WEB_TAB_PATHS = ['/app', '/app/pricing', '/app/plans', '/app/gallery', '/a
 export default function AppLayout() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
+  const isMobile = isMobileOrTabletApp();
+  const TAB_PATHS = isMobile ? MOBILE_TAB_PATHS : WEB_TAB_PATHS;
   const currentIndex = TAB_PATHS.indexOf(pathname);
   const prevIndexRef = useRef(currentIndex);
   const [direction, setDirection] = useState(0);
@@ -46,8 +51,6 @@ export default function AppLayout() {
     }
   }, [currentIndex, navigate]);
 
-  const isMobile = isMobileOrTabletApp();
-  const TAB_PATHS = isMobile ? MOBILE_TAB_PATHS : WEB_TAB_PATHS;
   const activeIndex = Math.max(TAB_PATHS.indexOf(pathname), 0);
   const TAB_COMPONENTS = { '/app': Home, '/app/pricing': BusinessFeatures, '/app/plans': Pricing, '/app/gallery': Gallery, '/app/settings': Settings };
 
