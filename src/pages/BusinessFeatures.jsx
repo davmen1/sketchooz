@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
 import { Zap, Shield, Award, Globe, Layers, Star, ExternalLink } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import MobileHeader from '@/components/MobileHeader';
 import { useLang } from '@/lib/LangContext';
 
