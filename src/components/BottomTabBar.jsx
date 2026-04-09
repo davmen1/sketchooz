@@ -7,14 +7,26 @@ import { useLang } from '@/lib/LangContext';
 
 export default function BottomTabBar() {
   const location = useLocation();
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const isMobile = isMobileOrTabletApp();
-  const TABS = [
-    { path: '/app', labelKey: 'tabHome', icon: Home },
-    { path: '/app/pricing', label: isMobile ? 'Info' : 'Plans', icon: Coins },
-    { path: '/app/gallery', label: 'Gallery', icon: Images },
-    { path: '/app/settings', labelKey: 'tabSettings', icon: Settings },
+  const it = lang === 'it';
+
+  const MOBILE_TABS = [
+    { path: '/app', label: it ? 'Inizio' : 'Home', icon: Home },
+    { path: '/app/pricing', label: 'Info', icon: Coins },
+    { path: '/app/gallery', label: it ? 'Galleria' : 'Gallery', icon: Images },
+    { path: '/app/settings', label: it ? 'Impostazioni' : 'Settings', icon: Settings },
   ];
+
+  const WEB_TABS = [
+    { path: '/app', label: it ? 'Inizio' : 'Home', icon: Home },
+    { path: '/app/pricing', label: 'Info', icon: Coins },
+    { path: '/app/plans', label: it ? 'Piani crediti' : 'Plans', icon: Coins },
+    { path: '/app/gallery', label: it ? 'Galleria' : 'Gallery', icon: Images },
+    { path: '/app/settings', label: it ? 'Impostazioni' : 'Settings', icon: Settings },
+  ];
+
+  const TABS = isMobile ? MOBILE_TABS : WEB_TABS;
 
   const navigate = useNavigate();
 
@@ -37,7 +49,7 @@ export default function BottomTabBar() {
         paddingRight: 'env(safe-area-inset-right)',
       }}
     >
-      {TABS.map(({ path, label, labelKey, icon: Icon }) => {
+      {TABS.map(({ path, label, icon: Icon }) => {
         const active = path === '/app'
           ? location.pathname === '/app'
           : location.pathname === path || location.pathname.startsWith(path + '/');
@@ -53,7 +65,7 @@ export default function BottomTabBar() {
             <span
               className={`text-[10px] font-medium transition-colors ${active ? 'text-accent' : 'text-muted-foreground'}`}
             >
-              {label || t(labelKey)}
+              {label}
             </span>
           </button>
         );

@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { Zap, Shield, Award, Globe, Layers, Star, ExternalLink } from 'lucide-react';
-import MobileHeader from '@/components/MobileHeader';
+import { Link } from 'react-router-dom';
+import { isMobileOrTabletApp } from '@/utils/platformDetect';
 import { useLang } from '@/lib/LangContext';
 
 const FEATURES = {
@@ -73,6 +74,7 @@ const FEATURES = {
 export default function BusinessFeatures() {
   const { lang } = useLang();
   const it = lang === 'it';
+  const isMobile = isMobileOrTabletApp();
   const features = FEATURES[lang];
 
   return (
@@ -101,18 +103,30 @@ export default function BusinessFeatures() {
           </p>
         </motion.div>
 
-        {/* Link to website */}
-        <motion.a
-          href="https://www.sketchooz.com/app/pricing"
-          target="_blank"
-          rel="noopener noreferrer"
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex items-center justify-between bg-accent text-accent-foreground rounded-2xl p-4 font-semibold text-sm"
-        >
-          <span>{it ? '🌐 Info & altro su sketchooz.com' : '🌐 Info & more at sketchooz.com'}</span>
-          <ExternalLink className="w-4 h-4 shrink-0" />
-        </motion.a>
+        {/* Link to plans */}
+        {isMobile ? (
+          <motion.a
+            href="https://www.sketchooz.com/app/pricing"
+            target="_blank"
+            rel="noopener noreferrer"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center justify-between bg-accent text-accent-foreground rounded-2xl p-4 font-semibold text-sm"
+          >
+            <span>{it ? '🌐 Info & altro su sketchooz.com' : '🌐 Info & more at sketchooz.com'}</span>
+            <ExternalLink className="w-4 h-4 shrink-0" />
+          </motion.a>
+        ) : (
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
+            <Link
+              to="/app/plans"
+              className="flex items-center justify-between bg-accent text-accent-foreground rounded-2xl p-4 font-semibold text-sm"
+            >
+              <span>{it ? '💳 Vedi i piani crediti' : '💳 View credit plans'}</span>
+              <ExternalLink className="w-4 h-4 shrink-0" />
+            </Link>
+          </motion.div>
+        )}
 
         {/* Features grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
