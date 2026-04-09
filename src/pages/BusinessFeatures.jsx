@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { Zap, Shield, Award, Globe, Layers, Star, ExternalLink } from 'lucide-react';
+import MobileHeader from '@/components/MobileHeader';
 import { Link } from 'react-router-dom';
 import { isMobileOrTabletApp } from '@/utils/platformDetect';
 import { useLang } from '@/lib/LangContext';
