@@ -15,7 +15,7 @@ function getIsDark() {
 const isDark = getIsDark();
 const splash = document.getElementById('initial-splash');
 if (splash) {
-  splash.style.backgroundColor = isDark ? '#111111' : '#ffffff';
+  splash.style.backgroundColor = isDark ? '#111111' : '#f7f6f2';
   const img = splash.querySelector('img');
   const text = splash.querySelector('span');
   if (text) text.style.color = isDark ? '#f0f0f0' : '#1a1a1a';

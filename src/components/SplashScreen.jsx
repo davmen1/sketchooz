@@ -28,7 +28,7 @@ export default function SplashScreen({ onDone }) {
             position: 'fixed',
             inset: 0,
             zIndex: 9999,
-            backgroundColor: isDark ? '#111111' : '#ffffff',
+            backgroundColor: isDark ? '#111111' : '#f7f6f2',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -48,7 +48,10 @@ export default function SplashScreen({ onDone }) {
                 }}
               >
                 <img
-                  src="https://media.base44.com/images/public/69c0940be94e736c4d6366a0/8d4fa559a_Gemini_Generated_Image_p24ieqp24ieqp24i112.png"
+                  src={isDark
+                    ? 'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/8d4fa559a_Gemini_Generated_Image_p24ieqp24ieqp24i112.png'
+                    : 'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/222cf1206_Gemini_Generated_Image_p24ieqp24ieqp24i1.jpg'
+                  }
                   alt="Sketchooz"
                   style={{ width: '140px', height: '140px', objectFit: 'contain' }}
                 />
