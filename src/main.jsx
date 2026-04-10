@@ -3,10 +3,22 @@ import ReactDOM from 'react-dom/client'
 import App from '@/App.jsx'
 import '@/index.css'
 
-// Splash always dark
+// Detect theme before React mounts (same logic as ThemeProvider)
+function getIsDark() {
+  const stored = localStorage.getItem('userTheme');
+  if (stored === 'dark') return true;
+  if (stored === 'light') return false;
+  if (window.matchMedia) return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  return false;
+}
+
+const isDark = getIsDark();
 const splash = document.getElementById('initial-splash');
 if (splash) {
-  splash.style.backgroundColor = '#111111';
+  splash.style.backgroundColor = isDark ? '#111111' : '#ffffff';
+  const img = splash.querySelector('img');
+  const text = splash.querySelector('span');
+  if (text) text.style.color = isDark ? '#f0f0f0' : '#1a1a1a';
 }
 
 function hideSplash() {

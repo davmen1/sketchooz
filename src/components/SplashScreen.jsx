@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
+import { useTheme } from '@/lib/ThemeProvider';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function SplashScreen({ onDone }) {
+  const { isDark } = useTheme();
   const [visible, setVisible] = useState(true);
   const [showContent, setShowContent] = useState(false);
 
@@ -26,7 +28,7 @@ export default function SplashScreen({ onDone }) {
             position: 'fixed',
             inset: 0,
             zIndex: 9999,
-            backgroundColor: '#111111',
+            backgroundColor: isDark ? '#111111' : '#ffffff',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -55,7 +57,7 @@ export default function SplashScreen({ onDone }) {
                     fontFamily: 'Arial, Helvetica Neue, Helvetica, sans-serif',
                     letterSpacing: '0.22em',
                     fontSize: '1.3rem',
-                    color: '#f0f0f0',
+                    color: isDark ? '#f0f0f0' : '#1a1a1a',
                     fontWeight: 300,
                     textTransform: 'uppercase',
                   }}
