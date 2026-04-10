@@ -21,5 +21,4 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <App />
 );
 
-// Rimuovi lo splash dopo che React ha renderizzato
 setTimeout(hideSplash, 800);
