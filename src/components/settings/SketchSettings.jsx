@@ -211,12 +211,37 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
 
       {/* Marker BG toggle — hidden for BW and tech sheet */}
       {!isBW && !isTechSheet && (
-        <div className="flex items-center justify-between">
-          <div>
-            <Label className="text-xs font-semibold">{t('markerBg')}</Label>
-            <p className="text-[10px] text-muted-foreground mt-0.5">{t('markerBgDesc')}</p>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <Label className="text-xs font-semibold">{t('markerBg')}</Label>
+              <p className="text-[10px] text-muted-foreground mt-0.5">{t('markerBgDesc')}</p>
+            </div>
+            <Switch checked={!!settings.markerBg} onCheckedChange={(v) => update('markerBg', v)} />
           </div>
-          <Switch checked={!!settings.markerBg} onCheckedChange={(v) => update('markerBg', v)} />
+          {settings.markerBg && (
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{lang === 'it' ? 'Spessore outline' : 'Outline thickness'}</Label>
+              <div className="flex rounded-lg border border-border overflow-hidden">
+                <button
+                  onClick={() => update('markerBgThickness', 'thin')}
+                  className={`flex-1 py-2 text-xs font-semibold transition-all ${
+                    settings.markerBgThickness !== 'thick' ? 'bg-foreground text-background' : 'bg-card text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  ✏️ {lang === 'it' ? 'Sottile' : 'Thin'}
+                </button>
+                <button
+                  onClick={() => update('markerBgThickness', 'thick')}
+                  className={`flex-1 py-2 text-xs font-semibold transition-all ${
+                    settings.markerBgThickness === 'thick' ? 'bg-foreground text-background' : 'bg-card text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  🖊️ {lang === 'it' ? 'Spessa' : 'Thick'}
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

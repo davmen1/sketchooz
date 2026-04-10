@@ -6,8 +6,12 @@
 export const isMobileOrTabletApp = () => {
   if (typeof window === 'undefined') return false;
 
-  // WKWebView / Capacitor / Cordova webview signals
-  if (window.webkit && window.webkit.messageHandlers) return true;
+  const ua = navigator.userAgent || '';
+  // Known mobile browsers — these are NOT native WebViews
+  const isKnownBrowser = /CriOS|FxiOS|OPiOS|EdgiOS|Chrome|Firefox|Safari/i.test(ua);
+
+  // WKWebView on iOS: native apps do NOT expose standard browser identifiers
+  if (window.webkit && window.webkit.messageHandlers && !isKnownBrowser) return true;
 
   // Capacitor native app
   if (window.Capacitor && window.Capacitor.isNative) return true;
