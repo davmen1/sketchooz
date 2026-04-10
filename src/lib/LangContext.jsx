@@ -70,6 +70,18 @@ export const translations = {
     // Pricing page
     pricingTitle: 'Crediti',
     pricingSubtitle: 'Pacchetti senza abbonamento',
+    // Sketch styles
+    markerRenderDesc: 'Rendering colorato a marker',
+    bwLinesDesc: 'Schizzo b/w per rasterizzazione',
+    // Modes
+    preciseMode: 'Preciso',
+    creativeMode: 'Creativo',
+    preciseModeDesc: "Massima fedeltà all'originale",
+    creativeModeDesc: 'Più libero e interpretativo',
+    // Tech sheet
+    techSheetNote: 'Le tavole tecniche usano sempre la modalità Preciso per la massima accuratezza.',
+    // Texture
+    textureComboNote: 'Verrà applicata una combinazione di {t1} e {t2}.',
   },
   en: {
     appSubtitle: 'Industrial Design AI',
@@ -138,6 +150,18 @@ export const translations = {
     // Pricing page
     pricingTitle: 'Credits',
     pricingSubtitle: 'No subscription — pay as you go',
+    // Sketch styles
+    markerRenderDesc: 'Colored marker rendering',
+    bwLinesDesc: 'B/W sketch for rasterization',
+    // Modes
+    preciseMode: 'Precise',
+    creativeMode: 'Creative',
+    preciseModeDesc: 'Maximum fidelity to the original',
+    creativeModeDesc: 'More free and interpretive',
+    // Tech sheet
+    techSheetNote: 'Technical sheets always use Precise mode for maximum accuracy.',
+    // Texture
+    textureComboNote: 'A combination of {t1} and {t2} will be applied.',
   },
 };
 

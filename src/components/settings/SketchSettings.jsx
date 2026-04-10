@@ -10,8 +10,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import InstructionsPopup from '@/components/InstructionsPopup';
 
 const SKETCH_STYLES = [
-  { value: 'marker_render', label: 'Marker Colors', desc: 'Rendering colorato a marker' },
-  { value: 'bw_lines', label: 'BW Lines', desc: 'Schizzo b/w per rasterizzazione' },
+  { value: 'marker_render', label: 'Marker Colors', descKey: 'markerRenderDesc' },
+  { value: 'bw_lines', label: 'BW Lines', descKey: 'bwLinesDesc' },
 ];
 
 // Single views
@@ -95,7 +95,7 @@ function toggleTexture(textures, value) {
 }
 
 export default function SketchSettings({ settings, onChange, imageUrl }) {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const textures = settings.textures || [];
   const isBW = settings.style === 'bw_lines';
   const isTechSheet = settings.outputMode === 'tech_sheet';
@@ -169,7 +169,7 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
               <OptionButton key={s.value} label={s.label} selected={settings.studySheet === s.value} onClick={() => update('studySheet', s.value)} />
             ))}
           </div>
-          <p className="text-[10px] text-muted-foreground">Technical sheets always use Precise mode for maximum accuracy.</p>
+          <p className="text-[10px] text-muted-foreground">{t('techSheetNote')}</p>
         </div>
       )}
 
@@ -191,7 +191,7 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
               }`}
             >
               <div>{s.label}</div>
-              <div className={`text-[9px] mt-0.5 ${settings.style === s.value ? 'opacity-70' : 'opacity-50'}`}>{s.desc}</div>
+              <div className={`text-[9px] mt-0.5 ${settings.style === s.value ? 'opacity-70' : 'opacity-50'}`}>{t(s.descKey)}</div>
             </button>
           ))}
         </div>
@@ -254,7 +254,7 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
                 !settings.creative ? 'bg-foreground text-background' : 'bg-card text-muted-foreground hover:text-foreground'
               }`}
             >
-              🎯 {t('preciseMode') || 'Preciso'}
+              🎯 {t('preciseMode')}
             </button>
             <button
               onClick={() => update('creative', true)}
@@ -262,11 +262,11 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
                 settings.creative ? 'bg-accent text-accent-foreground' : 'bg-card text-muted-foreground hover:text-foreground'
               }`}
             >
-              ✨ {t('creativeMode') || 'Creativo'}
+              ✨ {t('creativeMode')}
             </button>
           </div>
           <p className="text-[10px] text-muted-foreground">
-            {settings.creative ? (t('creativeModeDesc') || 'Più libero e interpretativo') : (t('preciseModeDesc') || "Massima fedeltà all'originale")}
+            {settings.creative ? t('creativeModeDesc') : t('preciseModeDesc')}
           </p>
         </div>
       )}
