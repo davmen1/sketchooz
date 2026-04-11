@@ -7,6 +7,7 @@ import { base44 } from '@/api/base44Client';
 import MobileHeader from '@/components/MobileHeader';
 import PullToRefresh from '@/components/PullToRefresh';
 import { useLang } from '@/lib/LangContext';
+import { isMobileOrTabletApp } from '@/utils/platformDetect';
 
 const PLANS = [
   {
@@ -163,10 +164,37 @@ const CHECKOUT_MAP = {
 
 export default function Pricing() {
   const [loading, setLoading] = useState(null);
-  const [iosWebView] = useState(isIOSWebView);
+  const [iosWebView] = useState(isMobileOrTabletApp);
   const [creditsRemaining, setCreditsRemaining] = useState(null);
   const { t, lang } = useLang();
   const it = lang === 'it';
+
+  if (isMobileOrTabletApp()) {
+    return (
+      <div className="flex flex-col flex-1">
+        <MobileHeader title={t('pricingTitle')} subtitle={t('pricingSubtitle')} />
+        <main className="flex-1 flex flex-col items-center justify-center px-8 py-16 text-center space-y-4">
+          <div className="text-5xl">🌐</div>
+          <h2 className="text-lg font-semibold">
+            {it ? 'Acquista sul sito web' : 'Purchase on the website'}
+          </h2>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            {it
+              ? 'Per acquistare crediti, visita sketchooz.com dal tuo browser.'
+              : 'To purchase credits, visit sketchooz.com from your browser.'}
+          </p>
+          <a
+            href="https://www.sketchooz.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground text-sm font-semibold"
+          >
+            sketchooz.com
+          </a>
+        </main>
+      </div>
+    );
+  }
 
   useEffect(() => {
     base44.entities.RenderPack.filter({}).then(packs => {

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { isMobileOrTabletApp } from '@/utils/platformDetect';
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { useLang } from '@/lib/LangContext';
@@ -29,6 +30,7 @@ export default function CreditCounter() {
   }, []);
 
   if (credits === null) return null;
+  if (isMobileOrTabletApp()) return null;
 
   return (
     <button

@@ -13,7 +13,6 @@ export default function BottomTabBar() {
 
   const MOBILE_TABS = [
     { path: '/app', label: it ? 'Inizio' : 'Home', icon: Home },
-    { path: '/app/pricing', label: 'Info', icon: Coins },
     { path: '/app/gallery', label: it ? 'Galleria' : 'Gallery', icon: Images },
     { path: '/app/settings', label: it ? 'Impostazioni' : 'Settings', icon: Settings },
   ];
