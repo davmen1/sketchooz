@@ -32,6 +32,7 @@ import Marketing from './pages/Marketing';
 import Gallery from './pages/Gallery';
 import AgeRating from './pages/AgeRating';
 import PaymentSuccess from './pages/PaymentSuccess';
+import Accessibility from './pages/Accessibility';
 
 // Only handles authenticated /app/* routes
 const AuthenticatedApp = () => {
@@ -89,6 +90,7 @@ function App() {
                 <Route path="/marketing" element={<Marketing />} />
                 <Route path="/age-rating" element={<AgeRating />} />
                 <Route path="/payment-success" element={<PaymentSuccess />} />
+                <Route path="/accessibility" element={<Accessibility />} />
                 {/* Authenticated routes */}
                 <Route path="/app/*" element={
                   <AuthProvider>
