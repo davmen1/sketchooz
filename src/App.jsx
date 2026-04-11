@@ -4,6 +4,10 @@ import { useState, useEffect } from 'react';
 const savedSize = localStorage.getItem('textSize') || 'medium';
 const sizeMap = { small: '14px', medium: '16px', large: '19px' };
 document.documentElement.style.fontSize = sizeMap[savedSize] || '16px';
+// Apply saved reduced motion preference
+if (localStorage.getItem('reducedMotion') === 'true') {
+  document.documentElement.classList.add('reduced-motion');
+}
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'

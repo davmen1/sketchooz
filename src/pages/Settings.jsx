@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Trash2, LogOut, AlertTriangle, Moon, Globe, ExternalLink } from 'lucide-react';
+import { Trash2, LogOut, AlertTriangle, Moon, Globe, ExternalLink, Zap } from 'lucide-react';
 import { useTheme } from '@/lib/ThemeProvider';
 import { Button } from '@/components/ui/button';
 import MobileHeader from '@/components/MobileHeader';
@@ -33,6 +33,17 @@ export default function Settings() {
   const { isDark, toggleTheme } = useTheme();
   const { lang } = useLang();
   const [deleteStep, setDeleteStep] = useState('idle');
+  const [reducedMotion, setReducedMotion] = useState(() => localStorage.getItem('reducedMotion') === 'true');
+
+  const applyReducedMotion = (val) => {
+    localStorage.setItem('reducedMotion', val);
+    if (val) {
+      document.documentElement.classList.add('reduced-motion');
+    } else {
+      document.documentElement.classList.remove('reduced-motion');
+    }
+    setReducedMotion(val);
+  };
   const [textSize, setTextSize] = useState(() => localStorage.getItem('textSize') || 'medium');
 
   const applyTextSize = (size) => {
@@ -178,6 +189,31 @@ export default function Settings() {
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* Reduced motion */}
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-muted flex items-center justify-center shrink-0">
+                  <Zap className="w-4 h-4 text-muted-foreground" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">{lang === 'it' ? 'Movimento ridotto' : 'Reduce motion'}</p>
+                </div>
+              </div>
+              <button
+                onClick={() => applyReducedMotion(!reducedMotion)}
+                className={`relative w-12 h-6 rounded-full transition-colors ${reducedMotion ? 'bg-accent' : 'bg-muted'}`}
+              >
+                <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${reducedMotion ? 'translate-x-6' : ''}`} />
+              </button>
+            </div>
+            <p className="text-xs text-muted-foreground leading-relaxed pl-12">
+              {lang === 'it'
+                ? 'Disattiva animazioni e transizioni. Utile per chi è sensibile al movimento o soffre di vertigini.'
+                : 'Disables animations and transitions. Useful for those sensitive to motion or prone to dizziness.'}
+            </p>
           </div>
         </section>
 
