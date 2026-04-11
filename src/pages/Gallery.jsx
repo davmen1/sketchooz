@@ -37,10 +37,11 @@ export default function Gallery() {
     }
   };
 
-  const handleClear = () => {
+  const handleDeleteOne = (item) => {
     vibrate([10, 50, 10]);
-    localStorage.removeItem('sketchooz_gallery');
-    setItems([]);
+    const updated = items.filter(i => i.timestamp !== item.timestamp);
+    localStorage.setItem('sketchooz_gallery', JSON.stringify(updated));
+    setItems(updated);
     setSelected(null);
   };
 
@@ -51,13 +52,7 @@ export default function Gallery() {
       <MobileHeader
         title={label('Galleria', 'Gallery')}
         subtitle={label(`${items.length} render salvati`, `${items.length} saved renders`)}
-        right={
-          items.length > 0 ? (
-            <Button variant="ghost" size="sm" onClick={handleClear} className="text-destructive hover:text-destructive min-h-[44px]">
-              <Trash2 className="w-4 h-4" />
-            </Button>
-          ) : null
-        }
+        right={null}
       />
       <main className="max-w-7xl mx-auto px-4 py-6 w-full flex-1">
         {items.length === 0 ? (
@@ -116,7 +111,10 @@ export default function Gallery() {
                 {label('Scarica', 'Download')}
               </Button>
               <Button variant="outline" className="text-white border-white/30" onClick={() => setSelected(null)}>
-                {label('Chiudi', 'Close')}
+                {label('Galleria', 'Gallery')}
+              </Button>
+              <Button variant="ghost" className="text-destructive hover:text-destructive border border-destructive/30" onClick={() => handleDeleteOne(selected)}>
+                <Trash2 className="w-4 h-4" />
               </Button>
             </div>
           </motion.div>
