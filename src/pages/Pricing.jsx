@@ -185,7 +185,7 @@ export default function Pricing() {
     }
     setLoading(planId);
     const packId = CHECKOUT_MAP[planId];
-    const successUrl = 'https://www.sketchooz.com/pricing?success=1';
+    const successUrl = 'https://www.sketchooz.com/payment-success';
     const cancelUrl = 'https://www.sketchooz.com/pricing';
     const res = await base44.functions.invoke('createCheckout', {
       pack: packId,
