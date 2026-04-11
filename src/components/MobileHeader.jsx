@@ -12,8 +12,7 @@ export default function MobileHeader({ title, subtitle, right }) {
 
 
   return (
-    <header className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-10"
-      style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+    <header className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-3">
         {/* Left: back button or logo */}
         <div className="flex items-center gap-3 min-w-0">
