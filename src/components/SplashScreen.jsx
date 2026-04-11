@@ -49,8 +49,8 @@ export default function SplashScreen({ onDone }) {
               >
                 <img
                   src={isDark
-                    ? 'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/8d4fa559a_Gemini_Generated_Image_p24ieqp24ieqp24i112.png'
-                    : 'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/222cf1206_Gemini_Generated_Image_p24ieqp24ieqp24i1.jpg'
+                    ? 'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/982e34fb1_Gemini_Generated_Image_p24ieqp24ieqp24i1121.png'
+                    : 'https://media.base44.com/images/public/69c0940be94e736c4d6366a0/80d9e9110_Gemini_Generated_Image_p24ieqp24ieqp24i12.png'
                   }
                   alt="Sketchooz"
                   style={{ width: '140px', height: '140px', objectFit: 'contain' }}
