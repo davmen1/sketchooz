@@ -1,4 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
+// Apply saved text size on app load
+const savedSize = localStorage.getItem('textSize') || 'medium';
+const sizeMap = { small: '14px', medium: '16px', large: '19px' };
+document.documentElement.style.fontSize = sizeMap[savedSize] || '16px';
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Trash2, LogOut, AlertTriangle, Moon, Globe, ExternalLink } from 'lucide-react';
 import { useTheme } from '@/lib/ThemeProvider';
@@ -33,6 +33,14 @@ export default function Settings() {
   const { isDark, toggleTheme } = useTheme();
   const { lang } = useLang();
   const [deleteStep, setDeleteStep] = useState('idle');
+  const [textSize, setTextSize] = useState(() => localStorage.getItem('textSize') || 'medium');
+
+  const applyTextSize = (size) => {
+    const map = { small: '14px', medium: '16px', large: '19px' };
+    document.documentElement.style.fontSize = map[size];
+    localStorage.setItem('textSize', size);
+    setTextSize(size);
+  };
   const [deleteLoading, setDeleteLoading] = useState(false);
 
   const s = lang === 'en' ? {
@@ -124,8 +132,8 @@ export default function Settings() {
         </section>
 
         {/* Appearance */}
-        <section className="bg-card rounded-2xl border border-border p-4">
-          <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-3">{s.appearance}</p>
+        <section className="bg-card rounded-2xl border border-border p-4 space-y-4">
+          <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">{s.appearance}</p>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-muted flex items-center justify-center shrink-0">
@@ -142,6 +150,34 @@ export default function Settings() {
             >
               <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${isDark ? 'translate-x-6' : ''}`} />
             </button>
+          </div>
+
+          {/* Text size */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-muted flex items-center justify-center shrink-0 text-base font-bold text-muted-foreground">
+                A
+              </div>
+              <div>
+                <p className="text-sm font-medium">{lang === 'it' ? 'Dimensione testo' : 'Text size'}</p>
+                <p className="text-xs text-muted-foreground">{lang === 'it' ? 'Piccolo · Normale · Grande' : 'Small · Normal · Large'}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-1">
+              {[['small', 'A-', 'text-xs'], ['medium', 'A', 'text-sm'], ['large', 'A+', 'text-base']].map(([size, label, cls]) => (
+                <button
+                  key={size}
+                  onClick={() => applyTextSize(size)}
+                  className={`w-10 h-10 rounded-xl font-semibold transition-colors ${cls} ${
+                    textSize === size
+                      ? 'bg-accent text-accent-foreground'
+                      : 'bg-muted text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
           </div>
         </section>
 
