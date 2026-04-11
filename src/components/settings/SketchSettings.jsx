@@ -233,19 +233,11 @@ export default function SketchSettings({ settings, onChange, imageUrl }) {
                 </button>
                 <button
                   onClick={() => update('markerBgThickness', 'thick')}
-                  className={`flex-1 py-2 text-xs font-semibold transition-all flex flex-col items-center gap-1 ${
+                  className={`flex-1 py-2 text-xs font-semibold transition-all ${
                     settings.markerBgThickness === 'thick' ? 'bg-foreground text-background' : 'bg-card text-muted-foreground hover:text-foreground'
                   }`}
                 >
-                  <span>🖊️ {lang === 'it' ? 'Spessa' : 'Thick'}</span>
-                  <span style={{
-                    display: 'block',
-                    width: '60%',
-                    height: '6px',
-                    borderRadius: '3px',
-                    background: settings.markerBgThickness === 'thick' ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.5)',
-                    boxShadow: '0 0 6px 2px rgba(255,255,255,0.4)',
-                  }} />
+                  🖊️ {lang === 'it' ? 'Spessa' : 'Thick'}
                 </button>
               </div>
             </div>
