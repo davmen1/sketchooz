@@ -105,9 +105,13 @@ export function buildPrompt(settings, productDescription) {
   let bgPart = '';
   if (settings.style !== 'bw_lines') {
     if (settings.markerBg) {
+      const isThick = settings.markerBgThickness === 'thick';
+      const whiteHighlightInstruction = isThick
+        ? 'Paint EXTREMELY THICK, BROAD, LUMINOUS WHITE STRIPES (minimum 8-12pt width) along ALL edges, top curves, and prominent silhouette boundaries — like a wide white highlighter marker dragged powerfully across the outline. These white bands must be so thick and bright they create a powerful glowing halo that completely dominates the edges of the product. The white must be 100% opaque and pure, stark white, creating a dramatic high-contrast separation between the product and the background.'
+        : 'Paint bright WHITE HIGHLIGHT LINES (2-3pt) on ALL key edges, creases, top curves, and prominent surfaces to create a strong halo/glow effect that makes the product pop.';
       bgPart = `FINISHING — MANDATORY MARKER BACKGROUND STYLE:
 1. PRODUCT OUTLINE: Apply a BOLD, THICK BLACK OUTLINE (minimum 4-5pt stroke) around the ENTIRE product silhouette. This outline MUST be dark, crisp, and define every boundary.
-2. WHITE HIGHLIGHTS: Paint bright WHITE HIGHLIGHT LINES (2-3pt) on ALL key edges, creases, top curves, and prominent surfaces to create a strong halo/glow effect that makes the product pop.
+2. WHITE HIGHLIGHTS: ${whiteHighlightInstruction}
 3. BACKGROUND: Behind the product, create a loose, raw MARKER SPLASH/PATCH in ${markerColorLabel} with irregular organic strokes (like a real Copic marker on paper). The splash should be bold and visible.
 4. SURROUNDING: The area outside the marker splash MUST be pure white paper.
 Aesthetic: Professional industrial design marker sketch on white paper with dramatic color backdrop, competition-style presentation. Bold, confident strokes. High contrast between black outline, white highlights, and colored marker splash.`;
