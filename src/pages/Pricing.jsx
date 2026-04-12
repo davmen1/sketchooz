@@ -146,15 +146,6 @@ const PLANS = [
   },
 ];
 
-const isIOSWebView = () => {
-  const ua = navigator.userAgent || '';
-  const isIOS = /iPhone|iPad|iPod/.test(ua);
-  const hasWebKit = typeof window !== 'undefined' && !!(window.webkit?.messageHandlers);
-  const notSafari = isIOS && !ua.includes('Safari');
-  return isIOS && (hasWebKit || notSafari);
-};
-
-// Map plan IDs to checkout pack IDs
 const CHECKOUT_MAP = {
   trial: 'starter',
   starter: 'monthly',
@@ -168,8 +159,20 @@ export default function Pricing() {
   const [creditsRemaining, setCreditsRemaining] = useState(null);
   const { t, lang } = useLang();
   const it = lang === 'it';
+  const isMobile = isMobileOrTabletApp();
 
-  if (isMobileOrTabletApp()) {
+  useEffect(() => {
+    if (isMobile) return;
+    base44.entities.RenderPack.filter({}).then(packs => {
+      if (packs.length > 0) {
+        setCreditsRemaining(packs[0].credits_remaining || 0);
+      } else {
+        setCreditsRemaining(0);
+      }
+    }).catch(() => setCreditsRemaining(0));
+  }, [isMobile]);
+
+  if (isMobile) {
     return (
       <div className="flex flex-col flex-1">
         <MobileHeader title={t('pricingTitle')} subtitle={t('pricingSubtitle')} />
@@ -195,16 +198,6 @@ export default function Pricing() {
       </div>
     );
   }
-
-  useEffect(() => {
-    base44.entities.RenderPack.filter({}).then(packs => {
-      if (packs.length > 0) {
-        setCreditsRemaining(packs[0].credits_remaining || 0);
-      } else {
-        setCreditsRemaining(0);
-      }
-    }).catch(() => setCreditsRemaining(0));
-  }, []);
 
   const handleCheckout = async (planId) => {
     if (window.self !== window.top) {
@@ -236,8 +229,6 @@ export default function Pricing() {
 
       <PullToRefresh onRefresh={() => {}}>
         <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8 w-full space-y-6">
-
-          {/* iOS: no external purchase links */}
 
           {creditsRemaining !== null && creditsRemaining > 0 && (
             <div className="p-4 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-xl text-sm text-green-800 dark:text-green-200 text-center">
@@ -370,7 +361,6 @@ export default function Pricing() {
               );
             })}
           </div>
-
 
           {/* Disclaimer */}
           <div className="rounded-xl border border-border bg-muted/50 p-4 space-y-2 text-xs text-muted-foreground">

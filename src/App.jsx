@@ -33,12 +33,19 @@ import Gallery from './pages/Gallery';
 import AgeRating from './pages/AgeRating';
 import PaymentSuccess from './pages/PaymentSuccess';
 import Accessibility from './pages/Accessibility';
+import { initPushNotifications } from '@/lib/pushNotifications';
 
 // Only handles authenticated /app/* routes
 const AuthenticatedApp = () => {
   const [showSplash, setShowSplash] = useState(true);
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
   const location = useLocation();
+
+  useEffect(() => {
+    if (!isLoadingAuth && !authError) {
+      initPushNotifications();
+    }
+  }, [isLoadingAuth, authError]);
 
   if (isLoadingPublicSettings || isLoadingAuth) {
     return (

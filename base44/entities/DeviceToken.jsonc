@@ -1,0 +1,38 @@
+{
+  "name": "DeviceToken",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string"
+    },
+    "token": {
+      "type": "string"
+    },
+    "platform": {
+      "type": "string",
+      "enum": [
+        "ios",
+        "android"
+      ]
+    }
+  },
+  "required": [
+    "user_email",
+    "token",
+    "platform"
+  ],
+  "rls": {
+    "create": {
+      "data.user_email": "{{user.email}}"
+    },
+    "read": {
+      "data.user_email": "{{user.email}}"
+    },
+    "update": {
+      "data.user_email": "{{user.email}}"
+    },
+    "delete": {
+      "data.user_email": "{{user.email}}"
+    }
+  }
+}
