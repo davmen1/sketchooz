@@ -3,12 +3,16 @@ import { appParams } from '@/lib/app-params';
 
 const { appId, token, functionsVersion, appBaseUrl } = appParams;
 
-// On Capacitor, relative URLs resolve to ws://capacitor — use absolute server URL instead
 const isCapacitor = typeof window !== 'undefined' && window.Capacitor?.isNativePlatform?.();
-// Always use the public HTTPS base44 server (never localhost or relative URLs on native)
 const serverUrl = isCapacitor ? 'https://api.base44.io' : '';
 
-//Create a client with authentication required
+// On Capacitor, defer realtime init until the native platform is fully ready
+// to avoid WebSocket TransportError on iOS WebView before DOM/network is ready.
+let realtimeEnabled = true;
+if (isCapacitor) {
+  realtimeEnabled = false; // start disabled, re-enable after deviceready
+}
+
 export const base44 = createClient({
   appId,
   token,
@@ -16,5 +20,24 @@ export const base44 = createClient({
   serverUrl,
   requiresAuth: false,
   appBaseUrl,
-  realtimeEnabled: true,
+  realtimeEnabled,
 });
+
+// On Capacitor, wait for deviceready then enable realtime
+if (isCapacitor) {
+  const enableRealtime = () => {
+    try {
+      base44.realtime?.connect?.();
+    } catch (e) {
+      console.warn('[base44] realtime connect failed:', e);
+    }
+  };
+  if (document.readyState === 'complete') {
+    // Already ready — short delay to let Capacitor network stack settle
+    setTimeout(enableRealtime, 500);
+  } else {
+    document.addEventListener('deviceready', enableRealtime, { once: true });
+    // Fallback: also try on DOMContentLoaded + delay
+    document.addEventListener('DOMContentLoaded', () => setTimeout(enableRealtime, 500), { once: true });
+  }
+}
