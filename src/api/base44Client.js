@@ -14,5 +14,7 @@ export const base44 = createClient({
   functionsVersion,
   serverUrl,
   requiresAuth: false,
-  appBaseUrl
+  appBaseUrl,
+  // Disable WebSocket realtime on Capacitor to prevent infinite connect_error loop
+  realtimeEnabled: !isCapacitor,
 });
