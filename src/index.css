@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+/* Inter loaded via system-ui on iOS (SF Pro), no external network call needed */
 
 @tailwind base;
 @tailwind components;
@@ -6,7 +6,7 @@
 
 @layer base {
   :root {
-    --font-inter: 'Inter', sans-serif;
+    --font-inter: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 
     --background: 48 24% 96%;
     --foreground: 220 15% 12%;
