@@ -4,16 +4,21 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
 
-    // Verifica autenticazione e ruolo admin
+    // Verifica autenticazione: deve essere un utente loggato
     const user = await base44.auth.me();
-    if (!user || user.role !== 'admin') {
-      return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+    if (!user) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { userEmail, renderTitle } = await req.json();
 
     if (!userEmail || !renderTitle) {
       return Response.json({ success: false, message: 'Missing userEmail or renderTitle' }, { status: 400 });
+    }
+
+    // Un utente normale può notificare solo se stesso; un admin può notificare chiunque
+    if (user.role !== 'admin' && user.email !== userEmail) {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const deviceTokens = await base44.asServiceRole.entities.DeviceToken.filter({ user_email: userEmail });
