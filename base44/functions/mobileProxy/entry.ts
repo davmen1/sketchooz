@@ -6,11 +6,19 @@ Deno.serve(async (req) => {
     const user = await base44.auth.me();
 
     if (!user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+      return Response.json(
+        { error: "Unauthorized: No valid session found" },
+        { status: 401 }
+      );
     }
 
     return Response.json({ user });
+
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 401 });
+    console.error("Auth error:", error.message);
+    return Response.json(
+      { error: "Authentication failed" },
+      { status: 401 }
+    );
   }
 });
