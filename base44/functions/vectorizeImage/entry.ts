@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 import { Buffer } from 'node:buffer';
 import ImageTracer from 'npm:imagetracerjs@1.2.6';
 import Jimp from 'npm:jimp@0.22.12';
@@ -14,6 +14,22 @@ Deno.serve(async (req) => {
     const { imageUrl } = await req.json();
     if (!imageUrl) {
       return Response.json({ error: 'imageUrl is required' }, { status: 400 });
+    }
+
+    // SSRF protection: only allow https URLs from trusted domains
+    let parsedUrl;
+    try {
+      parsedUrl = new URL(imageUrl);
+    } catch {
+      return Response.json({ error: 'Invalid URL' }, { status: 400 });
+    }
+    if (parsedUrl.protocol !== 'https:') {
+      return Response.json({ error: 'Only HTTPS URLs are allowed' }, { status: 400 });
+    }
+    const allowedHosts = ['base44.app', 'storage.googleapis.com', 'firebasestorage.googleapis.com', 'cdn.base44.app'];
+    const isAllowed = allowedHosts.some(h => parsedUrl.hostname === h || parsedUrl.hostname.endsWith('.' + h));
+    if (!isAllowed) {
+      return Response.json({ error: 'URL host not allowed' }, { status: 400 });
     }
 
     console.log('Downloading image from:', imageUrl);
