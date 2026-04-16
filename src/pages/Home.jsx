@@ -7,6 +7,7 @@ import { Sparkles, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 import ImageUploader from '@/components/upload/ImageUploader';
+import PromoDialog from '@/components/PromoDialog';
 import { useLang } from '@/lib/LangContext';
 import { Link } from 'react-router-dom';
 import SketchSettings from '@/components/settings/SketchSettings';
@@ -43,6 +44,7 @@ export default function Home() {
   const [hasWatermark, setHasWatermark] = useState(false);
   const [showDisclaimer, setShowDisclaimer] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [promoDialogOpen, setPromoDialogOpen] = useState(false);
   const [tipsRead, setTipsRead] = useState(() => !!localStorage.getItem('sketchooz_tips_read'));
 
   const isEnterprise = currentUser?.role === 'enterprise' || currentUser?.role === 'admin';
@@ -146,6 +148,20 @@ Be purely descriptive and factual. NO creative additions. Max 180 words.`,
     generateMutation.mutate(note);
   };
 
+  const handleApplyPromo = async (code) => {
+    try {
+      const res = await base44.functions.invoke('applyPromoCode', { promo_code: code });
+      if (res.data.success) {
+        toast.success(t('promoApplied'));
+      } else {
+        toast.error(res.data.error || t('promoInvalid'));
+      }
+    } catch {
+      toast.error(t('promoInvalid'));
+    }
+    setPromoDialogOpen(false);
+  };
+
   const handleReset = () => {
     setImageUrl(null);
     setResultUrl(null);
@@ -194,6 +210,19 @@ Be purely descriptive and factual. NO creative additions. Max 180 words.`,
                   onClear={() => setImageUrl(null)}
                 />
               </div>
+              <div className="text-center">
+                <button
+                  className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
+                  onClick={() => setPromoDialogOpen(true)}
+                >
+                  {t('promoLink')}
+                </button>
+              </div>
+              <PromoDialog
+                open={promoDialogOpen}
+                onOpenChange={setPromoDialogOpen}
+                onApply={handleApplyPromo}
+              />
               <div className="flex items-center justify-center gap-4 pt-2">
                 <Link to="/privacy" className="text-xs text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2">Privacy Policy</Link>
                 <span className="text-muted-foreground/40 text-xs">·</span>
