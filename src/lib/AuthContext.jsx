@@ -1,7 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { appParams } from '@/lib/app-params';
-import { SignInWithApple } from '@capacitor-community/apple-sign-in';
 import { Capacitor } from '@capacitor/core';
 
 const AuthContext = createContext();
@@ -61,6 +60,7 @@ export const AuthProvider = ({ children }) => {
         return;
       }
 
+      const { SignInWithApple } = await import('@capacitor-community/apple-sign-in');
       const result = await SignInWithApple.authorize({
         clientId: 'sketchooz.base44.app',
         redirectURI: 'https://sketchooz.base44.app',
