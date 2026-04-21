@@ -1,7 +1,8 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { appParams } from '@/lib/app-params';
-import { createAxiosClient } from '@base44/sdk/dist/utils/axios-client';
+import { SignInWithApple } from '@capacitor-community/apple-sign-in';
+import { Capacitor } from '@capacitor/core';
 
 const AuthContext = createContext();
 
@@ -11,7 +12,6 @@ export const AuthProvider = ({ children }) => {
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
   const [isLoadingPublicSettings, setIsLoadingPublicSettings] = useState(true);
   const [authError, setAuthError] = useState(null);
-  const [appPublicSettings, setAppPublicSettings] = useState(null); // Contains only { id, public_settings }
 
   useEffect(() => {
     checkAppState();
@@ -20,112 +20,88 @@ export const AuthProvider = ({ children }) => {
   const checkAppState = async () => {
     try {
       setIsLoadingPublicSettings(true);
-      setAuthError(null);
+      const savedToken = localStorage.getItem('b44_auth_token') || appParams.token;
       
-      // First, check app public settings (with token if available)
-      // This will tell us if auth is required, user not registered, etc.
-      const appClient = createAxiosClient({
-        baseURL: `/api/apps/public`,
-        headers: {
-          'X-App-Id': appParams.appId
-        },
-        token: appParams.token, // Include token if available
-        interceptResponses: true
-      });
-      
-      try {
-        const publicSettings = await appClient.get(`/prod/public-settings/by-id/${appParams.appId}`);
-        setAppPublicSettings(publicSettings);
-        
-        // If we got the app public settings successfully, check if user is authenticated
-        if (appParams.token) {
-          await checkUserAuth();
-        } else {
-          setIsLoadingAuth(false);
-          setIsAuthenticated(false);
-        }
-        setIsLoadingPublicSettings(false);
-      } catch (appError) {
-        console.error('App state check failed:', appError);
-        
-        // Handle app-level errors
-        if (appError.status === 403 && appError.data?.extra_data?.reason) {
-          const reason = appError.data.extra_data.reason;
-          if (reason === 'auth_required') {
-            setAuthError({
-              type: 'auth_required',
-              message: 'Authentication required'
-            });
-          } else if (reason === 'user_not_registered') {
-            setAuthError({
-              type: 'user_not_registered',
-              message: 'User not registered for this app'
-            });
-          } else {
-            setAuthError({
-              type: reason,
-              message: appError.message
-            });
-          }
-        } else {
-          setAuthError({
-            type: 'unknown',
-            message: appError.message || 'Failed to load app'
-          });
-        }
-        setIsLoadingPublicSettings(false);
+      if (savedToken) {
+        await checkUserAuth(savedToken);
+      } else {
         setIsLoadingAuth(false);
       }
+      setIsLoadingPublicSettings(false);
     } catch (error) {
-      console.error('Unexpected error:', error);
-      setAuthError({
-        type: 'unknown',
-        message: error.message || 'An unexpected error occurred'
-      });
+      console.error('Errore inizializzazione:', error);
       setIsLoadingPublicSettings(false);
       setIsLoadingAuth(false);
     }
   };
 
-  const checkUserAuth = async () => {
+  const checkUserAuth = async (token) => {
     try {
-      // Now check if the user is authenticated
       setIsLoadingAuth(true);
+      if (token) base44.auth.setToken(token);
+      
       const currentUser = await base44.auth.me();
       setUser(currentUser);
       setIsAuthenticated(true);
-      setIsLoadingAuth(false);
     } catch (error) {
-      console.error('User auth check failed:', error);
-      setIsLoadingAuth(false);
+      console.error('Check auth fallito:', error);
+      localStorage.removeItem('b44_auth_token');
       setIsAuthenticated(false);
-      
-      // If user auth fails, it might be an expired token
-      if (error.status === 401 || error.status === 403) {
-        setAuthError({
-          type: 'auth_required',
-          message: 'Authentication required'
-        });
-      }
+    } finally {
+      setIsLoadingAuth(false);
     }
   };
 
-  const logout = (shouldRedirect = true) => {
+  const loginWithApple = async () => {
+    try {
+      console.log("🍎 Avvio modulo nativo Apple...");
+      
+      if (Capacitor.getPlatform() !== 'ios') {
+        alert("Il login Apple è disponibile solo su iPhone reale o simulatore.");
+        return;
+      }
+
+      const result = await SignInWithApple.authorize({
+        clientId: 'sketchooz.base44.app',
+        redirectURI: 'https://sketchooz.base44.app',
+        scopes: 'email name',
+      });
+
+      if (result.response && result.response.identityToken) {
+        const appleToken = result.response.identityToken;
+        console.log("✅ Apple ID ottenuto. Scambio token con server Base44...");
+
+        // FIX: campo corretto è identity_token (non token)
+        const loginResponse = await base44.auth.loginWithProvider('apple', {
+          identity_token: appleToken
+        });
+
+        if (loginResponse && loginResponse.token) {
+          console.log("🎉 Token Base44 ricevuto correttamente!");
+          localStorage.setItem('b44_auth_token', loginResponse.token);
+          base44.auth.setToken(loginResponse.token);
+          await checkUserAuth(loginResponse.token);
+        } else {
+          console.error("❌ Il server non ha restituito un token valido.", JSON.stringify(loginResponse));
+        }
+      }
+    } catch (error) {
+      console.error("❌ Errore durante il login Apple:", JSON.stringify(error));
+      setAuthError(error.message || "Errore durante il login");
+      throw error;
+    }
+  };
+
+  const logout = () => {
+    localStorage.removeItem('b44_auth_token');
+    base44.auth.setToken(null);
     setUser(null);
     setIsAuthenticated(false);
-    
-    if (shouldRedirect) {
-      // Use the SDK's logout method which handles token cleanup and redirect
-      base44.auth.logout(window.location.href);
-    } else {
-      // Just remove the token without redirect
-      base44.auth.logout();
-    }
+    window.location.href = '/';
   };
 
   const navigateToLogin = () => {
-    // Use the SDK's redirectToLogin method
-    base44.auth.redirectToLogin(window.location.href);
+    loginWithApple();
   };
 
   return (
@@ -135,8 +111,8 @@ export const AuthProvider = ({ children }) => {
       isLoadingAuth,
       isLoadingPublicSettings,
       authError,
-      appPublicSettings,
       logout,
+      loginWithApple,
       navigateToLogin,
       checkAppState
     }}>
@@ -147,8 +123,6 @@ export const AuthProvider = ({ children }) => {
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
+  if (!context) throw new Error('useAuth must be used within an AuthProvider');
   return context;
 };
